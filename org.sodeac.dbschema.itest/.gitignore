@@ -6,3 +6,5 @@
 /build.properties
 /.classpath
 /.project
+/test.mv.db
+/test.trace.db
