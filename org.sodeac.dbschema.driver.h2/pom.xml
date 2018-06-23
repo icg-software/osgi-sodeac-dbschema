@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.sodeac</groupId>
+  <version>1.0.0</version>
+  <artifactId>org.sodeac.dbschema.driver.h2</artifactId>
+  <name>Sodeac DB Schema H2 Driver</name>
+  <packaging>bundle</packaging>
+  
+  <parent>
+    <groupId>org.sodeac</groupId>
+    <artifactId>sodeac-dbschema-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.sodeac</groupId>
+      <artifactId>org.sodeac.dbschema.api</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sodeac</groupId>
+      <artifactId>org.sodeac.dbschema.driver.base</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <version>3.5.0</version>
+        <configuration>
+          <instructions>
+          	<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
+            <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+            <Private-Package>org.sodeac.dbschema.driver.h2</Private-Package>
+          </instructions>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+</project>
