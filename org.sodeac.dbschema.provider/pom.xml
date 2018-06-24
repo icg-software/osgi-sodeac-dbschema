@@ -2,7 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.provider</artifactId>
-  <name>Sodeac DB Schema Service Provider</name>
+  <version>1.0.0</version>
+  <name>Sodeac db-schema provider</name>
+  <description>Service provider for Sodeac database schema management</description>
   <packaging>bundle</packaging>
   
   <parent>

@@ -2,7 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.driver.postgresql</artifactId>
-  <name>Sodeac DB Schema PostgreSQL Driver</name>
+  <version>1.0.0</version>
+  <name>Sodeac db-schema PostgreSQL driver</name>
+  <description>PostgreSQL driver for Sodeac database schema management service</description>
   <packaging>bundle</packaging>
    
   <parent>

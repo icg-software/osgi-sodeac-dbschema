@@ -3,7 +3,8 @@
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.driver.base</artifactId>
   <version>1.0.0</version>
-  <name>Sodeac DB Schema Base Driver</name>
+  <name>Sodeac db-schema base driver</name>
+  <description>Base driver for Sodeac database schema management service</description>
   <packaging>bundle</packaging>
   
   <parent>

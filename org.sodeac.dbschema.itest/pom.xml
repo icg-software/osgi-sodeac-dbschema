@@ -3,6 +3,8 @@
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.itest</artifactId>
   <version>1.0.0</version>
+  <name>Sodeac db-schema integration tests</name>
+  <description>OSGi-Container integration tests for Sodeac database schema management bundles</description>
   
   <parent>
     <groupId>org.sodeac</groupId>
@@ -17,21 +19,6 @@
       <artifactId>org.sodeac.dbschema.api</artifactId>
       <version>1.0.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.sodeac</groupId>
-      <artifactId>org.sodeac.dbschema.driver.h2</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sodeac</groupId>
-      <artifactId>org.sodeac.dbschema.driver.postgresql</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-	    <groupId>mysql</groupId>
-	    <artifactId>mysql-connector-java</artifactId>
-	    <version>6.0.6</version>
-	</dependency>
     <dependency>
       <groupId>org.sodeac</groupId>
       <artifactId>org.sodeac.dbschema.provider</artifactId>

@@ -3,7 +3,8 @@
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.driver.oracle</artifactId>
   <version>1.0.0</version>
-  <name>Sodeac DB Schema Oracle Driver</name>
+  <name>Sodeac db-schema Oracle driver</name>
+  <description>Oracle driver for Sodeac database schema management service</description>
   <packaging>bundle</packaging>
    
   <parent>
