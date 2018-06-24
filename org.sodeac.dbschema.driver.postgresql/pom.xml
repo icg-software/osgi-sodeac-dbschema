@@ -47,7 +47,7 @@
             <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
             <Private-Package>org.sodeac.dbschema.driver.postgresql</Private-Package>
             <Import-Package>
-            	org.postgresql.*;resolution:=optional,
+            	org.postgresql.*;resolution:=optional;version=!,
             	*
             </Import-Package>
           </instructions>
