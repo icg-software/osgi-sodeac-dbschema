@@ -1704,13 +1704,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
 		
 		for(String toDeleteKey : toDelete)
 		{
-			try
-			{
-				dropForeignKey(connection, schemaSpec, tableSpec, toDeleteKey, true);
-			}
-			catch (Exception e) {
-				// TODO: handle exception
-			}
+			dropForeignKey(connection, schemaSpec, tableSpec, toDeleteKey, true);
 		}
 	}
 	
@@ -1785,28 +1779,12 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
 		boolean refTableQuoted = ( columnSpec.getForeignKey() == null || columnSpec.getForeignKey().getQuotedRefTableName() == null ) ? false : columnSpec.getForeignKey().getQuotedRefTableName().booleanValue();
 		boolean refColumnQuoted = ( columnSpec.getForeignKey() == null || columnSpec.getForeignKey().getQuotedRefColumnName() == null ) ? false : columnSpec.getForeignKey().getQuotedRefColumnName().booleanValue();
 		
-		try
+		if((columnProperties.get("CLEAN_FK") != null) && ((Boolean)columnProperties.get("CLEAN_FK")).booleanValue() && (columnSpec.getForeignKey() != null))
 		{
-			if((columnProperties.get("CLEAN_FK") != null) && ((Boolean)columnProperties.get("CLEAN_FK")).booleanValue() && (columnSpec.getForeignKey() != null))
-			{
-				dropForeignKey(connection, schemaSpec, tableSpec, columnSpec.getForeignKey().getConstraintName(), keyQuoted);
-			}
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			// TODO: handle exception
+			dropForeignKey(connection, schemaSpec, tableSpec, columnSpec.getForeignKey().getConstraintName(), keyQuoted);
 		}
 		
-		try
-		{
-			cleanColumnForeignKeys(connection, schemaSpec, tableSpec, columnSpec);
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			// TODO: handle exception
-		}
+		cleanColumnForeignKeys(connection, schemaSpec, tableSpec, columnSpec);
 		
 		if(columnSpec.getForeignKey() == null)
 		{
@@ -2404,12 +2382,12 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
 	protected IColumnType findBestColumnType(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec) throws SQLException
 	{
 		//boolean FALLBACK,STANDARD,SPECIFIC
+		
 		Applicability best = Applicability.NONE;
 		IColumnType columnType = null;
 		boolean typeMatch = false;
 		for(IColumnType check : columnDriverList)
 		{
-			// TODO
 			List<String> list = check.getTypeList();
 			
 			if(list == null)
@@ -2489,7 +2467,6 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
 	public void createSchema(Connection connection, String schemaName, Map<String,Object> properties) throws SQLException
 	{
 		String sql = "CREATE SCHEMA IF NOT EXISTS " + objectNameGuidelineFormat(null, connection, schemaName, "SCHEMA") + " AUTHORIZATION " + connection.getMetaData().getUserName();
-		System.out.println(sql);
 		PreparedStatement prepStat = connection.prepareStatement(sql);
 		prepStat.executeUpdate();
 		prepStat.close();
