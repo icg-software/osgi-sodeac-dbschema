@@ -22,7 +22,7 @@ import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
 
-@Component(name="DefaultColumnType", immediate=true, service=IColumnType.class)
+@Component(name="DefaultColumnType", service=IColumnType.class)
 public class DefaultColumnTypeImpl implements IColumnType
 {
 	private static final List<String> typeList = Arrays.asList(new String[] 
