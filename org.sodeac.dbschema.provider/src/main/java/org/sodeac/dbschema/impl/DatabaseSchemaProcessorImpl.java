@@ -19,6 +19,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -40,7 +41,7 @@ import org.sodeac.dbschema.api.SchemaUnusableException;
 import org.sodeac.dbschema.api.TableSpec;
 import org.sodeac.dbschema.api.TerminateException;
 
-@Component(name="DatabaseSchemaProcessor", immediate=true, service=IDatabaseSchemaProcessor.class)
+@Component(name="DatabaseSchemaProcessor", service=IDatabaseSchemaProcessor.class)
 public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor 
 {
 	protected volatile ComponentContext context = null;
@@ -48,11 +49,28 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
 	@Reference(cardinality=ReferenceCardinality.OPTIONAL,policy=ReferencePolicy.DYNAMIC)
 	protected volatile LogService logService = null;
 	
-	@Reference(cardinality=ReferenceCardinality.MULTIPLE,policy=ReferencePolicy.DYNAMIC)
-	protected volatile List<IDatabaseSchemaDriver> schemaDriverList = null;
+	private DriverManager<IDatabaseSchemaDriver> schemaDriverList = new DriverManager<IDatabaseSchemaDriver>();
+	private DriverManager<IColumnType> columnDriverList = new DriverManager<IColumnType>();
 	
 	@Reference(cardinality=ReferenceCardinality.MULTIPLE,policy=ReferencePolicy.DYNAMIC)
-	protected volatile List<IColumnType> columnDriverList = null;
+	public void bindSchemaDriver(IDatabaseSchemaDriver type, ServiceReference<IDatabaseSchemaDriver> serviceReference)
+	{
+		this.schemaDriverList.add(type,serviceReference);
+	}
+	public void unbindSchemaDriver(IDatabaseSchemaDriver type, ServiceReference<IDatabaseSchemaDriver> serviceReference)
+	{
+		this.schemaDriverList.remove(type,serviceReference);
+	}
+	
+	@Reference(cardinality=ReferenceCardinality.MULTIPLE,policy=ReferencePolicy.DYNAMIC)
+	public void bindColumnType(IColumnType type, ServiceReference<IColumnType> serviceReference)
+	{
+		this.columnDriverList.add(type,serviceReference);
+	}
+	public void unbindColumnType(IColumnType type, ServiceReference<IColumnType> serviceReference)
+	{
+		this.columnDriverList.remove(type,serviceReference);
+	}
 	
 	@Activate
 	private void activate(ComponentContext context, Map<String, ?> properties)
@@ -71,7 +89,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
 	{
 		int currentLevel = -1;
 		IDatabaseSchemaDriver currentDriver = null;
-		for(IDatabaseSchemaDriver driver : this.schemaDriverList)
+		for(IDatabaseSchemaDriver driver : this.schemaDriverList.getDriverList())
 		{
 			int level = driver.handle(connection);
 			if(level > -1)
@@ -86,7 +104,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
 		
 		if(currentDriver != null)
 		{
-			currentDriver.setColumnDriverList(this.columnDriverList);
+			currentDriver.setColumnDriverList(this.columnDriverList.getDriverList());
 		}
 		
 		return currentDriver;
