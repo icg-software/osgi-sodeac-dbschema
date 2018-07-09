@@ -361,7 +361,7 @@ public class Statics
 			//Statics.ENABLED_DB2 ? 
 			//		TestTools.reactorBundle("org.sodeac.dbschema.driver.db2","1.0.0").start() :
 			//		TestTools.reactorBundle("org.sodeac.dbschema.driver.h2","1.0.0").start(),
-			TestTools.reactorBundle("org.sodeac.dbschema.provider","1.0.0").start()
+			TestTools.reactorBundle("org.sodeac.dbschema.provider","1.0.1").start()
 		};
 	}
 }
