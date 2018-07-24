@@ -17,7 +17,7 @@ Usually relational database objects are managed by heavyweight orm frameworks li
 <dependency>
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.provider</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
@@ -25,7 +25,7 @@ Usually relational database objects are managed by heavyweight orm frameworks li
 
 ```
 mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.api:1.0.0"
-mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.provider:1.0.0"
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.provider:1.0.1"
 mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.driver.h2:1.0.0"
 ```
 
@@ -33,7 +33,7 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sod
 
 ```
 bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.api/1.0.0
-bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.provider/1.0.0
+bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.provider/1.0.1
 bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.driver.base/1.0.0
 bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.driver.h2/1.0.0
 ```
@@ -109,20 +109,20 @@ More database managment systems can be supported by providing an OSGi service im
 
 | Type                 | Key                                               |  Provider-Bundle                                |
 |----------------------|---------------------------------------------------|-------------------------------------------------|
-| char                 | IColumnType.ColumnType.CHAR.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| varchar              | IColumnType.ColumnType.VARCHAR.toString()         | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| clob                 | IColumnType.ColumnType.CLOB.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| boolean              | ColumnType.BOOLEAN.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| smallint             | ColumnType.SMALLINT.toString()                    | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| integer              | ColumnType.INTEGER.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| bigint               | ColumnType.BIGINT.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| real                 | ColumnType.REAL.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| double               | ColumnType.DOUBLE.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| timestamp            | ColumnType.TIMESTAMP.toString()                   | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| date                 | ColumnType.DATE.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| time                 | ColumnType.TIME.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| binary               | ColumnType.BINARY.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
-| blob                 | ColumnType.BLOB.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.0   |
+| char                 | IColumnType.ColumnType.CHAR.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| varchar              | IColumnType.ColumnType.VARCHAR.toString()         | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| clob                 | IColumnType.ColumnType.CLOB.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| boolean              | ColumnType.BOOLEAN.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| smallint             | ColumnType.SMALLINT.toString()                    | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| integer              | ColumnType.INTEGER.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| bigint               | ColumnType.BIGINT.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| real                 | ColumnType.REAL.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| double               | ColumnType.DOUBLE.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| timestamp            | ColumnType.TIMESTAMP.toString()                   | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| date                 | ColumnType.DATE.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| time                 | ColumnType.TIME.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| binary               | ColumnType.BINARY.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| blob                 | ColumnType.BLOB.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
 
 More column types can be supported by providing an OSGi service implements [IColumnType](https://oss.sonatype.org/service/local/repositories/releases/archive/org/sodeac/org.sodeac.dbschema.api/1.0.0/org.sodeac.dbschema.api-1.0.0-javadoc.jar/!/org/sodeac/dbschema/api/IColumnType.html) .
 
@@ -137,5 +137,5 @@ More column types can be supported by providing an OSGi service implements [ICol
 * no support to specify functions, procedures, trigger, sequences and views
 
 ## License
-[Eclipse Public License 1.0](https://github.com/spalarus/osgi-sodeac-dbschema/blob/master/LICENSE)
+[Eclipse Public License 2.0](https://github.com/spalarus/osgi-sodeac-dbschema/blob/master/LICENSE)
 
