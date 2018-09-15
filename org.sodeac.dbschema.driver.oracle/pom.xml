@@ -32,22 +32,14 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <version>3.5.0</version>
         <configuration>
           <instructions>
-          	<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Bundle-Version>${project.version}</Bundle-Version>
-            <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
-            <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-            <Private-Package>org.sodeac.dbschema.driver.oracle</Private-Package>
+          	<Private-Package>org.sodeac.dbschema.driver.oracle</Private-Package>
             <Import-Package>
             	oracle.jdbc;resolution:=optional,
             	*
             </Import-Package>
           </instructions>
-          <source>1.8</source>
-          <target>1.8</target>
         </configuration>
       </plugin>
     </plugins>
