@@ -41,7 +41,7 @@ public class TableProcessor
 				Dictionary<ObjectType, Object> objects = new Hashtable<>();
 				objects.put(ObjectType.SCHEMA, schema);
 				objects.put(ObjectType.TABLE, table);
-				for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+				for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 				{
 					try
 					{
@@ -78,7 +78,7 @@ public class TableProcessor
 					Dictionary<ObjectType, Object> objects = new Hashtable<>();
 					objects.put(ObjectType.SCHEMA, schema);
 					objects.put(ObjectType.TABLE, table);
-					for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+					for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 					{
 						try
 						{
@@ -130,7 +130,7 @@ public class TableProcessor
 					Dictionary<ObjectType, Object> objects = new Hashtable<>();
 					objects.put(ObjectType.SCHEMA, schema);
 					objects.put(ObjectType.TABLE, table);
-					for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+					for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 					{
 						try
 						{
@@ -172,7 +172,7 @@ public class TableProcessor
 			Dictionary<ObjectType, Object> objects = new Hashtable<>();
 			objects.put(ObjectType.SCHEMA, schema);
 			objects.put(ObjectType.TABLE, table);
-			for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+			for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 			{
 				try
 				{
@@ -238,7 +238,7 @@ public class TableProcessor
 					Dictionary<ObjectType, Object> objects = new Hashtable<>();
 					objects.put(ObjectType.SCHEMA, schema);
 					objects.put(ObjectType.TABLE, table);
-					for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+					for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 					{
 						try
 						{
@@ -287,7 +287,7 @@ public class TableProcessor
 					Dictionary<ObjectType, Object> objects = new Hashtable<>();
 					objects.put(ObjectType.SCHEMA, schema);
 					objects.put(ObjectType.TABLE, table);
-					for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+					for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 					{
 						try
 						{
@@ -376,7 +376,7 @@ public class TableProcessor
 								objects.put(ObjectType.SCHEMA, schema);
 								objects.put(ObjectType.TABLE, table);
 								objects.put(ObjectType.TABLE_INDEX, indexSpec);
-								for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+								for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 								{
 									try
 									{
@@ -425,7 +425,7 @@ public class TableProcessor
 								objects.put(ObjectType.SCHEMA, schema);
 								objects.put(ObjectType.TABLE, table);
 								objects.put(ObjectType.TABLE_INDEX, indexSpec);
-								for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+								for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 								{
 									try
 									{
