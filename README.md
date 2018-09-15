@@ -4,7 +4,7 @@ An OSGi service inserts and updates database tables, columns and keys. The datab
 
 ## Purpose
 
-Usually relational database objects are managed by heavyweight orm frameworks like hibernate. This project fits, if mapping is unneeded and only a lightweight solution to manage relational database objects is required in OSGi environments.
+Usually relational database schema is managed by heavyweight orm frameworks like hibernate. DBSchema is an alternative, if mapping is unneeded and only a lightweight solution to manage relational database objects is required in OSGi environments.
 
 ## Maven
 
@@ -17,7 +17,7 @@ Usually relational database objects are managed by heavyweight orm frameworks li
 <dependency>
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.provider</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
@@ -25,7 +25,7 @@ Usually relational database objects are managed by heavyweight orm frameworks li
 
 ```
 mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.api:1.0.0"
-mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.provider:1.0.1"
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.provider:1.0.2"
 mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sodeac:org.sodeac.dbschema.driver.h2:1.0.0"
 ```
 
@@ -33,7 +33,7 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:get -Dartifact="org.sod
 
 ```
 bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.api/1.0.0
-bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.provider/1.0.1
+bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.provider/1.0.2
 bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.driver.base/1.0.0
 bundle:install -s mvn:org.sodeac/org.sodeac.dbschema.driver.h2/1.0.0
 ```
@@ -109,30 +109,30 @@ More database managment systems can be supported by providing an OSGi service im
 
 | Type                 | Key                                               |  Provider-Bundle                                |
 |----------------------|---------------------------------------------------|-------------------------------------------------|
-| char                 | IColumnType.ColumnType.CHAR.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| varchar              | IColumnType.ColumnType.VARCHAR.toString()         | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| clob                 | IColumnType.ColumnType.CLOB.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| boolean              | ColumnType.BOOLEAN.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| smallint             | ColumnType.SMALLINT.toString()                    | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| integer              | ColumnType.INTEGER.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| bigint               | ColumnType.BIGINT.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| real                 | ColumnType.REAL.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| double               | ColumnType.DOUBLE.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| timestamp            | ColumnType.TIMESTAMP.toString()                   | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| date                 | ColumnType.DATE.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| time                 | ColumnType.TIME.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| binary               | ColumnType.BINARY.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
-| blob                 | ColumnType.BLOB.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.1   |
+| char                 | IColumnType.ColumnType.CHAR.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| varchar              | IColumnType.ColumnType.VARCHAR.toString()         | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| clob                 | IColumnType.ColumnType.CLOB.toString()            | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| boolean              | ColumnType.BOOLEAN.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| smallint             | ColumnType.SMALLINT.toString()                    | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| integer              | ColumnType.INTEGER.toString()                     | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| bigint               | ColumnType.BIGINT.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| real                 | ColumnType.REAL.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| double               | ColumnType.DOUBLE.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| timestamp            | ColumnType.TIMESTAMP.toString()                   | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| date                 | ColumnType.DATE.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| time                 | ColumnType.TIME.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| binary               | ColumnType.BINARY.toString()                      | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
+| blob                 | ColumnType.BLOB.toString()                        | org.sodeac:org.sodeac.dbschema.provider:1.0.2   |
 
 More column types can be supported by providing an OSGi service implements [IColumnType](https://oss.sonatype.org/service/local/repositories/releases/archive/org/sodeac/org.sodeac.dbschema.api/1.0.0/org.sodeac.dbschema.api-1.0.0-javadoc.jar/!/org/sodeac/dbschema/api/IColumnType.html) .
 
 ## Limits
 
-* support only single column primary keys
-* changes in primary key specification are ignored in already existing database tables
-* changes in tablespace specification are ignored in already existing database tables and keys/indices
-* changes in column type are limit by limits of used dbms
-* removing tables, columns and indices are ignored if objects already exist
+* only single column primary keys are supported
+* primary key specification updates are ignored in already existing database tables
+* tablespaces specification updates are ignored in already existing database tables or keys/indices
+* column types updates are limited by limits of used dbms
+* removing tables, columns and indices from schema specification are ignored if objects already exist in dbms
 * only one foreign key specification is allowed for one tablecolumn
 * no support to specify functions, procedures, trigger, sequences and views
 
