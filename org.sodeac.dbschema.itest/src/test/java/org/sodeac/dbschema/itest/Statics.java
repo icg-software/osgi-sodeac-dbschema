@@ -312,13 +312,13 @@ public class Statics
 		MavenArtifactUrlReference karafUrl = maven()
 			.groupId("org.apache.karaf")
 			.artifactId("apache-karaf")
-			.version("4.1.5")
+			.version("4.1.6")
 			.type("zip");
 
 		MavenUrlReference karafStandardRepo = maven()
 			.groupId("org.apache.karaf.features")
 			.artifactId("standard")
-			.version("4.1.5")
+			.version("4.1.6")
 			.classifier("features")
 			.type("xml");
 		
