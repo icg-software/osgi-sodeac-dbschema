@@ -312,13 +312,13 @@ public class Statics
 		MavenArtifactUrlReference karafUrl = maven()
 			.groupId("org.apache.karaf")
 			.artifactId("apache-karaf")
-			.version("4.1.5")
+			.version("4.1.6")
 			.type("zip");
 
 		MavenUrlReference karafStandardRepo = maven()
 			.groupId("org.apache.karaf.features")
 			.artifactId("standard")
-			.version("4.1.5")
+			.version("4.1.6")
 			.classifier("features")
 			.type("xml");
 		
@@ -361,7 +361,7 @@ public class Statics
 			//Statics.ENABLED_DB2 ? 
 			//		TestTools.reactorBundle("org.sodeac.dbschema.driver.db2","1.0.0").start() :
 			//		TestTools.reactorBundle("org.sodeac.dbschema.driver.h2","1.0.0").start(),
-			TestTools.reactorBundle("org.sodeac.dbschema.provider","1.0.1").start()
+			TestTools.reactorBundle("org.sodeac.dbschema.provider","1.0.2").start()
 		};
 	}
 }

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.provider</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <name>Sodeac db-schema provider</name>
   <description>Service provider for Sodeac database schema management</description>
   <packaging>bundle</packaging>
@@ -27,18 +27,10 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <version>3.5.0</version>
         <configuration>
           <instructions>
-          	<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Bundle-Version>${project.version}</Bundle-Version>
-            <Bundle-RequiredExecutionEnvironment>JavaSE-1.8</Bundle-RequiredExecutionEnvironment>
-            <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-            <Private-Package>org.sodeac.dbschema.impl</Private-Package>
+          	<Private-Package>org.sodeac.dbschema.impl</Private-Package>
           </instructions>
-          <source>1.8</source>
-          <target>1.8</target>
         </configuration>
       </plugin>
     </plugins>

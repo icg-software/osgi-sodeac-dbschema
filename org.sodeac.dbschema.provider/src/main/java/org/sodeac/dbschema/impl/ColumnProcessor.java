@@ -43,7 +43,7 @@ public class ColumnProcessor
 				objects.put(ObjectType.SCHEMA, schema);
 				objects.put(ObjectType.TABLE, table);
 				objects.put(ObjectType.COLUMN, column);
-				for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+				for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 				{
 					try
 					{
@@ -89,7 +89,7 @@ public class ColumnProcessor
 					objects.put(ObjectType.SCHEMA, schema);
 					objects.put(ObjectType.TABLE, table);
 					objects.put(ObjectType.COLUMN, column);
-					for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+					for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 					{
 						try
 						{
@@ -144,7 +144,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -188,7 +188,7 @@ public class ColumnProcessor
 			objects.put(ObjectType.SCHEMA, schema);
 			objects.put(ObjectType.TABLE, table);
 			objects.put(ObjectType.COLUMN, column);
-			for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+			for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 			{
 				try
 				{
@@ -257,7 +257,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -293,7 +293,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -329,7 +329,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -365,7 +365,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -411,7 +411,7 @@ public class ColumnProcessor
 					return;
 				}
 				
-				if(schema.getUpdateListenerList() != null)
+				if(table.getUpdateListenerList() != null)
 				{
 					if(columnProperties.get("INVALID_NULLABLE") != null)
 					{
@@ -419,7 +419,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -447,7 +447,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -476,7 +476,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -504,7 +504,7 @@ public class ColumnProcessor
 						objects.put(ObjectType.SCHEMA, schema);
 						objects.put(ObjectType.TABLE, table);
 						objects.put(ObjectType.COLUMN, column);
-						for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+						for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 						{
 							try
 							{
@@ -576,7 +576,7 @@ public class ColumnProcessor
 					objects.put(ObjectType.SCHEMA, schema);
 					objects.put(ObjectType.TABLE, table);
 					objects.put(ObjectType.COLUMN, column);
-					for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+					for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 					{
 						try
 						{
@@ -626,7 +626,7 @@ public class ColumnProcessor
 					objects.put(ObjectType.SCHEMA, schema);
 					objects.put(ObjectType.TABLE, table);
 					objects.put(ObjectType.COLUMN, column);
-					for(IDatabaseSchemaUpdateListener updateListener : schema.getUpdateListenerList())
+					for(IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
 					{
 						try
 						{
