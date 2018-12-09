@@ -42,6 +42,8 @@ public class Statics
 	public static final Boolean ENABLED_DB2 = false;
 	public static final Boolean ENABLED_MYSQL = false;
 	
+	// TODO mvn -DmyVariable=someValue for DB Config
+	
 	public static List<Object[]> connections(Map<String,Boolean> createdSchema)
     {
 		final String schemaName = "S" + TestTools.getSchemaName();
@@ -102,6 +104,8 @@ public class Statics
 						// chown postgres.postgres /var/lib/postgresql/data/sodeacdata
 						// chown postgres.postgres /var/lib/postgresql/data/sodeacindex
 						
+						// psql -h 127.0.0.1 -U postgres --dbname=postgres ::
+						
 						// CREATE USER sodeac with SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION LOGIN PASSWORD 'sodeac';
 						// CREATE TABLESPACE sodeacdata OWNER sodeac LOCATION '//var//lib//postgresql//data//sodeacdata';
 						// CREATE TABLESPACE sodeacindex OWNER sodeac LOCATION '//var//lib//postgresql//data//sodeacindex';
@@ -114,7 +118,7 @@ public class Statics
 							Class.forName("org.postgresql.Driver").newInstance();
 						}
 						catch (Exception e) {}
-						testConnection.connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/sodeac", "sodeac", "sodeac");
+						testConnection.connection = DriverManager.getConnection("jdbc:postgresql://192.168.178.45:5432/sodeac", "sodeac", "sodeac");
 						
 						if(createdSchema.get("POSTGRES_" + schemaName) == null)
 						{
@@ -203,6 +207,9 @@ public class Statics
 							
 						 */
 						
+						
+						// sqlplus system/oracle@//localhost:1521/xe:
+						
 						// CREATE TABLESPACE sodeacdata  DATAFILE 'sodeacdata.dbf' SIZE 40M AUTOEXTEND ON NEXT 10M ONLINE;
 						// CREATE TABLESPACE sodeacindex  DATAFILE 'sodeacindex.dbf' SIZE 40M AUTOEXTEND ON NEXT 10M ONLINE;
 						
@@ -219,40 +226,49 @@ public class Statics
 						
 						try
 						{
-							Class.forName("oracle.jdbc.OracleDriver").newInstance();
+							
+							try
+							{
+								Class.forName("oracle.jdbc.OracleDriver").newInstance();
+							}
+							catch (Exception e) {}
+							
+							
+							if(createdSchema.get("ORACLE_" + schemaName) == null)
+							{
+								createdSchema.put("ORACLE_" + schemaName,true);
+								
+								Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.178.45:1521/xe", "system", "oracle");
+								
+								PreparedStatement prepStat = connection.prepareStatement("CREATE USER " + schemaName.toUpperCase() + " IDENTIFIED BY sodeac DEFAULT TABLESPACE USERS PROFILE DEFAULT");
+								prepStat.executeUpdate();
+								prepStat.close();
+								
+								prepStat = connection.prepareStatement("GRANT CONNECT TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
+								prepStat.executeUpdate();
+								prepStat.close();
+								
+								prepStat = connection.prepareStatement("GRANT RESOURCE TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
+								prepStat.executeUpdate();
+								prepStat.close();
+								
+								prepStat = connection.prepareStatement("GRANT DBA TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
+								prepStat.executeUpdate();
+								prepStat.close();
+								
+								connection.close();
+							}
+							testConnection.connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.178.45:1521/xe", schemaName.toUpperCase(), "sodeac");
+							testConnection.connection.setSchema(schemaName.toUpperCase());
+							testConnection.dbmsSchemaName = schemaName.toUpperCase();
+							
+							return testConnection;
 						}
-						catch (Exception e) {}
-						
-						
-						if(createdSchema.get("ORACLE_" + schemaName) == null)
+						catch (SQLException e) 
 						{
-							createdSchema.put("ORACLE_" + schemaName,true);
-							
-							Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521/xe", "system", "oracle");
-							
-							PreparedStatement prepStat = connection.prepareStatement("CREATE USER " + schemaName.toUpperCase() + " IDENTIFIED BY sodeac DEFAULT TABLESPACE USERS PROFILE DEFAULT");
-							prepStat.executeUpdate();
-							prepStat.close();
-							
-							prepStat = connection.prepareStatement("GRANT CONNECT TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
-							prepStat.executeUpdate();
-							prepStat.close();
-							
-							prepStat = connection.prepareStatement("GRANT RESOURCE TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
-							prepStat.executeUpdate();
-							prepStat.close();
-							
-							prepStat = connection.prepareStatement("GRANT DBA TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
-							prepStat.executeUpdate();
-							prepStat.close();
-							
-							connection.close();
+							e.printStackTrace();
+							throw e;
 						}
-						testConnection.connection = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521/xe", schemaName.toUpperCase(), "sodeac");
-						testConnection.connection.setSchema(schemaName.toUpperCase());
-						testConnection.dbmsSchemaName = schemaName.toUpperCase();
-						
-						return testConnection;
 					}
 					
 				}}
