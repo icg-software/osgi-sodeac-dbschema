@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Sebastian Palarus
+ * Copyright (c) 2018, 2019 Sebastian Palarus
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.osgi.service.component.annotations.Component;
 import org.sodeac.dbschema.api.IndexSpec;
 import org.sodeac.dbschema.api.ColumnSpec;
 import org.sodeac.dbschema.api.DatabaseCommonElements;
@@ -34,15 +33,14 @@ import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
 import org.sodeac.dbschema.api.IColumnType.Applicability;
 
-@Component(service=IDatabaseSchemaDriver.class)
-public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
+public class AbstractDatabaseSchemaDriver implements IDatabaseSchemaDriver
 {
 	protected List<IColumnType> columnDriverList = null;
 
 	@Override
 	public int handle(Connection connection) throws SQLException
 	{		
-		return HANDLE_FALLBACK;
+		return HANDLE_NONE;
 	}
 	
 	@Override
