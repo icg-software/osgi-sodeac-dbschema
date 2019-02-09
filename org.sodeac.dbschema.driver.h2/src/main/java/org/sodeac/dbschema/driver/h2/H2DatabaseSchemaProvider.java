@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Sebastian Palarus
+ * Copyright (c) 2018, 2019 Sebastian Palarus
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,11 @@ import org.osgi.service.component.annotations.Component;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
-import org.sodeac.dbschema.driver.base.DefaultDatabaseSchemaDriver;
+import org.sodeac.dbschema.driver.base.AbstractDatabaseSchemaDriver;
 
 
 @Component(service=IDatabaseSchemaDriver.class)
-public class H2DatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
+public class H2DatabaseSchemaProvider extends AbstractDatabaseSchemaDriver implements IDatabaseSchemaDriver
 {
 	@Override
 	public int handle(Connection connection) throws SQLException

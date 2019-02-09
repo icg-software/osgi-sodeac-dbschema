@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sodeac</groupId>
   <artifactId>sodeac-dbschema-parent</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <packaging>pom</packaging>
   <name>Sodeac db-schema parent</name>
   <description>Parent POM for Sodeac database schema management service modules</description>

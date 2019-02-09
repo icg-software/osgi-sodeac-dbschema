@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sodeac</groupId>
   <artifactId>org.sodeac.dbschema.driver.h2</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <name>Sodeac db-schema H2 driver</name>
   <description>H2 driver for Sodeac database schema management service</description>
   <packaging>bundle</packaging>
@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.sodeac</groupId>
     <artifactId>sodeac-dbschema-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
@@ -18,12 +18,12 @@
     <dependency>
       <groupId>org.sodeac</groupId>
       <artifactId>org.sodeac.dbschema.api</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.sodeac</groupId>
       <artifactId>org.sodeac.dbschema.driver.base</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
   

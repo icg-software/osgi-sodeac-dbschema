@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Sebastian Palarus
+ * Copyright (c) 2018, 2019 Sebastian Palarus
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -189,6 +189,24 @@ public class Statics
 						}
 						
 						// docker run --name oracle -d -p 28080:8080 -p 1521:1521 sath89/oracle-12c
+						// or
+						// docker run --name oracle -d -v </my/oracle/data>:/u01/app/oracle -p 28080:28080 -p 1521:1521 sath89/oracle-12c
+						
+						// docker exec -it oracle sqlplus system/oracle@//localhost:1521/xe
+						
+						// CREATE TABLESPACE sodeacdata  DATAFILE 'sodeacdata.dbf' SIZE 40M AUTOEXTEND ON NEXT 10M ONLINE;
+						// CREATE TABLESPACE sodeacindex  DATAFILE 'sodeacindex.dbf' SIZE 40M AUTOEXTEND ON NEXT 10M ONLINE;
+						
+						// CREATE USER SODEAC IDENTIFIED BY sodeac DEFAULT TABLESPACE USERS PROFILE DEFAULT;
+						// GRANT CONNECT TO SODEAC  WITH ADMIN OPTION;
+						// GRANT RESOURCE TO SODEAC  WITH ADMIN OPTION;
+						// GRANT DBA TO SODEAC  WITH ADMIN OPTION;
+						
+						/* cleanup sqlcommands:
+						    select 
+								'drop user '||username||' cascade;'
+							from dba_users  WHERE username LIKE 'S00%'
+						*/
 						
 						/*
 						 * http://localhost:8080/apex
@@ -207,21 +225,6 @@ public class Statics
 							
 						 */
 						
-						
-						// sqlplus system/oracle@//localhost:1521/xe:
-						
-						// CREATE TABLESPACE sodeacdata  DATAFILE 'sodeacdata.dbf' SIZE 40M AUTOEXTEND ON NEXT 10M ONLINE;
-						// CREATE TABLESPACE sodeacindex  DATAFILE 'sodeacindex.dbf' SIZE 40M AUTOEXTEND ON NEXT 10M ONLINE;
-						
-						// CREATE USER SODEAC IDENTIFIED BY sodeac DEFAULT TABLESPACE USERS PROFILE DEFAULT
-						// GRANT CONNECT TO SODEAC  WITH ADMIN OPTION
-						// GRANT RESOURCE TO SODEAC  WITH ADMIN OPTION
-						// GRANT DBA TO SODEAC  WITH ADMIN OPTION
-						
-						/*   select 
-								'drop user '||username||' cascade;'
-							from dba_users  WHERE username LIKE 'S00%'
-						*/
 						
 						
 						try
@@ -355,7 +358,7 @@ public class Statics
 			features(karafStandardRepo,"pax-jdbc"),
 			features(karafStandardRepo,"pax-jdbc-spec"),
 			mavenBundle("org.easymock", "easymock", "3.4").start(),
-			mavenBundle("org.postgresql", "postgresql", "42.2.2").start(),
+			mavenBundle("org.postgresql", "postgresql", "42.2.5").start(),
 			mavenBundle("com.h2database", "h2", "1.4.197").start(),
 			//mavenBundle("mysql", "mysql-connector-java", "6.0.6").start(),
 			Statics.ENABLED_DB2 ? 
@@ -366,18 +369,18 @@ public class Statics
 					mavenBundle("com.h2database", "h2", "1.4.197")
 			,
 			
-			TestTools.reactorBundle("org.sodeac.dbschema.api","1.0.0").start(),
-			TestTools.reactorBundle("org.sodeac.dbschema.driver.base","1.0.0").start(),
-			TestTools.reactorBundle("org.sodeac.dbschema.driver.h2","1.0.0").start(),
-			TestTools.reactorBundle("org.sodeac.dbschema.driver.postgresql","1.0.0").start(),
+			TestTools.reactorBundle("org.sodeac.dbschema.api","1.1.0").start(),
+			TestTools.reactorBundle("org.sodeac.dbschema.driver.base","1.1.0").start(),
+			TestTools.reactorBundle("org.sodeac.dbschema.driver.h2","1.1.0").start(),
+			TestTools.reactorBundle("org.sodeac.dbschema.driver.postgresql","1.1.0").start(),
 			//TestTools.reactorBundle("org.sodeac.dbschema.driver.mysql","1.0.0").start(),
 			Statics.ENABLED_ORACLE_12 ?
-					TestTools.reactorBundle("org.sodeac.dbschema.driver.oracle","1.0.0").start() :
-					TestTools.reactorBundle("org.sodeac.dbschema.driver.h2","1.0.0").start(),
+					TestTools.reactorBundle("org.sodeac.dbschema.driver.oracle","1.1.0").start() :
+					TestTools.reactorBundle("org.sodeac.dbschema.driver.h2","1.1.0").start(),
 			//Statics.ENABLED_DB2 ? 
 			//		TestTools.reactorBundle("org.sodeac.dbschema.driver.db2","1.0.0").start() :
 			//		TestTools.reactorBundle("org.sodeac.dbschema.driver.h2","1.0.0").start(),
-			TestTools.reactorBundle("org.sodeac.dbschema.provider","1.0.2").start()
+			TestTools.reactorBundle("org.sodeac.dbschema.provider","1.1.0").start()
 		};
 	}
 }

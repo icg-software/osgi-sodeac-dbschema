@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Sebastian Palarus
+ * Copyright (c) 2018, 2019 Sebastian Palarus
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -21,13 +21,13 @@ import org.sodeac.dbschema.api.IColumnType;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
-import org.sodeac.dbschema.driver.base.DefaultDatabaseSchemaDriver;
+import org.sodeac.dbschema.driver.base.AbstractDatabaseSchemaDriver;
 
 // https://books.google.de/books?id=r13SMVABpx4C&printsec=frontcover&hl=de#v=onepage&q&f=false
 //https://docs.oracle.com/database/121/DRDAS/data_type.htm#DRDAS277
 
 @Component(service=IDatabaseSchemaDriver.class)
-public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
+public class OracleDatabaseSchemaProvider extends AbstractDatabaseSchemaDriver implements IDatabaseSchemaDriver
 {
 	@Override
 	public int handle(Connection connection) throws SQLException
