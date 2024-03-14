@@ -8,7 +8,7 @@
  * Contributors:
  *     Sebastian Palarus - initial API and implementation
  *******************************************************************************/
-package org.sodeac.dbschema.itest;
+package org.sodeac.dbschema.itest.test.util;
 
 import java.sql.Connection;
 

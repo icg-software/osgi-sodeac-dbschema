@@ -35,6 +35,7 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.ColumnSpec;
 
@@ -56,11 +57,16 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaColumnTypeDecimal
+public class DBSchemaColumnTypeDecimal implements ITestBase
 {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private EasyMockSupport support = new EasyMockSupport();
 	
-	public static List<Object[]> connectionList = null;
 	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
 	
 	@Inject
@@ -70,20 +76,16 @@ public class DBSchemaColumnTypeDecimal
 	private String table1Name = "TableColDec";
 	private String columnRealName = "col_real";
 	private String columnDoubleName = "col_double";
-
+	
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	public DBSchemaColumnTypeDecimal(Callable<TestConnection> connectionFactory)
+	public DBSchemaColumnTypeDecimal(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -162,7 +164,7 @@ public class DBSchemaColumnTypeDecimal
 				
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary,driver, null);
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
 		
 		// table1 column creation
@@ -620,6 +622,6 @@ public class DBSchemaColumnTypeDecimal
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

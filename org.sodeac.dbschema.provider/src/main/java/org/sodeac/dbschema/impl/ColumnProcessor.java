@@ -19,7 +19,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.osgi.service.log.LogService;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.ColumnSpec;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
@@ -80,7 +79,7 @@ public class ColumnProcessor
 			{
 				if((schemaProcessor.logService != null) && schema.getLogUpdates())
 				{
-					schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO, "{(type=updatedbmodel)(action=createcolumn)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} create column " + table.getName().toUpperCase() + "." + column.getName());
+					schemaProcessor.logService.getLogger(ColumnProcessor.class).info("{(type=updatedbmodel)(action=createcolumn)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} create column " + table.getName().toUpperCase() + "." + column.getName());
 				}
 					
 				if(table.getUpdateListenerList() != null)
@@ -248,7 +247,7 @@ public class ColumnProcessor
 				{
 					if((schemaProcessor.logService != null) && schema.getLogUpdates())
 					{
-						schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO, "{(type=updatedbmodel)(action=setnullable)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set nullable " + table.getName() + "." + column.getName() + " " + column.getNullable());
+						schemaProcessor.logService.getLogger(ColumnProcessor.class).info("{(type=updatedbmodel)(action=setnullable)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set nullable " + table.getName() + "." + column.getName() + " " + column.getNullable());
 					}
 					
 					if(table.getUpdateListenerList() != null)
@@ -284,7 +283,7 @@ public class ColumnProcessor
 				{
 					if((schemaProcessor.logService != null) && schema.getLogUpdates())
 					{
-						schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO, "{(type=updatedbmodel)(action=setcolsize)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set colsize " + table.getName() + "." + column.getName() + " " + column.getSize());
+						schemaProcessor.logService.getLogger(ColumnProcessor.class).info("{(type=updatedbmodel)(action=setcolsize)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set colsize " + table.getName() + "." + column.getName() + " " + column.getSize());
 					}
 					
 					if(table.getUpdateListenerList() != null)
@@ -321,7 +320,7 @@ public class ColumnProcessor
 				{
 					if((schemaProcessor.logService != null) && schema.getLogUpdates())
 					{
-						schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO, "{(type=updatedbmodel)(action=setcoltype)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set type " + table.getName() + "." + column.getName() + " " + column.getColumntype());
+						schemaProcessor.logService.getLogger(ColumnProcessor.class).info("{(type=updatedbmodel)(action=setcoltype)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set type " + table.getName() + "." + column.getName() + " " + column.getColumntype());
 					}
 					if(table.getUpdateListenerList() != null)
 					{
@@ -356,7 +355,7 @@ public class ColumnProcessor
 				{
 					if((schemaProcessor.logService != null) && schema.getLogUpdates())
 					{
-						schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO, "{(type=updatedbmodel)(action=setcoldefaultvalue)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set nullable " + table.getName() + "." + column.getName() + " " + column.getDefaultValue());
+						schemaProcessor.logService.getLogger(ColumnProcessor.class).info("{(type=updatedbmodel)(action=setcoldefaultvalue)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} set nullable " + table.getName() + "." + column.getName() + " " + column.getDefaultValue());
 					}
 					
 					if(table.getUpdateListenerList() != null)
@@ -567,7 +566,7 @@ public class ColumnProcessor
 			{
 				if((schemaProcessor.logService != null) && schema.getLogUpdates())
 				{
-					schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO, "{(type=updatedbmodel)(action=createforeignkey)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} create foreignkey " + table.getName() + "." + column.getName());
+					schemaProcessor.logService.getLogger(ColumnProcessor.class).info("{(type=updatedbmodel)(action=createforeignkey)(database=" + databaseID + ")(object=" + table.getName() + "." + column.getName() + ")} create foreignkey " + table.getName() + "." + column.getName());
 				}
 				
 				if(table.getUpdateListenerList() != null)

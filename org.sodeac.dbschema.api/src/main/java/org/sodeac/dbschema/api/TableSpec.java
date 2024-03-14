@@ -11,6 +11,7 @@
 
 package org.sodeac.dbschema.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -284,10 +285,14 @@ public class TableSpec
 	 * 
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
 	 */
-	public TableSpec applyTemplate(Class<?> tableTemplateClass) throws InstantiationException, IllegalAccessException
+	public TableSpec applyTemplate(Class<?> tableTemplateClass) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
-		ITableTemplate instanceOfTemplate = (ITableTemplate)tableTemplateClass.newInstance();
+		ITableTemplate instanceOfTemplate = (ITableTemplate)tableTemplateClass.getConstructor().newInstance();
 		instanceOfTemplate.tableTemplateApply(this);
 		return this;
 	}

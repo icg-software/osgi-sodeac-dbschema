@@ -31,13 +31,19 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.DatabaseCommonElements;
 import org.sodeac.dbschema.api.DefaultSodeacSchemaTemplate;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.notNull;
+
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -51,15 +57,19 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaTableTemplate
+public class DBSchemaTableTemplate implements ITestBase
 {
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static final String DOMAIN = "TESTDOMAIN";
 	
 	private EasyMockSupport support = new EasyMockSupport();
 	
-	public static List<Object[]> connectionList = null;
 	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
 	
 	String table1Name = "TblWithColsByTemplate";
@@ -70,17 +80,12 @@ public class DBSchemaTableTemplate
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	
-	public DBSchemaTableTemplate(Callable<TestConnection> connectionFactory)
+	public DBSchemaTableTemplate(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -110,7 +115,7 @@ public class DBSchemaTableTemplate
 	}
 	
 	@Test
-	public void test001300SodeacDefaultTemplate() throws SQLException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException 
+	public void test001300SodeacDefaultTemplate() throws SQLException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException 
 	{
 		if(! testConnection.enabled)
 		{
@@ -283,7 +288,7 @@ public class DBSchemaTableTemplate
 	}
 	
 	@Test
-	public void test001301SodeacDefaultTemplateAgain() throws SQLException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException 
+	public void test001301SodeacDefaultTemplateAgain() throws SQLException, ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException 
 	{
 		if(! testConnection.enabled)
 		{
@@ -413,6 +418,12 @@ public class DBSchemaTableTemplate
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(databaseID), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_FOREIGN_KEY, PhaseType.PRE, connection, databaseID, table1ColumnContextDictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.COLUMN_FOREIGN_KEY), eq(PhaseType.POST), eq(connection), eq(databaseID), eq(table1ColumnContextDictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -425,6 +436,6 @@ public class DBSchemaTableTemplate
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

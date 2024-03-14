@@ -463,7 +463,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
 			return;
 		}
 		
-		this.logService.log(this.context == null ? null : this.context.getServiceReference(), LogService.LOG_ERROR, "{(type=sqlerror)(sqlstate=" + e.getSQLState() + ")(errorcode=" + e.getErrorCode() + ")} " + e.getMessage(),e);
+		this.logService.getLogger(getClass()).error("{(type=sqlerror)(sqlstate=" + e.getSQLState() + ")(errorcode=" + e.getErrorCode() + ")} " + e.getMessage(),e);
 	
 		SQLException nextException = e.getNextException();
 		if(nextException != null)
@@ -508,7 +508,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
 		
 		if(this.logService != null)
 		{
-			this.logService.log(this.context == null ? null : this.context.getServiceReference(), LogService.LOG_ERROR, msg,throwable);
+			this.logService.getLogger(getClass()).error(msg,throwable);
 		}
 		else
 		{

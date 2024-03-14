@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.sodeac.dbschema.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -234,10 +235,14 @@ public class SchemaSpec
 	 * @return schema spec
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
 	 */
-	public SchemaSpec applyTemplate(Class<?> schemaTemplateClass) throws InstantiationException, IllegalAccessException
+	public SchemaSpec applyTemplate(Class<?> schemaTemplateClass) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
-		ISchemaTemplate instanceOfTemplate = (ISchemaTemplate)schemaTemplateClass.newInstance();
+		ISchemaTemplate instanceOfTemplate = (ISchemaTemplate)schemaTemplateClass.getConstructor().newInstance();
 		instanceOfTemplate.schemaTemplateApply(this);
 		return this;
 	}

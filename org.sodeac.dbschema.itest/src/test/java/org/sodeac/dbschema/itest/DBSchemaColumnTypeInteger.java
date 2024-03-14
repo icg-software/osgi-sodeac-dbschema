@@ -36,6 +36,7 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.ColumnSpec;
 
@@ -57,11 +58,16 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaColumnTypeInteger
+public class DBSchemaColumnTypeInteger implements ITestBase
 {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private EasyMockSupport support = new EasyMockSupport();
 	
-	public static List<Object[]> connectionList = null;
 	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
 	
 	@Inject
@@ -73,20 +79,16 @@ public class DBSchemaColumnTypeInteger
 	private String columnSmallintName = "col_smallint";
 	private String columnIntegerName = "col_int";
 	private String columnBigintName = "col_bigint";
-
+	
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	public DBSchemaColumnTypeInteger(Callable<TestConnection> connectionFactory)
+	public DBSchemaColumnTypeInteger(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -1125,6 +1127,6 @@ public class DBSchemaColumnTypeInteger
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

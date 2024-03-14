@@ -31,6 +31,7 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 import org.sodeac.dbschema.api.ActionType;
 
 import java.io.IOException;
@@ -49,15 +50,20 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaTable
+public class DBSchemaTable implements ITestBase
 {
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	
 	public static final String DOMAIN = "TESTDOMAIN";
 	
 	private EasyMockSupport support = new EasyMockSupport();
 	
-	public static List<Object[]> connectionList = null;
 	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
 	
 	@Inject
@@ -66,17 +72,13 @@ public class DBSchemaTable
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
 	
-	public DBSchemaTable(Callable<TestConnection> connectionFactory)
+	public DBSchemaTable(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -841,6 +843,6 @@ public class DBSchemaTable
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

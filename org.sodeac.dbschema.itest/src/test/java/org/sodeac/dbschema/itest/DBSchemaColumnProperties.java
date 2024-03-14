@@ -32,18 +32,20 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.ColumnSpec;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.easymock.EasyMock.*;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -58,21 +60,25 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaColumnProperties
+public class DBSchemaColumnProperties implements ITestBase
 {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	
 	public static final String DOMAIN = "TESTDOMAIN";
 	
 	private EasyMockSupport support = new EasyMockSupport();
 	
-	public static List<Object[]> connectionList = null;
-	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
-	
 	private String table1Name = "TableColChar";
-	private String columnIdName = "id";
+	private String columnIdName = "ID";
 	private String columnCharName = "column_char";
 	private String columnNumberName = "column_number";
+	
+	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
 	
 	@Inject
 	private IDatabaseSchemaProcessor databaseSchemaProcessor;
@@ -80,16 +86,12 @@ public class DBSchemaColumnProperties
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	public DBSchemaColumnProperties(Callable<TestConnection> connectionFactory)
+	public DBSchemaColumnProperties(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -176,7 +178,7 @@ public class DBSchemaColumnProperties
 				
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, DOMAIN, table1Dictionary,driver, null);
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, DOMAIN, table1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, DOMAIN, table1Dictionary, driver, null);
 		
 		// table1 column creation
@@ -291,6 +293,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
+
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver,  null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver),  notNull(SQLSyntaxErrorException.class));
 		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
@@ -301,12 +306,12 @@ public class DBSchemaColumnProperties
 		ctrl.verify();
 	}
 	
-	@Test
+	@Test(expected = SQLException.class)
 	public void test001102InsertFailed() throws SQLException, ClassNotFoundException, IOException 
 	{
 		if(! testConnection.enabled)
 		{
-			return;
+			throw new SQLException("connection not enabled");
 		}
 		Connection connection = testConnection.connection;
 		
@@ -324,10 +329,10 @@ public class DBSchemaColumnProperties
 			connection.commit();
 			
 		}
-		catch (Exception e) 
+		catch (SQLException e) 
 		{
 			connection.rollback();
-			return;
+			throw e;
 		}
 		finally 
 		{
@@ -415,6 +420,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_DEFAULT_VALUE, PhaseType.PRE, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_DEFAULT_VALUE, PhaseType.POST, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -497,6 +505,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
+		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
 		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
@@ -632,6 +643,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_DEFAULT_VALUE, PhaseType.PRE, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_DEFAULT_VALUE, PhaseType.POST, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -715,6 +729,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -723,13 +740,13 @@ public class DBSchemaColumnProperties
 		
 		ctrl.verify();
 	}
-	
-	@Test
+
+	@Test(expected = SQLException.class)
 	public void test001108InsertFailedAgain() throws SQLException, ClassNotFoundException, IOException 
 	{
 		if(! testConnection.enabled)
 		{
-			return;
+			throw new SQLException("connection not enabled");
 		}
 		Connection connection = testConnection.connection;
 		
@@ -747,10 +764,10 @@ public class DBSchemaColumnProperties
 			connection.commit();
 			
 		}
-		catch (Exception e) 
+		catch (SQLException e) 
 		{
 			connection.rollback();
-			return;
+			throw e;
 		}
 		finally 
 		{
@@ -760,13 +777,13 @@ public class DBSchemaColumnProperties
 		
 		fail("Expected an SQLException to be thrown");
 	}
-	
-	@Test
+
+	@Test(expected = SQLException.class)
 	public void test001120InsertFailedLength() throws SQLException, ClassNotFoundException, IOException 
 	{
 		if(! testConnection.enabled)
 		{
-			return;
+			throw new SQLException("connection not enabled");
 		}
 		Connection connection = testConnection.connection;
 		
@@ -785,10 +802,10 @@ public class DBSchemaColumnProperties
 			connection.commit();
 			
 		}
-		catch (Exception e) 
+		catch (SQLException e) 
 		{
 			connection.rollback();
-			return;
+			throw e;
 		}
 		finally 
 		{
@@ -876,6 +893,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_SIZE, PhaseType.PRE, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_SIZE, PhaseType.POST, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -958,6 +978,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
+		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
 		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
@@ -1081,6 +1104,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -1164,6 +1190,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
+		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
 		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
@@ -1252,6 +1281,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_TYPE, PhaseType.PRE, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_TYPE, PhaseType.POST, connection, DOMAIN, table1Column1Dictionary, driver, null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -1336,6 +1368,9 @@ public class DBSchemaColumnProperties
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver,  null);
 		
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, DOMAIN, table1Dictionary, driver, null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(DOMAIN), eq(table1Dictionary), eq(driver), notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, DOMAIN, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -1349,6 +1384,6 @@ public class DBSchemaColumnProperties
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

@@ -44,9 +44,9 @@ public class H2DatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
 		super.setPrimaryKeyWithIndex(connection, schemaSpec, tableSpec, tableProperties);
 	}
 	
-	@Override
-	public String objectNameGuidelineFormat(SchemaSpec schemaSpec, Connection connection, String name, String type)
-	{
-		return name == null ? name : name.toUpperCase();
-	}
+//	@Override
+//	public String objectNameGuidelineFormat(SchemaSpec schemaSpec, Connection connection, String name, String type)
+//	{
+//		return name == null ? name : name.toUpperCase();
+//	}
 }

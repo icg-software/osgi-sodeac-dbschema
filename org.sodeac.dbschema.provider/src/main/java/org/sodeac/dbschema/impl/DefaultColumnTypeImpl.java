@@ -92,7 +92,7 @@ public class DefaultColumnTypeImpl implements IColumnType
 			{
 				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "float4", "COLUMN_TYPE");
 			}
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
+			else if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
 			{
 				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FLOAT(63)", "COLUMN_TYPE");
 			}
@@ -103,7 +103,7 @@ public class DefaultColumnTypeImpl implements IColumnType
 			{
 				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "float8", "COLUMN_TYPE");
 			}
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
+			else if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
 			{
 				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FLOAT(126)", "COLUMN_TYPE");
 			}
@@ -114,9 +114,20 @@ public class DefaultColumnTypeImpl implements IColumnType
 			{
 				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "bytea", "COLUMN_TYPE");
 			}
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
+			else if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
 			{
 				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "LONG RAW", "COLUMN_TYPE");
+			}
+			else if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("H2"))
+			{
+				if(columnSpec.getSize() > 0)
+				{
+					return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "VARBINARY(" + columnSpec.getSize() + ")", "COLUMN_TYPE") ;
+				}
+				else
+				{
+					return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "VARBINARY" , "COLUMN_TYPE") ;
+				}
 			}
 		}
 		

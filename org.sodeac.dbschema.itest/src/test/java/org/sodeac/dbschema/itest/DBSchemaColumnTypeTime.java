@@ -34,6 +34,7 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.ColumnSpec;
 
@@ -43,6 +44,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -57,12 +60,21 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaColumnTypeTime
+public class DBSchemaColumnTypeTime implements ITestBase
 {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private EasyMockSupport support = new EasyMockSupport();
 	
-	public static List<Object[]> connectionList = null;
 	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
+	
+	public static final int HOUR_AS_MILLIS = 60 * 60 * 1000;
+	public static final int MINUTE_AS_MILLIS = 60 * 1000;
+	public static final int SECOND_AS_MILLIS = 1000;
 		
 	@Inject
 	private IDatabaseSchemaProcessor databaseSchemaProcessor;
@@ -77,20 +89,16 @@ public class DBSchemaColumnTypeTime
 	private String columnDfltTimeName = "col_time";
 	private String columnDfltDateName = "col_date";
 	private String columnDfltTimestampName = "col_ts";
-
+	
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	public DBSchemaColumnTypeTime(Callable<TestConnection> connectionFactory)
+	public DBSchemaColumnTypeTime(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -169,7 +177,7 @@ public class DBSchemaColumnTypeTime
 				
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary,driver, null);
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
 		
 		// table1 column creation
@@ -206,7 +214,7 @@ public class DBSchemaColumnTypeTime
 			rset.close();
 			prepStat.close();
 			
-			Time time = new Time(0,12,00);
+			Time time = new Time(12 * MINUTE_AS_MILLIS);
 			
 			prepStat = connection.prepareStatement("insert into " +  table1Name + " (" + columnTimeName + ") values (?)");
 			prepStat.setTime(1, time);
@@ -308,7 +316,7 @@ public class DBSchemaColumnTypeTime
 		ResultSet rset = null;
 		try
 		{
-			Time time = new Time(0,12,00);
+			Time time = new Time(12 * MINUTE_AS_MILLIS);
 
 			int count = 0;
 			prepStat = connection.prepareStatement("select " + columnTimeName + " from " +  table1Name);
@@ -343,7 +351,7 @@ public class DBSchemaColumnTypeTime
 		ResultSet rset = null;
 		try
 		{
-			Time time = new Time(0,13,00);
+			Time time = new Time(13 * MINUTE_AS_MILLIS);
 			
 			connection.setAutoCommit(false);
 			
@@ -456,7 +464,7 @@ public class DBSchemaColumnTypeTime
 		{
 			connection.setAutoCommit(false);
 			
-			java.sql.Date date = new java.sql.Date(118,0,1); 
+			java.sql.Date date = java.sql.Date.valueOf(LocalDate.of(2019, 1, 1));
 			
 			prepStat = connection.prepareStatement("update " +  table1Name + " set " + columnDateName + " = ?");
 			prepStat.setDate(1, date);
@@ -558,7 +566,7 @@ public class DBSchemaColumnTypeTime
 		ResultSet rset = null;
 		try
 		{
-			java.sql.Date date = new java.sql.Date(118,0,1); 
+			java.sql.Date date = java.sql.Date.valueOf(LocalDate.of(2019, 1, 1));
 
 			int count = 0;
 			prepStat = connection.prepareStatement("select " + columnDateName + " from " +  table1Name);
@@ -593,7 +601,7 @@ public class DBSchemaColumnTypeTime
 		ResultSet rset = null;
 		try
 		{
-			java.sql.Date date = new java.sql.Date(117,0,1); 
+			java.sql.Date date = java.sql.Date.valueOf(LocalDate.of(2019, 1, 1));
 			
 			connection.setAutoCommit(false);
 			
@@ -706,7 +714,7 @@ public class DBSchemaColumnTypeTime
 		{
 			connection.setAutoCommit(false);
 			
-			java.sql.Timestamp date = new java.sql.Timestamp(118,0,1,12,0,0,0); 
+			java.sql.Timestamp date = java.sql.Timestamp.valueOf(LocalDateTime.of(2018, 1, 1, 0, 0, 0));
 			
 			prepStat = connection.prepareStatement("update " +  table1Name + " set " + columnTimestampName + " = ?");
 			prepStat.setTimestamp(1, date);
@@ -808,7 +816,7 @@ public class DBSchemaColumnTypeTime
 		ResultSet rset = null;
 		try
 		{
-			java.sql.Timestamp date = new java.sql.Timestamp(118,0,1,12,0,0,0); 
+			java.sql.Timestamp date = java.sql.Timestamp.valueOf(LocalDateTime.of(2018, 1, 1, 0, 0, 0));
 
 			int count = 0;
 			prepStat = connection.prepareStatement("select " + columnTimestampName + " from " +  table1Name);
@@ -843,7 +851,7 @@ public class DBSchemaColumnTypeTime
 		ResultSet rset = null;
 		try
 		{
-			java.sql.Timestamp date = new java.sql.Timestamp(115,0,1,17,0,0,0); 
+			java.sql.Timestamp date = java.sql.Timestamp.valueOf(LocalDateTime.of(2021, 1, 1, 0, 0, 0));
 			
 			connection.setAutoCommit(false);
 			
@@ -924,6 +932,6 @@ public class DBSchemaColumnTypeTime
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

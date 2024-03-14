@@ -1,8 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.sodeac</groupId>
+  
   <artifactId>org.sodeac.dbschema.driver.oracle</artifactId>
-  <version>1.0.0</version>
+  
   <name>Sodeac db-schema Oracle driver</name>
   <description>Oracle driver for Sodeac database schema management service</description>
   <packaging>bundle</packaging>
@@ -10,21 +11,30 @@
   <parent>
     <groupId>org.sodeac</groupId>
     <artifactId>sodeac-dbschema-parent</artifactId>
-    <version>1.0.0</version>
+  	<version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
+  
+  <properties>
+		<oracle.version>19.22.0.0</oracle.version>
+  </properties>
   
   <dependencies>
     <dependency>
       <groupId>org.sodeac</groupId>
       <artifactId>org.sodeac.dbschema.api</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sodeac</groupId>
       <artifactId>org.sodeac.dbschema.driver.base</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
+    <dependency>
+	    <groupId>com.oracle.database.jdbc</groupId>
+	    <artifactId>ojdbc10</artifactId>
+	    <version>${oracle.version}</version>
+	</dependency>
   </dependencies>
   
   <build>

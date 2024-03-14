@@ -1,8 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.sodeac</groupId>
+  
   <artifactId>org.sodeac.dbschema.api</artifactId>
-  <version>1.0.0</version>
+  
   <name>Sodeac db-schema API</name>
   <description>API for Sodeac database schema management service</description>
   <packaging>bundle</packaging>
@@ -10,7 +11,7 @@
   <parent>
     <groupId>org.sodeac</groupId>
     <artifactId>sodeac-dbschema-parent</artifactId>
-    <version>1.0.0</version>
+  	<version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   

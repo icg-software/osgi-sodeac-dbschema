@@ -27,6 +27,7 @@ import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 import org.sodeac.dbschema.api.IDatabaseSchemaProcessor;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -54,10 +55,15 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaColumnTypeBinary
+public class DBSchemaColumnTypeBinary implements ITestBase
 {
 	
-	public static List<Object[]> connectionList = null;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
 	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
 	
 	@Inject
@@ -67,20 +73,17 @@ public class DBSchemaColumnTypeBinary
 	private String table1Name = "TableColBin";
 	private String columnBinaryName = "col_binary";
 	private String columnBlobName = "col_blob";
-
+	private int columnBlobSize = 1000;
+	
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	public DBSchemaColumnTypeBinary(Callable<TestConnection> connectionFactory)
+	public DBSchemaColumnTypeBinary(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -127,7 +130,7 @@ public class DBSchemaColumnTypeBinary
 		
 		table1.addColumn("id",IColumnType.ColumnType.CHAR.toString(),false,36);
 		table1.addColumn(columnBinaryName, IColumnType.ColumnType.BINARY.toString());
-		table1.addColumn(columnBlobName, IColumnType.ColumnType.BLOB.toString());
+		table1.addColumn(columnBlobName, IColumnType.ColumnType.BLOB.toString(), true, columnBlobSize);
 		
 		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
 		
@@ -338,7 +341,7 @@ public class DBSchemaColumnTypeBinary
 		
 		table1.addColumn("id",IColumnType.ColumnType.CHAR.toString(),false,36);
 		table1.addColumn(columnBinaryName, IColumnType.ColumnType.BINARY.toString());
-		table1.addColumn(columnBlobName, IColumnType.ColumnType.BLOB.toString());
+		table1.addColumn(columnBlobName, IColumnType.ColumnType.BLOB.toString(), true, columnBlobSize);
 		
 		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
 		
@@ -1062,6 +1065,6 @@ public class DBSchemaColumnTypeBinary
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

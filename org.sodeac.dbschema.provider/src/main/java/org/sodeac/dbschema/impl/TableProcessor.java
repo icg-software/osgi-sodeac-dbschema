@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.osgi.service.log.LogService;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.IndexSpec;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
@@ -70,7 +69,7 @@ public class TableProcessor
 			{
 				if((schemaProcessor.logService != null) && schema.getLogUpdates())
 				{
-					schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO, "{(type=updatedbmodel)(action=createtable)(database=" + databaseID + ")(object=" + table.getName() + ")} create table " + table.getName());
+					schemaProcessor.logService.getLogger(TableProcessor.class).info("{(type=updatedbmodel)(action=createtable)(database=" + databaseID + ")(object=" + table.getName() + ")} create table " + table.getName());
 				}
 					
 				if(table.getUpdateListenerList() != null)
@@ -230,7 +229,7 @@ public class TableProcessor
 			{
 				if((schemaProcessor.logService != null) && schema.getLogUpdates())
 				{
-					schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO,  "{(type=updatedbmodel)(action=createprimarykey)(database=" + databaseID + ")(object=" + table.getName() + ")} create primarykey " + table.getName() );
+					schemaProcessor.logService.getLogger(TableProcessor.class).info( "{(type=updatedbmodel)(action=createprimarykey)(database=" + databaseID + ")(object=" + table.getName() + ")} create primarykey " + table.getName() );
 				}
 					
 				if(table.getUpdateListenerList() != null)
@@ -367,7 +366,7 @@ public class TableProcessor
 							
 							if((schemaProcessor.logService != null) && schema.getLogUpdates())
 							{
-								schemaProcessor.logService.log(schemaProcessor.context == null ? null : schemaProcessor.context.getServiceReference(), LogService.LOG_INFO,  "{(type=updatedbmodel)(action=createindex)(database=" + databaseID + ")(object=" + table.getName() + ")} create index " + indexSpec.getIndexName() );
+								schemaProcessor.logService.getLogger(TableProcessor.class).info( "{(type=updatedbmodel)(action=createindex)(database=" + databaseID + ")(object=" + table.getName() + ")} create index " + indexSpec.getIndexName() );
 							}
 							
 							if(table.getUpdateListenerList() != null)

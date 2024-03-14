@@ -23,7 +23,6 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExamParameterized;
 
-import static org.junit.Assert.fail;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.sodeac.dbschema.api.IColumnType;
@@ -34,34 +33,40 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.IndexSpec;
 import org.sodeac.dbschema.api.ColumnSpec;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
+
+import static org.easymock.EasyMock.*;
 
 
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaDisableChecks
+public class DBSchemaDisableChecks implements ITestBase
 {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private EasyMockSupport support = new EasyMockSupport();
 	
-	public static List<Object[]> connectionList = null;
 	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
 	
 	@Inject
@@ -74,20 +79,16 @@ public class DBSchemaDisableChecks
 	private String columnIdName = "id";
 	private String columnFKName = "fk";
 	private String columnUniqueName = "unq1";
-
+	
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	public DBSchemaDisableChecks(Callable<TestConnection> connectionFactory)
+	public DBSchemaDisableChecks(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -658,7 +659,12 @@ public class DBSchemaDisableChecks
 		table1ColumnUnqDictionary.put(ObjectType.TABLE, table1);
 		table1ColumnUnqDictionary.put(ObjectType.COLUMN, columnUnqTable1);
 		
-		table1.addColumnIndex("unq1_tbl1_dis_check", columnUniqueName, true);
+		IndexSpec columnIndexSpecTable1 = table1.addColumnIndex("unq1_tbl1_dis_check", columnUniqueName, true);
+		
+		Dictionary<ObjectType, Object> table1ColumnUnqIndexDictionary = new Hashtable<>();
+		table1ColumnUnqIndexDictionary.put(ObjectType.SCHEMA, spec);
+		table1ColumnUnqIndexDictionary.put(ObjectType.TABLE, table1);
+		table1ColumnUnqIndexDictionary.put(ObjectType.TABLE_INDEX, columnIndexSpecTable1);
 		
 		TableSpec table2 = spec.addTable(table2Name);
 		
@@ -688,8 +694,12 @@ public class DBSchemaDisableChecks
 		table2ColumnUnqDictionary.put(ObjectType.TABLE, table2);
 		table2ColumnUnqDictionary.put(ObjectType.COLUMN, columnUnqTable2);
 		
-		table2.addColumnIndex("unq1_tbl2_dis_check", columnUniqueName, true);
+		IndexSpec columnIndexSpecTable2 = table2.addColumnIndex("unq1_tbl2_dis_check", columnUniqueName, true);
 		
+		Dictionary<ObjectType, Object> table2ColumnUnqIndexDictionary = new Hashtable<>();
+		table2ColumnUnqIndexDictionary.put(ObjectType.SCHEMA, spec);
+		table2ColumnUnqIndexDictionary.put(ObjectType.TABLE, table2);
+		table2ColumnUnqIndexDictionary.put(ObjectType.TABLE_INDEX, columnIndexSpecTable2);
 		
 		// simulate listener
 		
@@ -728,7 +738,22 @@ public class DBSchemaDisableChecks
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-					
+
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, databaseID, table1Dictionary, driver,  null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(databaseID), eq(table1Dictionary), eq(driver),  notNull(SQLSyntaxErrorException.class));
+
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_INDEX, PhaseType.PRE, connection, databaseID, table1ColumnUnqIndexDictionary, driver,  null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_INDEX), eq(PhaseType.POST), eq(connection), eq(databaseID), eq(table1ColumnUnqIndexDictionary), eq(driver),  notNull(SQLSyntaxErrorException.class));
+
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, databaseID, table2Dictionary, driver,  null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_PRIMARY_KEY), eq(PhaseType.POST), eq(connection), eq(databaseID), eq(table2Dictionary), eq(driver),  notNull(SQLSyntaxErrorException.class));
+
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE_INDEX, PhaseType.PRE, connection, databaseID, table2ColumnUnqIndexDictionary, driver,  null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.TABLE_INDEX), eq(PhaseType.POST), eq(connection), eq(databaseID), eq(table2ColumnUnqIndexDictionary), eq(driver),  notNull(SQLSyntaxErrorException.class));
+
+		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.COLUMN_FOREIGN_KEY, PhaseType.PRE, connection, databaseID, table1ColumnFKDictionary, driver,  null);
+		updateListenerMock.onAction(eq(ActionType.UPDATE), eq(ObjectType.COLUMN_FOREIGN_KEY), eq(PhaseType.POST), eq(connection), eq(databaseID), eq(table1ColumnFKDictionary), eq(driver),  notNull(SQLSyntaxErrorException.class));
+		
 		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
 				
 		ctrl.replay();
@@ -741,6 +766,6 @@ public class DBSchemaDisableChecks
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }

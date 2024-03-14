@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.sodeac.dbschema.itest;
 
-import org.easymock.EasyMockSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -25,6 +24,7 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 import org.sodeac.dbschema.api.IDatabaseSchemaProcessor;
+import org.sodeac.dbschema.itest.test.util.TestConnection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,9 +32,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -45,16 +43,19 @@ import javax.inject.Inject;
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchema
+public class DBSchema implements ITestBase
 {
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	
 	public static final String SCHEMA_NAME = "SODEAC_TEST";
 	
-	private EasyMockSupport support = new EasyMockSupport();
-	
-	public static List<Object[]> connectionList = null;
-	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
+	public static final Map<String,Boolean> createdSchema = new HashMap<>();
 	
 	@Inject
 	private IDatabaseSchemaProcessor databaseSchemaProcessor;
@@ -62,16 +63,12 @@ public class DBSchema
 	@Parameters
     public static List<Object[]> connections()
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+    	return ITestBase.testParams();
     }
 	
-	public DBSchema(Callable<TestConnection> connectionFactory)
+	public DBSchema(int connectionNumber)
 	{
-		this.testConnectionFactory = connectionFactory;
+		this.testConnectionFactory = ITestBase.connections(createdSchema).get(connectionNumber);
 	}
 	
 	Callable<TestConnection> testConnectionFactory = null;
@@ -133,6 +130,6 @@ public class DBSchema
 	@Configuration
 	public static Option[] config() 
 	{
-		return Statics.config();
+		return ITestBase.config();
 	}
 }
