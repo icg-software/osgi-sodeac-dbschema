@@ -13,16 +13,13 @@ package org.sodeac.dbschema.itest;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 import org.easymock.IMocksControl;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
-import org.ops4j.pax.exam.junit.PaxExamParameterized;
+import org.junit.runners.MethodSorters;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.ColumnSpec;
 import org.sodeac.dbschema.api.IColumnType;
@@ -32,21 +29,11 @@ import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
-import org.sodeac.dbschema.itest.testconnections.EDbType;
 
-@RunWith(PaxExamParameterized.class)
-public class DBSchemaColumn extends AbstractDBTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class DBSchemaColumn extends AbstractDBSchemaTest
 {
     public DBSchemaColumn(final String dbType) { super(dbType); }
-
-    @Parameters(name = "{0}")
-    public static List<Object[]> connections()
-    {
-        return Arrays.stream(EDbType.values())
-                     // needs String >> enum.name()
-                     .map(dbType -> new Object[] { dbType.name() })
-                     .toList();
-    }
 
     @Test
     public void test000200CreateColumnUnquoted() throws SQLException, ClassNotFoundException, IOException

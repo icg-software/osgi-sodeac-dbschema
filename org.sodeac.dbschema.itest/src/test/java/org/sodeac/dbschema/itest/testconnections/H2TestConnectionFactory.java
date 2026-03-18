@@ -4,8 +4,10 @@ import java.io.Serial;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Map;
 
+import org.jspecify.annotations.NonNull;
 import org.sodeac.dbschema.itest.Statics;
 import org.sodeac.dbschema.itest.TestConnection;
 
@@ -14,9 +16,9 @@ public class H2TestConnectionFactory extends AbstractTestConnectionFactory
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public H2TestConnectionFactory(final Map<String, Boolean> createdSchema, final String schemaName)
-    {
-        super(createdSchema, schemaName);
+    public H2TestConnectionFactory(final Map<String, Boolean> createdSchema, @NonNull final String schemaName)
+    { // toUpperCase() important for H2!
+        super(createdSchema, schemaName.toUpperCase(Locale.ROOT));
     }
 
     @Override

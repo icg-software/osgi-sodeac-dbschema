@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
@@ -39,12 +40,15 @@ import lombok.val;
 
 public class Statics
 {
+    // FIXME: woanders hin
     public static final Boolean ENABLED_H2 = true;
     public static final Boolean ENABLED_POSTGRES = false;
     public static final Boolean ENABLED_ORACLE_12 = false;
 
     public static final Boolean ENABLED_DB2 = false;
     public static final Boolean ENABLED_MYSQL = false;
+
+    private static final Map<String, String> schemaNames = new ConcurrentHashMap<>();
 
     // TODO mvn -DmyVariable=someValue for DB Config
 
@@ -133,11 +137,13 @@ public class Statics
                 };
     }
 
-    public static TestConnection createConnection(final EDbType dbType, final Map<String, Boolean> createdSchema) throws SQLException, ClassNotFoundException
+    public static TestConnection createConnection(final EDbType dbType, final Map<String, Boolean> createdSchema, final String testClassName) throws SQLException, ClassNotFoundException
     {
         System.out.println("##################################");
         System.out.println(createdSchema);
-        final String schemaName = "S" + TestTools.getSchemaName();
+        final String schemaName = schemaNames.computeIfAbsent(
+                "%s-%s".formatted(testClassName, dbType), key -> "%s_S%s".formatted(testClassName, TestTools.getSchemaName())
+        );
         return switch (dbType)
         {
             case H2 -> new H2TestConnectionFactory(createdSchema, schemaName).call();

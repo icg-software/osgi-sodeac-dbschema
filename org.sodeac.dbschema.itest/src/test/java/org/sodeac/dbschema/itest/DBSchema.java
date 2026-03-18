@@ -16,35 +16,22 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.MethodSorters;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExamParameterized;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
-import org.sodeac.dbschema.itest.testconnections.EDbType;
 
-@RunWith(PaxExamParameterized.class)
-public class DBSchema extends AbstractDBTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class DBSchema extends AbstractDBSchemaTest
 {
     public static final String SCHEMA_NAME = "SODEAC_TEST";
 
     public DBSchema(final String dbType) { super(dbType); }
-
-    @Parameters(name = "{0}")
-    public static List<Object[]> connections()
-    {
-        return Arrays.stream(EDbType.values())
-                     // needs String >> enum.name()
-                     .map(dbType -> new Object[] { dbType.name() })
-                     .toList();
-    }
 
     @Test
     public void test000001createSchema() throws SQLException, ClassNotFoundException, IOException

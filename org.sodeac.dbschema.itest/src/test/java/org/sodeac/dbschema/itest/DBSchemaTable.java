@@ -10,595 +10,529 @@
  *******************************************************************************/
 package org.sodeac.dbschema.itest;
 
-import org.easymock.EasyMockSupport;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import org.easymock.IMocksControl;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized.Parameters;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExamParameterized;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerSuite;
+import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
-import org.sodeac.dbschema.api.IDatabaseSchemaProcessor;
 import org.sodeac.dbschema.api.IDatabaseSchemaUpdateListener;
 import org.sodeac.dbschema.api.ObjectType;
 import org.sodeac.dbschema.api.PhaseType;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
-import org.sodeac.dbschema.api.ActionType;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import javax.inject.Inject;
-
-
-@RunWith(PaxExamParameterized.class)
-@ExamReactorStrategy(PerSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DBSchemaTable
+public class DBSchemaTable extends AbstractDBSchemaTest
 {
-	
-	
-	public static final String DOMAIN = "TESTDOMAIN";
-	
-	private EasyMockSupport support = new EasyMockSupport();
-	
-	public static List<Object[]> connectionList = null;
-	public static final Map<String,Boolean> createdSchema = new HashMap<String,Boolean>();
-	
-	@Inject
-	private IDatabaseSchemaProcessor databaseSchemaProcessor;
-	
-	@Parameters
-    public static List<Object[]> connections()
+    public DBSchemaTable(final String dbType) { super(dbType); }
+
+    @Test
+    public void test000101CreateTableUnquoted() throws SQLException, ClassNotFoundException, IOException
     {
-    	if(connectionList != null)
-    	{
-    		return connectionList;
-    	}
-    	return connectionList = Statics.connections(createdSchema);
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTable1";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+
+        final TableSpec table1 = spec.addTable(table1Name);
+
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
     }
-	
-	
-	public DBSchemaTable(Callable<TestConnection> connectionFactory)
-	{
-		this.testConnectionFactory = connectionFactory;
-	}
-	
-	Callable<TestConnection> testConnectionFactory = null;
-	TestConnection testConnection = null;
-	
-	@Before
-	public void setUp() throws Exception 
-	{
-		this.testConnection = testConnectionFactory.call();
-	}
-	
-	@After
-	public void tearDown()
-	{
-		if(! this.testConnection.enabled)
-		{
-			return;
-		}
-		if(this.testConnection.connection != null)
-		{
-			try
-			{
-				this.testConnection.connection.close();
-			}
-			catch (Exception e) {}
-		}
-	}
-	
-	@Test
-	public void test000101CreateTableUnquoted() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTable1";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-				
-		TableSpec table1 = spec.addTable(table1Name);
-		
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary,driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-								
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
-	
-	@Test
-	public void test000102CreateTableUnquotedAgain() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTable1";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-				
-		TableSpec table1 = spec.addTable(table1Name);
-		
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-								
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
-	
-	@Test
-	public void test000111CreateTableQuoted() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTableQ1";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-				
-		TableSpec table1 = spec.addTable(table1Name);
-		table1.setQuotedName(true);
-		
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary,driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-								
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
-	
-	@Test
-	public void test000112CreateTableQuotedAgain() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTableQ1";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-				
-		TableSpec table1 = spec.addTable(table1Name);
-		table1.setQuotedName(true);
-		
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-								
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
-	
-	@Test
-	public void test000121CreateTableUnquotedTableSpace() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTable1TS";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		spec.setTableSpaceData("sodeacdata");
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-				
-		TableSpec table1 = spec.addTable(table1Name);
-		
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary,driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-								
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
-	
-	@Test
-	public void test000122CreateTableUnquotedTableSpaceAgain() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTable1TS";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-		spec.setTableSpaceData("sodeacdata");
-		
-		TableSpec table1 = spec.addTable(table1Name);
-		
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-								
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
-	
-	@Test
-	public void test000131CreateTableQuotedTableSpace() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTableQ1TS";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		spec.setTableSpaceData("sodeacdata");
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-				
-		TableSpec table1 = spec.addTable(table1Name);
-		table1.setQuotedName(true);
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary,driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-								
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
-	
-	@Test
-	public void test000132CreateTableQuotedTableSpaceAgain() throws SQLException, ClassNotFoundException, IOException 
-	{
-		if(! testConnection.enabled)
-		{
-			return;
-		}
-		Connection connection = testConnection.connection;
-		IDatabaseSchemaDriver driver = databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-		
-		String databaseID = DOMAIN;
-		String table1Name = "EmptyTableQ1TS";
-		
-		IMocksControl ctrl = support.createControl();
-		IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
-		
-		ctrl.checkOrder(true);
-		
-		// create spec
-		SchemaSpec spec = new SchemaSpec(databaseID);
-		spec.setDbmsSchemaName(testConnection.dbmsSchemaName);
-		
-		// prepare spec for simulation
-		Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
-		schemaDictionary.put(ObjectType.SCHEMA, spec);
-		spec.addUpdateListener(updateListenerMock);
-		spec.setTableSpaceData("sodeacdata");
-		
-		TableSpec table1 = spec.addTable(table1Name);
-		table1.setQuotedName(true);
-		
-		// prepare table for simulation
-		Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
-		table1Dictionary.put(ObjectType.SCHEMA, spec);
-		table1Dictionary.put(ObjectType.TABLE, table1);
-		table1.addUpdateListener(updateListenerMock);
-		
-		// simulate listener
-		
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
-				
-		// table creation
-				
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
-					
-		// convert schema
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver,  null);
-					
-		updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
-				
-		ctrl.replay();
-				
-		databaseSchemaProcessor.checkSchemaSpec(spec, connection);
-		
-		ctrl.verify();
-	}
+
+    @Test
+    public void test000102CreateTableUnquotedAgain() throws SQLException, ClassNotFoundException, IOException
+    {
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTable1";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+
+        final TableSpec table1 = spec.addTable(table1Name);
+
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
+    }
+
+    @Test
+    public void test000111CreateTableQuoted() throws SQLException, ClassNotFoundException, IOException
+    {
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTableQ1";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+
+        final TableSpec table1 = spec.addTable(table1Name);
+        table1.setQuotedName(true);
+
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
+    }
+
+    @Test
+    public void test000112CreateTableQuotedAgain() throws SQLException, ClassNotFoundException, IOException
+    {
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTableQ1";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+
+        final TableSpec table1 = spec.addTable(table1Name);
+        table1.setQuotedName(true);
+
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
+    }
+
+    @Test
+    public void test000121CreateTableUnquotedTableSpace() throws SQLException, ClassNotFoundException, IOException
+    {
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTable1TS";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+        spec.setTableSpaceData("sodeacdata");
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+
+        final TableSpec table1 = spec.addTable(table1Name);
+
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        /*
+        If here exception in postgres but not in H2 then you need to create Tablespaces
+        sodeacdata and sodeacindex in your postgres tablesspace location ie in C:\Postgres\Tablespaces.
+         */
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
+    }
+
+    @Test
+    public void test000122CreateTableUnquotedTableSpaceAgain() throws SQLException, ClassNotFoundException, IOException
+    {
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTable1TS";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+        spec.setTableSpaceData("sodeacdata");
+
+        final TableSpec table1 = spec.addTable(table1Name);
+
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
+    }
+
+    @Test
+    public void test000131CreateTableQuotedTableSpace() throws SQLException, ClassNotFoundException, IOException
+    {
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTableQ1TS";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+        spec.setTableSpaceData("sodeacdata");
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+
+        final TableSpec table1 = spec.addTable(table1Name);
+        table1.setQuotedName(true);
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
+    }
+
+    @Test
+    public void test000132CreateTableQuotedTableSpaceAgain() throws SQLException, ClassNotFoundException, IOException
+    {
+        if(!this.testConnection.enabled)
+        {
+            return;
+        }
+        final Connection connection = this.testConnection.connection;
+        final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
+
+        final String databaseID = DOMAIN;
+        final String table1Name = "EmptyTableQ1TS";
+
+        final IMocksControl ctrl = this.support.createControl();
+        final IDatabaseSchemaUpdateListener updateListenerMock = ctrl.createMock(IDatabaseSchemaUpdateListener.class);
+
+        ctrl.checkOrder(true);
+
+        // create spec
+        final SchemaSpec spec = new SchemaSpec(databaseID);
+        spec.setDbmsSchemaName(this.testConnection.dbmsSchemaName);
+
+        // prepare spec for simulation
+        final Dictionary<ObjectType, Object> schemaDictionary = new Hashtable<>();
+        schemaDictionary.put(ObjectType.SCHEMA, spec);
+        spec.addUpdateListener(updateListenerMock);
+        spec.setTableSpaceData("sodeacdata");
+
+        final TableSpec table1 = spec.addTable(table1Name);
+        table1.setQuotedName(true);
+
+        // prepare table for simulation
+        final Dictionary<ObjectType, Object> table1Dictionary = new Hashtable<>();
+        table1Dictionary.put(ObjectType.SCHEMA, spec);
+        table1Dictionary.put(ObjectType.TABLE, table1);
+        table1.addUpdateListener(updateListenerMock);
+
+        // simulate listener
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+
+        // table creation
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, table1Dictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, table1Dictionary, driver, null);
+
+        // convert schema
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        updateListenerMock.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, databaseID, schemaDictionary, driver, null);
+
+        ctrl.replay();
+
+        this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
+
+        ctrl.verify();
+    }
 	
 	
 	
@@ -835,12 +769,10 @@ public class DBSchemaTable
 		ctrl.verify();
 		
 	}*/
-	
-	
 
-	@Configuration
-	public static Option[] config() 
-	{
-		return Statics.config();
-	}
+    @Configuration
+    public static Option[] config()
+    {
+        return Statics.config();
+    }
 }
