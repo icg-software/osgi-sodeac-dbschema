@@ -26,7 +26,7 @@ import org.sodeac.dbschema.itest.testconnections.EDbType;
 
 @RunWith(PaxExamParameterized.class)
 @ExamReactorStrategy(PerSuite.class)
-public abstract class AbstractDBSchemaTest
+public abstract class AbstractDBSchemaIT
 {
     protected static final String DOMAIN = "TESTDOMAIN";
 
@@ -56,11 +56,13 @@ public abstract class AbstractDBSchemaTest
 
     protected final EDbType dbType;
 
-    protected AbstractDBSchemaTest(final String dbType) { this.dbType = EDbType.valueOf(dbType); }
+    protected AbstractDBSchemaIT(final String dbType) { this.dbType = EDbType.valueOf(dbType); }
 
     @Before
     public void setUp() throws Exception
     {
+        // FIXME: sysouts raus
+        // FIXME: connectionfactories ohne Callable
         System.out.println("type: " + this.dbType);
         this.testConnection = Statics.createConnection(this.dbType, createdSchema, this.getClass().getSimpleName());
         System.out.println("conn: " + this.testConnection);
