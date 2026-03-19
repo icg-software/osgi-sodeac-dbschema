@@ -62,7 +62,7 @@ public abstract class AbstractDBSchemaTest
     public void setUp() throws Exception
     {
         System.out.println("type: " + this.dbType);
-        this.testConnection = Statics.createConnection(this.dbType, createdSchema);
+        this.testConnection = Statics.createConnection(this.dbType, createdSchema, this.getClass().getSimpleName());
         System.out.println("conn: " + this.testConnection);
     }
 

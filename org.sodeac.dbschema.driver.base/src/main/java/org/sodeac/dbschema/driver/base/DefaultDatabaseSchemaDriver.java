@@ -926,46 +926,48 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         {
             return null;
         }
-        if(columnProperties.get("COLUMN_TYPE_NAME") == null)
+        final Object columnTypeName = columnProperties.get("COLUMN_TYPE_NAME");
+
+        if(columnTypeName == null)
         {
             return null;
         }
         for (final IColumnType.ColumnType type : IColumnType.ColumnType.values())
         {
-            if(type.toString().equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+            if(type.toString().equalsIgnoreCase(columnTypeName.toString()))
             {
                 return type.toString();
             }
         }
-        if("bool".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("bool".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.BOOLEAN.toString();
         }
-        if("text".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("text".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.CLOB.toString();
         }
-        if("int2".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("int2".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.SMALLINT.toString();
         }
-        if("int4".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("int4".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.INTEGER.toString();
         }
-        if("int8".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("int8".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.BIGINT.toString();
         }
-        if("float4".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("float4".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.REAL.toString();
         }
-        if("float8".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("float8".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.DOUBLE.toString();
         }
-        if("varbinary".equalsIgnoreCase(columnProperties.get("COLUMN_TYPE_NAME").toString()))
+        if("varbinary".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.BINARY.toString();
         }
