@@ -61,11 +61,7 @@ public abstract class AbstractDBSchemaIT
     @Before
     public void setUp() throws Exception
     {
-        // FIXME: sysouts raus
-        // FIXME: connectionfactories ohne Callable
-        System.out.println("type: " + this.dbType);
         this.testConnection = Statics.createConnection(this.dbType, createdSchema, this.getClass().getSimpleName());
-        System.out.println("conn: " + this.testConnection);
     }
 
     @After

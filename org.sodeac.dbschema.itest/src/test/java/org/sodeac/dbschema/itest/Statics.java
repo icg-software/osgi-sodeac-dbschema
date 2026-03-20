@@ -20,8 +20,6 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,32 +38,14 @@ import lombok.val;
 
 public class Statics
 {
-    // FIXME: woanders hin
     public static final Boolean ENABLED_H2 = true;
-    public static final Boolean ENABLED_POSTGRES = false;
-    public static final Boolean ENABLED_ORACLE_12 = false;
+    public static final Boolean ENABLED_POSTGRES = true;
 
+    public static final Boolean ENABLED_ORACLE_12 = false;
     public static final Boolean ENABLED_DB2 = false;
     public static final Boolean ENABLED_MYSQL = false;
 
     private static final Map<String, String> schemaNames = new ConcurrentHashMap<>();
-
-    // TODO mvn -DmyVariable=someValue for DB Config
-
-    public static List<Object[]> connections(final Map<String, Boolean> createdSchema)
-    {
-        final String schemaName = "S" + TestTools.getSchemaName();
-        return Arrays.asList(new Object[][]
-                {
-                        { new H2TestConnectionFactory(createdSchema, schemaName) },
-                        { new PostgresTestConnectionFactory(createdSchema, schemaName) },
-                        { new MySqlTestConnectionFactory(createdSchema, schemaName) },
-                        { new Oracle12TestConnectionFactory(createdSchema, schemaName) },
-                        { new DB2TestConnectionFactory(createdSchema, schemaName) }
-
-                }
-        );
-    }
 
     public static Option[] config()
     {
@@ -87,13 +67,13 @@ public class Statics
         val h2 = mavenBundle("com.h2database", "h2").versionAsInProject();
         val sodeacVersion = System.getProperty("sodeac.version", "2.0.0-SNAPSHOT");
 
-        System.out.println("########################################################################################");
-        System.out.println(karafUrl);
-        System.out.println(karafStandardRepo);
-        System.out.println(easymock);
-        System.out.println(postgresql);
-        System.out.println(h2);
-        System.out.println(sodeacVersion);
+        // System.out.println("########################################################################################");
+        // System.out.println(karafUrl);
+        // System.out.println(karafStandardRepo);
+        // System.out.println(easymock);
+        // System.out.println(postgresql);
+        // System.out.println(h2);
+        // System.out.println(sodeacVersion);
         return new Option[]
                 {
                         karafDistributionConfiguration()
@@ -139,18 +119,16 @@ public class Statics
 
     public static TestConnection createConnection(final EDbType dbType, final Map<String, Boolean> createdSchema, final String testClassName) throws SQLException, ClassNotFoundException
     {
-        System.out.println("##################################");
-        System.out.println(createdSchema);
         final String schemaName = schemaNames.computeIfAbsent(
                 "%s-%s".formatted(testClassName, dbType), key -> "%s_S%s".formatted(testClassName, TestTools.getSchemaName())
         );
         return switch (dbType)
         {
-            case H2 -> new H2TestConnectionFactory(createdSchema, schemaName).call();
-            case POSTGRES -> new PostgresTestConnectionFactory(createdSchema, schemaName).call();
-            case MYSQL -> new MySqlTestConnectionFactory(createdSchema, schemaName).call();
-            case ORACLE_12 -> new Oracle12TestConnectionFactory(createdSchema, schemaName).call();
-            case DB2 -> new DB2TestConnectionFactory(createdSchema, schemaName).call();
+            case H2 -> H2TestConnectionFactory.create(createdSchema, schemaName, ENABLED_H2);
+            case POSTGRES -> PostgresTestConnectionFactory.create(createdSchema, schemaName, ENABLED_POSTGRES);
+            case MYSQL -> MySqlTestConnectionFactory.create(createdSchema, schemaName, ENABLED_MYSQL);
+            case ORACLE_12 -> Oracle12TestConnectionFactory.create(createdSchema, schemaName, ENABLED_ORACLE_12);
+            case DB2 -> DB2TestConnectionFactory.create(createdSchema, schemaName, ENABLED_DB2);
         };
     }
 }

@@ -1,28 +1,21 @@
 package org.sodeac.dbschema.itest.testconnections;
 
-import java.io.Serial;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.sodeac.dbschema.itest.Statics;
 import org.sodeac.dbschema.itest.TestConnection;
 
-public class DB2TestConnectionFactory extends AbstractTestConnectionFactory
+public final class DB2TestConnectionFactory
 {
-    @Serial
-    private static final long serialVersionUID = 1L;
 
-    public DB2TestConnectionFactory(final Map<String, Boolean> createdSchema, final String schemaName)
-    {
-        super(createdSchema, schemaName);
-    }
+    private DB2TestConnectionFactory() { }
 
-    @Override
-    public TestConnection call() throws ClassNotFoundException, SQLException
+    public static TestConnection create(final Map<String, Boolean> createdSchema, final String schemaName, final boolean isEnabled)
+            throws ClassNotFoundException, SQLException
     {
-        final TestConnection testConnection = new TestConnection(Statics.ENABLED_DB2);
+        final TestConnection testConnection = new TestConnection(isEnabled);
         if(!testConnection.enabled)
         {
             return testConnection;
@@ -45,18 +38,18 @@ public class DB2TestConnectionFactory extends AbstractTestConnectionFactory
         testConnection.connection =
                 DriverManager.getConnection("jdbc:db2://127.0.0.1:50000/sodeac", "db2inst1", "sodeac");
 
-        if(this.createdSchema.get("DB2_" + this.schemaName) == null)
+        if(createdSchema.get("DB2_" + schemaName) == null)
         {
-            this.createdSchema.put("DB2_" + this.schemaName, true);
+            createdSchema.put("DB2_" + schemaName, true);
 
             final PreparedStatement prepStat = testConnection.connection.prepareStatement(
-                    "CREATE SCHEMA " + this.schemaName.toUpperCase() + " AUTHORIZATION DB2INST1");
+                    "CREATE SCHEMA " + schemaName.toUpperCase() + " AUTHORIZATION DB2INST1");
             prepStat.executeUpdate();
             prepStat.close();
         }
 
-        testConnection.connection.setSchema(this.schemaName.toUpperCase());
-        testConnection.dbmsSchemaName = this.schemaName.toUpperCase();
+        testConnection.connection.setSchema(schemaName.toUpperCase());
+        testConnection.dbmsSchemaName = schemaName.toUpperCase();
 
         return testConnection;
     }

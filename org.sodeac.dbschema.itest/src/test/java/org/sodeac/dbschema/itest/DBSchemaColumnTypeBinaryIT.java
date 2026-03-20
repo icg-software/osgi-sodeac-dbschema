@@ -29,8 +29,6 @@ import java.util.UUID;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.sodeac.dbschema.api.IColumnType;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 import org.sodeac.dbschema.api.SchemaSpec;
@@ -994,11 +992,5 @@ public class DBSchemaColumnTypeBinaryIT extends AbstractDBSchemaIT
             connection.setAutoCommit(ac);
         }
         catch (final Exception e) { }
-    }
-
-    @Configuration
-    public static Option[] config()
-    {
-        return Statics.config();
     }
 }

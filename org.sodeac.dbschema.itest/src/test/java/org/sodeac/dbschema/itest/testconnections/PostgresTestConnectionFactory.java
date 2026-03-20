@@ -1,6 +1,5 @@
 package org.sodeac.dbschema.itest.testconnections;
 
-import java.io.Serial;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -8,20 +7,14 @@ import java.util.Map;
 
 import org.sodeac.dbschema.itest.TestConnection;
 
-public class PostgresTestConnectionFactory extends AbstractTestConnectionFactory
+public final class PostgresTestConnectionFactory
 {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    private PostgresTestConnectionFactory() { }
 
-    public PostgresTestConnectionFactory(final Map<String, Boolean> createdSchema, final String schemaName)
+    public static TestConnection create(final Map<String, Boolean> createdSchema, final String schemaName, final boolean isEnabled)
+            throws ClassNotFoundException, SQLException
     {
-        super(createdSchema, schemaName);
-    }
-
-    @Override
-    public TestConnection call() throws ClassNotFoundException, SQLException
-    {
-        final TestConnection testConnection = new TestConnection(true);
+        final TestConnection testConnection = new TestConnection(isEnabled);
         if(!testConnection.enabled)
         {
             return testConnection;
@@ -53,18 +46,18 @@ public class PostgresTestConnectionFactory extends AbstractTestConnectionFactory
                 // DriverManager.getConnection("jdbc:postgresql://192.168.178.45:5432/sodeac", "sodeac", "sodeac");
                 DriverManager.getConnection("jdbc:postgresql://localhost/sodeac", "sodeac", "sodeac");
 
-        if(this.createdSchema.get("POSTGRES_" + this.schemaName) == null)
+        if(createdSchema.get("POSTGRES_" + schemaName) == null)
         {
-            this.createdSchema.put("POSTGRES_" + this.schemaName, true);
+            createdSchema.put("POSTGRES_" + schemaName, true);
 
             final PreparedStatement prepStat = testConnection.connection.prepareStatement(
-                    "CREATE SCHEMA IF NOT EXISTS " + this.schemaName.toLowerCase() + " AUTHORIZATION sodeac");
+                    "CREATE SCHEMA IF NOT EXISTS " + schemaName.toLowerCase() + " AUTHORIZATION sodeac");
             prepStat.executeUpdate();
             prepStat.close();
         }
 
-        testConnection.connection.setSchema(this.schemaName.toLowerCase());
-        testConnection.dbmsSchemaName = this.schemaName.toLowerCase();
+        testConnection.connection.setSchema(schemaName.toLowerCase());
+        testConnection.dbmsSchemaName = schemaName.toLowerCase();
 
         return testConnection;
     }

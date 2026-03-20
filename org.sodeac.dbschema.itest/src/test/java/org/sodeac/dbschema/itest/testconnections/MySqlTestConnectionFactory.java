@@ -1,28 +1,20 @@
 package org.sodeac.dbschema.itest.testconnections;
 
-import java.io.Serial;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.sodeac.dbschema.itest.Statics;
 import org.sodeac.dbschema.itest.TestConnection;
 
-public class MySqlTestConnectionFactory extends AbstractTestConnectionFactory
+public final class MySqlTestConnectionFactory
 {
-    @Serial
-    private static final long serialVersionUID = 1L;
+    private MySqlTestConnectionFactory() { }
 
-    public MySqlTestConnectionFactory(final Map<String, Boolean> createdSchema, final String schemaName)
+    public static TestConnection create(final Map<String, Boolean> createdSchema, final String schemaName, final boolean isEnabled)
+            throws ClassNotFoundException, SQLException
     {
-        super(createdSchema, schemaName);
-    }
-
-    @Override
-    public TestConnection call() throws ClassNotFoundException, SQLException
-    {
-        final TestConnection testConnection = new TestConnection(Statics.ENABLED_MYSQL);
+        final TestConnection testConnection = new TestConnection(isEnabled);
         if(!testConnection.enabled)
         {
             return testConnection;
@@ -42,18 +34,18 @@ public class MySqlTestConnectionFactory extends AbstractTestConnectionFactory
         testConnection.connection =
                 DriverManager.getConnection("jdbc:mysql://127.0.0.1/?useSSL=false", "root", "sodeac");
 
-        if(this.createdSchema.get("MYSQL_" + this.schemaName) == null)
+        if(createdSchema.get("MYSQL_" + schemaName) == null)
         {
-            this.createdSchema.put("MYSQL_" + this.schemaName, true);
+            createdSchema.put("MYSQL_" + schemaName, true);
 
             final PreparedStatement prepStat = testConnection.connection.prepareStatement(
-                    "CREATE SCHEMA " + this.schemaName.toLowerCase() + " CHARACTER SET = utf8 COLLATE = utf8_general_ci");
+                    "CREATE SCHEMA " + schemaName.toLowerCase() + " CHARACTER SET = utf8 COLLATE = utf8_general_ci");
             prepStat.executeUpdate();
             prepStat.close();
         }
-        testConnection.connection.setSchema(this.schemaName.toLowerCase());
-        testConnection.connection.setCatalog(this.schemaName.toLowerCase());
-        testConnection.dbmsSchemaName = this.schemaName.toLowerCase();
+        testConnection.connection.setSchema(schemaName.toLowerCase());
+        testConnection.connection.setCatalog(schemaName.toLowerCase());
+        testConnection.dbmsSchemaName = schemaName.toLowerCase();
 
         return testConnection;
     }

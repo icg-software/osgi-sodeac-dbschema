@@ -22,8 +22,6 @@ import java.util.Map;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -36,9 +34,6 @@ public class DBSchemaIT extends AbstractDBSchemaIT
     @Test
     public void test000001createSchema() throws SQLException, ClassNotFoundException, IOException
     {
-        System.out.println("+++++++++++++++++++++++++++++++++++++");
-        System.out.println(createdSchema);
-        System.out.println(this.testConnection.enabled);
         if(!this.testConnection.enabled)
         {
             return;
@@ -62,11 +57,5 @@ public class DBSchemaIT extends AbstractDBSchemaIT
 
         driver.dropSchema(connection, SCHEMA_NAME, confirmMap);
         assertFalse("test schema should not exist", driver.schemaExists(connection, SCHEMA_NAME));
-    }
-
-    @Configuration
-    public static Option[] config()
-    {
-        return Statics.config();
     }
 }

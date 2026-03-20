@@ -14,6 +14,40 @@
     <name>Sodeac db-schema parent</name>
     <description>Parent POM for Sodeac database schema management service modules</description>
 
+    <modules>
+        <module>org.sodeac.dbschema.api</module>
+        <module>org.sodeac.dbschema.provider</module>
+        <module>org.sodeac.dbschema.driver.base</module>
+        <module>org.sodeac.dbschema.driver.h2</module>
+        <module>org.sodeac.dbschema.driver.postgresql</module>
+        <!--module>org.sodeac.dbschema.driver.mysql</module-->
+        <module>org.sodeac.dbschema.driver.oracle</module>
+        <!--module>org.sodeac.dbschema.driver.db2</module-->
+        <module>org.sodeac.dbschema.itest</module>
+    </modules>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License v2.0</name>
+            <url>http://www.eclipse.org/legal/epl-v20.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>sebastian.palarus</id>
+            <name>Sebastian Palarus</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/spalarus/osgi-sodeac-dbschema.git</connection>
+        <url>https://github.com/spalarus/osgi-sodeac-dbschema.git</url>
+    </scm>
+
+    <url>https://github.com/spalarus/osgi-sodeac-dbschema</url>
+
+
     <dependencies>
 
         <dependency>
@@ -98,38 +132,5 @@
             </build>
         </profile>
     </profiles>
-
-    <licenses>
-        <license>
-            <name>Eclipse Public License v2.0</name>
-            <url>http://www.eclipse.org/legal/epl-v20.html</url>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>sebastian.palarus</id>
-            <name>Sebastian Palarus</name>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:https://github.com/spalarus/osgi-sodeac-dbschema.git</connection>
-        <url>https://github.com/spalarus/osgi-sodeac-dbschema.git</url>
-    </scm>
-
-    <url>https://github.com/spalarus/osgi-sodeac-dbschema</url>
-
-    <modules>
-        <module>org.sodeac.dbschema.api</module>
-        <module>org.sodeac.dbschema.provider</module>
-        <module>org.sodeac.dbschema.driver.base</module>
-        <module>org.sodeac.dbschema.driver.h2</module>
-        <module>org.sodeac.dbschema.driver.postgresql</module>
-        <!--module>org.sodeac.dbschema.driver.mysql</module-->
-        <module>org.sodeac.dbschema.driver.oracle</module>
-        <!--module>org.sodeac.dbschema.driver.db2</module-->
-        <module>org.sodeac.dbschema.itest</module>
-    </modules>
 
 </project>

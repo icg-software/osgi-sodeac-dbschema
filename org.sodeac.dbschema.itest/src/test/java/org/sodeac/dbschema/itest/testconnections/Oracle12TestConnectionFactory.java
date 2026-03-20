@@ -1,29 +1,22 @@
 package org.sodeac.dbschema.itest.testconnections;
 
-import java.io.Serial;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.sodeac.dbschema.itest.Statics;
 import org.sodeac.dbschema.itest.TestConnection;
 
-public class Oracle12TestConnectionFactory extends AbstractTestConnectionFactory
+public final class Oracle12TestConnectionFactory
 {
-    @Serial
-    private static final long serialVersionUID = 1L;
 
-    public Oracle12TestConnectionFactory(final Map<String, Boolean> createdSchema, final String schemaName)
-    {
-        super(createdSchema, schemaName);
-    }
+    private Oracle12TestConnectionFactory() { }
 
-    @Override
-    public TestConnection call() throws ClassNotFoundException, SQLException
+    public static TestConnection create(final Map<String, Boolean> createdSchema, final String schemaName, final boolean isEnabled)
+            throws ClassNotFoundException, SQLException
     {
-        final TestConnection testConnection = new TestConnection(Statics.ENABLED_ORACLE_12);
+        final TestConnection testConnection = new TestConnection(isEnabled);
         if(!testConnection.enabled)
         {
             return testConnection;
@@ -72,33 +65,33 @@ public class Oracle12TestConnectionFactory extends AbstractTestConnectionFactory
             }
             catch (final Exception e) { }
 
-            if(this.createdSchema.get("ORACLE_" + this.schemaName) == null)
+            if(createdSchema.get("ORACLE_" + schemaName) == null)
             {
-                this.createdSchema.put("ORACLE_" + this.schemaName, true);
+                createdSchema.put("ORACLE_" + schemaName, true);
 
                 final Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.178.45:1521/xe", "system", "oracle");
 
-                PreparedStatement prepStat = connection.prepareStatement("CREATE USER " + this.schemaName.toUpperCase() + " IDENTIFIED BY sodeac DEFAULT TABLESPACE USERS PROFILE DEFAULT");
+                PreparedStatement prepStat = connection.prepareStatement("CREATE USER " + schemaName.toUpperCase() + " IDENTIFIED BY sodeac DEFAULT TABLESPACE USERS PROFILE DEFAULT");
                 prepStat.executeUpdate();
                 prepStat.close();
 
-                prepStat = connection.prepareStatement("GRANT CONNECT TO " + this.schemaName.toUpperCase() + "  WITH ADMIN OPTION");
+                prepStat = connection.prepareStatement("GRANT CONNECT TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
                 prepStat.executeUpdate();
                 prepStat.close();
 
-                prepStat = connection.prepareStatement("GRANT RESOURCE TO " + this.schemaName.toUpperCase() + "  WITH ADMIN OPTION");
+                prepStat = connection.prepareStatement("GRANT RESOURCE TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
                 prepStat.executeUpdate();
                 prepStat.close();
 
-                prepStat = connection.prepareStatement("GRANT DBA TO " + this.schemaName.toUpperCase() + "  WITH ADMIN OPTION");
+                prepStat = connection.prepareStatement("GRANT DBA TO " + schemaName.toUpperCase() + "  WITH ADMIN OPTION");
                 prepStat.executeUpdate();
                 prepStat.close();
 
                 connection.close();
             }
-            testConnection.connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.178.45:1521/xe", this.schemaName.toUpperCase(), "sodeac");
-            testConnection.connection.setSchema(this.schemaName.toUpperCase());
-            testConnection.dbmsSchemaName = this.schemaName.toUpperCase();
+            testConnection.connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.178.45:1521/xe", schemaName.toUpperCase(), "sodeac");
+            testConnection.connection.setSchema(schemaName.toUpperCase());
+            testConnection.dbmsSchemaName = schemaName.toUpperCase();
 
             return testConnection;
         }

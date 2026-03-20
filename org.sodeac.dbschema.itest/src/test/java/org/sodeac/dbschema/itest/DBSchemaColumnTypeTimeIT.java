@@ -27,8 +27,6 @@ import org.easymock.IMocksControl;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.ColumnSpec;
 import org.sodeac.dbschema.api.IColumnType;
@@ -853,11 +851,5 @@ public class DBSchemaColumnTypeTimeIT extends AbstractDBSchemaIT
             try { rset.close(); }catch (final Exception e) { }
             try { prepStat.close(); }catch (final Exception e) { }
         }
-    }
-
-    @Configuration
-    public static Option[] config()
-    {
-        return Statics.config();
     }
 }

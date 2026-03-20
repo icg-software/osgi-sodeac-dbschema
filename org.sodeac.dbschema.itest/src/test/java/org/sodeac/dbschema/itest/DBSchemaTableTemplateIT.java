@@ -20,8 +20,6 @@ import org.easymock.IMocksControl;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.sodeac.dbschema.api.ActionType;
 import org.sodeac.dbschema.api.DatabaseCommonElements;
 import org.sodeac.dbschema.api.DefaultSodeacSchemaTemplate;
@@ -346,11 +344,5 @@ public class DBSchemaTableTemplateIT extends AbstractDBSchemaIT
         this.databaseSchemaProcessor.checkSchemaSpec(spec, connection);
 
         ctrl.verify();
-    }
-
-    @Configuration
-    public static Option[] config()
-    {
-        return Statics.config();
     }
 }
