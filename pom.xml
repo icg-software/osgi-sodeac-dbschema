@@ -50,6 +50,13 @@
 
     <dependencies>
 
+        <!-- TODO: Remove: Transfer UNIT tests to junit 5 -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.karaf</groupId>
             <artifactId>apache-karaf</artifactId>
@@ -65,7 +72,7 @@
             <plugin>
                 <groupId>org.apache.servicemix.tooling</groupId>
                 <artifactId>depends-maven-plugin</artifactId>
-                <version>1.2</version>
+                <version>1.5.0</version>
                 <executions>
                     <execution>
                         <id>generate-depends-file</id>
