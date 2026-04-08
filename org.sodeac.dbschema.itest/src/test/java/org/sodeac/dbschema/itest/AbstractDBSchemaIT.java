@@ -29,15 +29,15 @@ import org.sodeac.dbschema.itest.testconnections.EDbType;
 public abstract class AbstractDBSchemaIT
 {
     protected static final String DOMAIN = "TESTDOMAIN";
-
+    
     protected static final Map<String, Boolean> createdSchema = new ConcurrentHashMap<>();
-
+    
     @Configuration
     public static Option[] config()
     {
         return Statics.config();
     }
-
+    
     @Parameters(name = "{0}")
     public static List<Object[]> connections()
     {
@@ -46,30 +46,36 @@ public abstract class AbstractDBSchemaIT
                      .map(dbType -> new Object[] { dbType.name() })
                      .toList();
     }
-
+    
     protected final EasyMockSupport support = new EasyMockSupport();
-
+    
     protected TestConnection testConnection;
-
+    
     @Inject
     protected IDatabaseSchemaProcessor databaseSchemaProcessor;
-
+    
     protected final EDbType dbType;
-
-    protected AbstractDBSchemaIT(final String dbType) { this.dbType = EDbType.valueOf(dbType); }
-
+    
+    protected AbstractDBSchemaIT(final String dbType)
+    {
+        this.dbType = EDbType.valueOf(dbType);
+    }
+    
     @Before
     public void setUp() throws Exception
     {
         this.testConnection = Statics.createConnection(this.dbType, createdSchema, this.getClass().getSimpleName());
     }
-
+    
     @After
     public void tearDown()
     {
-        if(!this.testConnection.enabled) { return; }
-
-        if(this.testConnection.connection != null)
+        if (!this.testConnection.enabled)
+        {
+            return;
+        }
+        
+        if (this.testConnection.connection != null)
         {
             try
             {
@@ -78,17 +84,17 @@ public abstract class AbstractDBSchemaIT
             catch (final Exception e) { }
         }
     }
-
+    
     protected IDatabaseSchemaDriver driver() throws SQLException
     {
         return this.databaseSchemaProcessor.getDatabaseSchemaDriver(this.testConnection.connection);
     }
-
+    
     protected IMocksControl newControl()
     {
         return this.support.createControl();
     }
-
+    
     protected SchemaSpec newSchemaSpec()
     {
         final SchemaSpec spec = new SchemaSpec(DOMAIN);

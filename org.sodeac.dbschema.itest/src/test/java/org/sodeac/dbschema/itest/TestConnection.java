@@ -19,18 +19,18 @@ import lombok.ToString;
 public class TestConnection implements Serializable
 {
     private static final long serialVersionUID = 1L;
-
+    
     public transient Connection connection;
     public boolean enabled = false;
     public String dbmsSchemaName = null;
     public String tableSpaceIndex = null;
     public String tableSpaceData = null;
-
+    
     public TestConnection()
     {
         super();
     }
-
+    
     public TestConnection(final boolean enabled)
     {
         super();

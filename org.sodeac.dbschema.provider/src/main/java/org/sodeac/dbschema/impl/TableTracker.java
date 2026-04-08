@@ -18,46 +18,54 @@ import org.sodeac.dbschema.api.TableSpec;
 
 public class TableTracker
 {
-	private TableSpec tableSpec = null;
-	private boolean created = false;
-	private boolean exits = false;
-	private Map<String,Object> tableProperties = null;
-	private List<ColumnTracker> columnTrackerList = new ArrayList<ColumnTracker>();
-	
-	public boolean isCreated()
-	{
-		return created;
-	}
-	public void setCreated(boolean created)
-	{
-		this.created = created;
-	}
-	public boolean isExits()
-	{
-		return exits;
-	}
-	public void setExits(boolean exits)
-	{
-		this.exits = exits;
-	}
-	public Map<String, Object> getTableProperties()
-	{
-		return tableProperties;
-	}
-	public void setTableProperties(Map<String, Object> tableProperties)
-	{
-		this.tableProperties = tableProperties;
-	}
-	public TableSpec getTableSpec()
-	{
-		return tableSpec;
-	}
-	public void setTableSpec(TableSpec tableSpec)
-	{
-		this.tableSpec = tableSpec;
-	}
-	public List<ColumnTracker> getColumnTrackerList()
-	{
-		return columnTrackerList;
-	}
+    private TableSpec tableSpec = null;
+    private boolean created = false;
+    private boolean exits = false;
+    private Map<String, Object> tableProperties = null;
+    private List<ColumnTracker> columnTrackerList = new ArrayList<ColumnTracker>();
+    
+    public boolean isCreated()
+    {
+        return created;
+    }
+    
+    public void setCreated(boolean created)
+    {
+        this.created = created;
+    }
+    
+    public boolean isExits()
+    {
+        return exits;
+    }
+    
+    public void setExits(boolean exits)
+    {
+        this.exits = exits;
+    }
+    
+    public Map<String, Object> getTableProperties()
+    {
+        return tableProperties;
+    }
+    
+    public void setTableProperties(Map<String, Object> tableProperties)
+    {
+        this.tableProperties = tableProperties;
+    }
+    
+    public TableSpec getTableSpec()
+    {
+        return tableSpec;
+    }
+    
+    public void setTableSpec(TableSpec tableSpec)
+    {
+        this.tableSpec = tableSpec;
+    }
+    
+    public List<ColumnTracker> getColumnTrackerList()
+    {
+        return columnTrackerList;
+    }
 }

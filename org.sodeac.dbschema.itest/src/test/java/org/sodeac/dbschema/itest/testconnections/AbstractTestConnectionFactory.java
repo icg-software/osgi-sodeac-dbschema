@@ -11,10 +11,10 @@ public abstract class AbstractTestConnectionFactory implements Callable<TestConn
 {
     @Serial
     private static final long serialVersionUID = 1L;
-
+    
     protected final Map<String, Boolean> createdSchema;
     protected final String schemaName;
-
+    
     protected AbstractTestConnectionFactory(final Map<String, Boolean> createdSchema, final String schemaName)
     {
         this.createdSchema = createdSchema;

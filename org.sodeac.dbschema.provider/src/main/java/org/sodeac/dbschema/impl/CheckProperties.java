@@ -17,24 +17,26 @@ import org.sodeac.dbschema.api.SchemaUnusableException;
 
 public class CheckProperties
 {
-	private boolean interrupted = false;
-	private List<SchemaUnusableException> unusableExceptionList = new ArrayList<SchemaUnusableException>();
-
-	public boolean isInterrupted()
-	{
-		return interrupted;
-	}
-	public void setInterrupted(boolean interrupted)
-	{
-		this.interrupted = interrupted;
-	}
-	
-	public List<SchemaUnusableException> getUnusableExceptionList()
-	{
-		return unusableExceptionList;
-	}
-	public void setUnusableExceptionList(List<SchemaUnusableException> unusableExceptionList)
-	{
-		this.unusableExceptionList = unusableExceptionList;
-	}
+    private boolean interrupted = false;
+    private List<SchemaUnusableException> unusableExceptionList = new ArrayList<SchemaUnusableException>();
+    
+    public boolean isInterrupted()
+    {
+        return interrupted;
+    }
+    
+    public void setInterrupted(boolean interrupted)
+    {
+        this.interrupted = interrupted;
+    }
+    
+    public List<SchemaUnusableException> getUnusableExceptionList()
+    {
+        return unusableExceptionList;
+    }
+    
+    public void setUnusableExceptionList(List<SchemaUnusableException> unusableExceptionList)
+    {
+        this.unusableExceptionList = unusableExceptionList;
+    }
 }

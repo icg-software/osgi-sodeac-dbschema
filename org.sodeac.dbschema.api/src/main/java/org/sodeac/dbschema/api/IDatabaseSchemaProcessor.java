@@ -15,31 +15,32 @@ import java.sql.SQLException;
 
 /**
  * Database Schema Processor to create or update a database schema by specification objects
- * 
+ *
  * @author Sebastian Palarus
  *
  */
-public interface IDatabaseSchemaProcessor 
+public interface IDatabaseSchemaProcessor
 {
-	/**
-	 * determine database schema driver
-	 * 
-	 * @param connection used connection
-	 * 
-	 * @return database schema driver
-	 * 
-	 * @throws SQLException
-	 */
-	public IDatabaseSchemaDriver getDatabaseSchemaDriver(Connection connection) throws SQLException;
-	
-	/**
-	 * create or update a database schema by specification objects
-	 * 
-	 * @param schemaSpec schema specification
-	 * @param connection used connection
-	 * @return false, if process is interrupted, otherwise true
-	 * 
-	 * @throws SQLException
-	 */
-	public boolean checkSchemaSpec(SchemaSpec schemaSpec, Connection connection) throws SQLException;
+    /**
+     * determine database schema driver
+     *
+     * @param connection used connection
+     *
+     * @return database schema driver
+     *
+     * @throws SQLException
+     */
+    public IDatabaseSchemaDriver getDatabaseSchemaDriver(Connection connection) throws SQLException;
+    
+    /**
+     * create or update a database schema by specification objects
+     *
+     * @param schemaSpec schema specification
+     * @param connection used connection
+     *
+     * @return false, if process is interrupted, otherwise true
+     *
+     * @throws SQLException
+     */
+    public boolean checkSchemaSpec(SchemaSpec schemaSpec, Connection connection) throws SQLException;
 }

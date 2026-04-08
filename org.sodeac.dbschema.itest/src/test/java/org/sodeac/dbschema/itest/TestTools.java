@@ -22,93 +22,93 @@ import org.osgi.framework.Bundle;
 
 public class TestTools
 {
-	public static ProvisionOption<?> reactorBundle(String artifactId, String version) 
-	{
-		String fileName = String.format("%s/../%s/target/%s-%s.jar", PathUtils.getBaseDir(), artifactId, artifactId,version);
-
-		if (new File(fileName).exists()) 
-		{
-			try
-			{
-				String url = "file:" + new File(fileName).getCanonicalPath();
-				return bundle(url);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			fileName = String.format("%s/../%s/target/%s-%s-SNAPSHOT.jar", PathUtils.getBaseDir(), artifactId, artifactId,version);
-
-			if (new File(fileName).exists()) 
-			{
-				try
-				{
-					String url = "file:" + new File(fileName).getCanonicalPath();
-					return bundle(url);
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
-	}
-	
-	public static String getBundleStateName(int state)
-	{
-		switch (state) 
-		{
-			case Bundle.UNINSTALLED:
-					
-				return "UNINSTALLED";
-				
-			case Bundle.INSTALLED:
-				
-				return "INSTALLED";
-	
-			case Bundle.RESOLVED:
-				
-				return "RESOLVED";
-			
-			case Bundle.STARTING:
-				
-				return "STARTING";
-			
-			case Bundle.STOPPING:
-				
-				return "STOPPING";
-				
-			case Bundle.ACTIVE:
-				
-				return "ACTIVE";
-			default:
-				
-				return "State " + state;
-		}
-	}
-	
-	public static String getSchemaName()
-	{
-		try
-		{
-			Date begin = new SimpleDateFormat("yyyyMMddHHmmssSSS").parse("20180101000000000");
-			Date now = new Date();
-			long diff = now.getTime() - begin.getTime();
-			diff = diff / 1000;
-			Thread.sleep(2000);
-			return String.format("%09X", diff);
-		}
-		catch (Exception e) 
-		{
-			if(e instanceof RuntimeException)
-			{
-				throw (RuntimeException)e;
-			}
-			throw new RuntimeException(e);
-		}
-	}
+    public static ProvisionOption<?> reactorBundle(String artifactId, String version)
+    {
+        String fileName = String.format("%s/../%s/target/%s-%s.jar", PathUtils.getBaseDir(), artifactId, artifactId, version);
+        
+        if (new File(fileName).exists())
+        {
+            try
+            {
+                String url = "file:" + new File(fileName).getCanonicalPath();
+                return bundle(url);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            fileName = String.format("%s/../%s/target/%s-%s-SNAPSHOT.jar", PathUtils.getBaseDir(), artifactId, artifactId, version);
+            
+            if (new File(fileName).exists())
+            {
+                try
+                {
+                    String url = "file:" + new File(fileName).getCanonicalPath();
+                    return bundle(url);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+    
+    public static String getBundleStateName(int state)
+    {
+        switch (state)
+        {
+        case Bundle.UNINSTALLED:
+            
+            return "UNINSTALLED";
+        
+        case Bundle.INSTALLED:
+            
+            return "INSTALLED";
+        
+        case Bundle.RESOLVED:
+            
+            return "RESOLVED";
+        
+        case Bundle.STARTING:
+            
+            return "STARTING";
+        
+        case Bundle.STOPPING:
+            
+            return "STOPPING";
+        
+        case Bundle.ACTIVE:
+            
+            return "ACTIVE";
+        default:
+            
+            return "State " + state;
+        }
+    }
+    
+    public static String getSchemaName()
+    {
+        try
+        {
+            Date begin = new SimpleDateFormat("yyyyMMddHHmmssSSS").parse("20180101000000000");
+            Date now = new Date();
+            long diff = now.getTime() - begin.getTime();
+            diff = diff / 1000;
+            Thread.sleep(2000);
+            return String.format("%09X", diff);
+        }
+        catch (Exception e)
+        {
+            if (e instanceof RuntimeException)
+            {
+                throw (RuntimeException) e;
+            }
+            throw new RuntimeException(e);
+        }
+    }
 }

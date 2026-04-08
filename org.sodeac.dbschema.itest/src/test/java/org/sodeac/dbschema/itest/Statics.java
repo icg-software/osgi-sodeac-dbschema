@@ -40,33 +40,33 @@ public class Statics
 {
     public static final Boolean ENABLED_H2 = true;
     public static final Boolean ENABLED_POSTGRES = true;
-
+    
     public static final Boolean ENABLED_ORACLE_12 = false;
     public static final Boolean ENABLED_DB2 = false;
     public static final Boolean ENABLED_MYSQL = false;
-
+    
     private static final Map<String, String> schemaNames = new ConcurrentHashMap<>();
-
+    
     public static Option[] config()
     {
         final MavenArtifactUrlReference karafUrl = maven()
-                .groupId("org.apache.karaf")
-                .artifactId("apache-karaf")
-                .versionAsInProject()
-                .type("zip");
-
+            .groupId("org.apache.karaf")
+            .artifactId("apache-karaf")
+            .versionAsInProject()
+            .type("zip");
+        
         final MavenUrlReference karafStandardRepo = maven()
-                .groupId("org.apache.karaf.features")
-                .artifactId("standard")
-                .versionAsInProject()
-                .classifier("features")
-                .type("xml");
-
+            .groupId("org.apache.karaf.features")
+            .artifactId("standard")
+            .versionAsInProject()
+            .classifier("features")
+            .type("xml");
+        
         val easymock = mavenBundle("org.easymock", "easymock").versionAsInProject();
         val postgresql = mavenBundle("org.postgresql", "postgresql").versionAsInProject();
         val h2 = mavenBundle("com.h2database", "h2").versionAsInProject();
         val sodeacVersion = System.getProperty("sodeac.version", "2.0.0-SNAPSHOT");
-
+        
         // System.out.println("########################################################################################");
         // System.out.println(karafUrl);
         // System.out.println(karafStandardRepo);
@@ -75,52 +75,52 @@ public class Statics
         // System.out.println(h2);
         // System.out.println(sodeacVersion);
         return new Option[]
-                {
-                        karafDistributionConfiguration()
-                                .frameworkUrl(karafUrl)
-                                .unpackDirectory(new File("target", "exam"))
-                                .useDeployFolder(false),
-                        keepRuntimeFolder(),
-                        cleanCaches(true),
-                        logLevel(LogLevel.INFO),
-                        features(karafStandardRepo, "scr"),
-                        features(karafStandardRepo, "jdbc"),
-                        features(karafStandardRepo, "transaction"),
-                        features(karafStandardRepo, "jasypt-encryption"),
-                        features(karafStandardRepo, "jndi"),
-                        features(karafStandardRepo, "pax-jdbc"),
-                        features(karafStandardRepo, "pax-jdbc-spec"),
-                        easymock.start(),
-                        postgresql.start(),
-                        h2.start(),
-                        // mavenBundle("mysql", "mysql-connector-java", "6.0.6").start(),
-                        Statics.ENABLED_DB2 ?
-                                mavenBundle("org.sodeac", "org.sodeac.thirdparty.jdbcdriver.db2", "1.0.0").start() :
-                                h2,
-                        Statics.ENABLED_ORACLE_12 ?
-                                mavenBundle("org.sodeac", "org.sodeac.thirdparty.jdbcdriver.oracle", "1.0.0").start() :
-                                h2
-                        ,
-
-                        TestTools.reactorBundle("org.sodeac.dbschema.api", sodeacVersion).start(),
-                        TestTools.reactorBundle("org.sodeac.dbschema.driver.base", sodeacVersion).start(),
-                        TestTools.reactorBundle("org.sodeac.dbschema.driver.h2", sodeacVersion).start(),
-                        TestTools.reactorBundle("org.sodeac.dbschema.driver.postgresql", sodeacVersion).start(),
-                        // TestTools.reactorBundle("org.sodeac.dbschema.driver.mysql",sodeacVersion).start(),
-                        Statics.ENABLED_ORACLE_12 ?
-                                TestTools.reactorBundle("org.sodeac.dbschema.driver.oracle", sodeacVersion).start() :
-                                TestTools.reactorBundle("org.sodeac.dbschema.driver.h2", sodeacVersion).start(),
-                        // Statics.ENABLED_DB2 ?
-                        //		TestTools.reactorBundle("org.sodeac.dbschema.driver.db2",sodeacVersion).start() :
-                        //		TestTools.reactorBundle("org.sodeac.dbschema.driver.h2",sodeacVersion).start(),
-                        TestTools.reactorBundle("org.sodeac.dbschema.provider", sodeacVersion).start()
-                };
+            {
+                karafDistributionConfiguration()
+                    .frameworkUrl(karafUrl)
+                    .unpackDirectory(new File("target", "exam"))
+                    .useDeployFolder(false),
+                keepRuntimeFolder(),
+                cleanCaches(true),
+                logLevel(LogLevel.INFO),
+                features(karafStandardRepo, "scr"),
+                features(karafStandardRepo, "jdbc"),
+                features(karafStandardRepo, "transaction"),
+                features(karafStandardRepo, "jasypt-encryption"),
+                features(karafStandardRepo, "jndi"),
+                features(karafStandardRepo, "pax-jdbc"),
+                features(karafStandardRepo, "pax-jdbc-spec"),
+                easymock.start(),
+                postgresql.start(),
+                h2.start(),
+                // mavenBundle("mysql", "mysql-connector-java", "6.0.6").start(),
+                Statics.ENABLED_DB2 ?
+                    mavenBundle("org.sodeac", "org.sodeac.thirdparty.jdbcdriver.db2", "1.0.0").start() :
+                    h2,
+                Statics.ENABLED_ORACLE_12 ?
+                    mavenBundle("org.sodeac", "org.sodeac.thirdparty.jdbcdriver.oracle", "1.0.0").start() :
+                    h2
+                ,
+                
+                TestTools.reactorBundle("org.sodeac.dbschema.api", sodeacVersion).start(),
+                TestTools.reactorBundle("org.sodeac.dbschema.driver.base", sodeacVersion).start(),
+                TestTools.reactorBundle("org.sodeac.dbschema.driver.h2", sodeacVersion).start(),
+                TestTools.reactorBundle("org.sodeac.dbschema.driver.postgresql", sodeacVersion).start(),
+                // TestTools.reactorBundle("org.sodeac.dbschema.driver.mysql",sodeacVersion).start(),
+                Statics.ENABLED_ORACLE_12 ?
+                    TestTools.reactorBundle("org.sodeac.dbschema.driver.oracle", sodeacVersion).start() :
+                    TestTools.reactorBundle("org.sodeac.dbschema.driver.h2", sodeacVersion).start(),
+                // Statics.ENABLED_DB2 ?
+                //		TestTools.reactorBundle("org.sodeac.dbschema.driver.db2",sodeacVersion).start() :
+                //		TestTools.reactorBundle("org.sodeac.dbschema.driver.h2",sodeacVersion).start(),
+                TestTools.reactorBundle("org.sodeac.dbschema.provider", sodeacVersion).start()
+            };
     }
-
+    
     public static TestConnection createConnection(final EDbType dbType, final Map<String, Boolean> createdSchema, final String testClassName) throws SQLException, ClassNotFoundException
     {
         final String schemaName = schemaNames.computeIfAbsent(
-                "%s-%s".formatted(testClassName, dbType), key -> "%s_S%s".formatted(testClassName, TestTools.getSchemaName())
+            "%s-%s".formatted(testClassName, dbType), key -> "%s_S%s".formatted(testClassName, TestTools.getSchemaName())
         );
         return switch (dbType)
         {

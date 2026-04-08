@@ -15,20 +15,21 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses
-        ({
-                DBSchemaIT.class,
-                DBSchemaTableIT.class,
-                DBSchemaColumnIT.class,
-                DBSchemaColumnTypeTextIT.class,
-                DBSchemaColumnTypeIntegerIT.class,
-                DBSchemaColumnTypeDecimalIT.class,
-                DBSchemaColumnTypeTimeIT.class,
-                DBSchemaColumnTypeBinaryIT.class,
-                DBSchemaKeysIT.class,
-                DBSchemaColumnPropertiesIT.class,
-                DBSchemaDisableChecksIT.class,
-                DBSchemaTableTemplateIT.class
-        })
+    ({
+        DBSchemaIT.class,
+        DBSchemaTableIT.class,
+        DBSchemaColumnIT.class,
+        DBSchemaColumnTypeTextIT.class,
+        DBSchemaColumnTypeIntegerIT.class,
+        DBSchemaColumnTypeDecimalIT.class,
+        DBSchemaColumnTypeTimeIT.class,
+        DBSchemaColumnTypeBinaryIT.class,
+        DBSchemaKeysIT.class,
+        DBSchemaColumnPropertiesIT.class,
+        DBSchemaDisableChecksIT.class,
+        DBSchemaTableTemplateIT.class
+    }
+    )
 public class SuiteTests
 {
 

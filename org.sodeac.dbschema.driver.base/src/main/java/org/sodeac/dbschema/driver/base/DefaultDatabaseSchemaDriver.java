@@ -38,70 +38,71 @@ import org.sodeac.dbschema.api.TableSpec;
 public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
 {
     protected List<IColumnType> columnDriverList = null;
-
+    
     @Override
     public int handle(final Connection connection) throws SQLException
     {
         return HANDLE_FALLBACK;
     }
-
+    
     @Override
     public String getType(final Connection connection) throws SQLException
     {
-        if(connection == null)
+        if (connection == null)
         {
             return null;
         }
         return connection.getMetaData().getDatabaseProductName();
     }
-
-    @Override public void setColumnDriverList(final List<IColumnType> columnDriverList)
+    
+    @Override
+    public void setColumnDriverList(final List<IColumnType> columnDriverList)
     {
         this.columnDriverList = columnDriverList;
     }
-
+    
     @Override
     public boolean tableExists
-            (
-                    final Connection connection,
-                    final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec,
-                    final Map<String, Object> properties
-            )
-            throws SQLException
+        (
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final Map<String, Object> properties
+        )
+        throws SQLException
     {
         final String catalog = connection.getCatalog();
-
+        
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = schemaSpec.getDbmsSchemaName();
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = tableSpec.getDbmsSchemaName();
         }
         boolean quoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             quoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         String cat = null;
         String schem = null;
         String tbl;
-
+        
         ResultSet resultSet = null;
         try
         {
             final DatabaseMetaData databaseMetaData = connection.getMetaData();
             resultSet = databaseMetaData.getTables
-                                                (
-                                                        catalogSearchPattern(schemaSpec, connection, catalog),
-                                                        schemaSearchPattern(schemaSpec, connection, schema),
-                                                        objectSearchPattern(schemaSpec, connection, tableSpec.getName(), quoted, "TABLE"),
-                                                        new String[] { "TABLE" }
-                                                );
+                                            (
+                                                catalogSearchPattern(schemaSpec, connection, catalog),
+                                                schemaSearchPattern(schemaSpec, connection, schema),
+                                                objectSearchPattern(schemaSpec, connection, tableSpec.getName(), quoted, "TABLE"),
+                                                new String[] { "TABLE" }
+                                            );
             while (resultSet.next())
             {
                 /*
@@ -119,30 +120,39 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 cat = resultSet.getString("TABLE_CAT");
                 schem = resultSet.getString("TABLE_SCHEM");
                 tbl = resultSet.getString("TABLE_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-                if(quoted && tbl.equals(tableSpec.getName()))
+                if (quoted && tbl.equals(tableSpec.getName()))
                 {
                     return true;
                 }
-
-                if((!quoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
+                
+                if ((!quoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
                 {
                     return true;
                 }
@@ -150,7 +160,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -159,11 +169,11 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 catch (final Exception e) { }
             }
         }
-
+        
         try
         {
             // Try again with wildcard tablename
-
+            
             final DatabaseMetaData databaseMetaData = connection.getMetaData();
             resultSet = databaseMetaData.getTables(null, null, "%", new String[] { "TABLE" });
             while (resultSet.next())
@@ -183,30 +193,39 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 cat = resultSet.getString("TABLE_CAT");
                 schem = resultSet.getString("TABLE_SCHEM");
                 tbl = resultSet.getString("TABLE_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-                if(quoted && tbl.equals(tableSpec.getName()))
+                if (quoted && tbl.equals(tableSpec.getName()))
                 {
                     return true;
                 }
-
-                if((!quoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
+                
+                if ((!quoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
                 {
                     return true;
                 }
@@ -214,7 +233,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -223,69 +242,69 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 catch (final Exception e) { }
             }
         }
-
+        
         return false;
     }
-
+    
     @Override
     public void createTable
-            (
-                    final Connection connection,
-                    final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec,
-                    final Map<String, Object> properties
-            ) throws SQLException
+        (
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final Map<String, Object> properties
+        ) throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         boolean quoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             quoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         String defaultColumn = "";
-
-        if(tableRequiresColumn())
+        
+        if (tableRequiresColumn())
         {
             defaultColumn = " " + objectNameGuidelineFormat(schemaSpec, connection, IDatabaseSchemaDriver.REQUIRED_DEFAULT_COLUMN, "COLUMN") + " char(1) NULL ";
         }
-
+        
         String tableSpace = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getTableSpaceData(), "TABLESPACE");
-
-        if((tableSpec.getTableSpace() != null) && (!tableSpec.getTableSpace().isEmpty()))
+        
+        if ((tableSpec.getTableSpace() != null) && (!tableSpec.getTableSpace().isEmpty()))
         {
             tableSpace = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getTableSpace(), "TABLESPACE");
         }
-
+        
         String tableSpaceDefinition = "";
-
-        if((tableSpace != null) && (!tableSpace.isEmpty()))
+        
+        if ((tableSpace != null) && (!tableSpace.isEmpty()))
         {
             tableSpaceDefinition = tableSpaceAppendix(connection, schemaSpec, tableSpec, properties, tableSpace, "TABLE");
         }
-
+        
         PreparedStatement createTableStatement = null;
         try
         {
             final String sql =
-                    quoted ?
-                            "CREATE TABLE " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + "(" + defaultColumn + ")" + tableSpaceDefinition :
-                            "CREATE TABLE " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + "(" + defaultColumn + ")" + tableSpaceDefinition;
+                quoted ?
+                    "CREATE TABLE " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + "(" + defaultColumn + ")" + tableSpaceDefinition :
+                    "CREATE TABLE " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + "(" + defaultColumn + ")" + tableSpaceDefinition;
             createTableStatement = connection.prepareStatement(sql);
             createTableStatement.executeUpdate();
         }
         finally
         {
-            if(createTableStatement != null)
+            if (createTableStatement != null)
             {
                 try
                 {
@@ -295,85 +314,85 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     protected String tableSpaceAppendix
-            (
-                    final Connection connection,
-                    final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec,
-                    final Map<String, Object> properties,
-                    final String tableSpace,
-                    final String type
-            )
+        (
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final Map<String, Object> properties,
+            final String tableSpace,
+            final String type
+        )
     {
         return "";
     }
-
+    
     @Override
     public boolean primaryKeyExists
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final Map<String, Object> tableProperties
-            ) throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final Map<String, Object> tableProperties
+        ) throws SQLException
     {
         final String catalog = connection.getCatalog();
         String schema = connection.getSchema();
-
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = schemaSpec.getDbmsSchemaName();
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = tableSpec.getDbmsSchemaName();
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         ColumnSpec columnSpec = null;
         for (final ColumnSpec column : tableSpec.getColumnList())
         {
-            if(column.getPrimaryKey() == null)
+            if (column.getPrimaryKey() == null)
             {
                 continue;
             }
-            if(columnSpec != null)
+            if (columnSpec != null)
             {
                 throw new RuntimeException("Multible PKs not supported !!!");
             }
             columnSpec = column;
         }
-
-        if(columnSpec == null)
+        
+        if (columnSpec == null)
         {
             return true;
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         String cat = null;
         String schem = null;
         String tbl = null;
         String col = null;
-
+        
         ResultSet resultSet = null;
         try
         {
             final DatabaseMetaData databaseMetaData = connection.getMetaData();
             resultSet = databaseMetaData.getPrimaryKeys
-                                                (
-                                                        catalogSearchPattern(schemaSpec, connection, catalog),
-                                                        schemaSearchPattern(schemaSpec, connection, schema),
-                                                        objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE")
-                                                );
+                                            (
+                                                catalogSearchPattern(schemaSpec, connection, catalog),
+                                                schemaSearchPattern(schemaSpec, connection, schema),
+                                                objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE")
+                                            );
             while (resultSet.next())
             {
                 /*
@@ -384,56 +403,68 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                  * KEY_SEQ
                  * PK_NAME							CONSTRAINT-NAME
                  */
-
+                
                 cat = resultSet.getString("TABLE_CAT");
                 schem = resultSet.getString("TABLE_SCHEM");
                 tbl = resultSet.getString("TABLE_NAME");
                 col = resultSet.getString("COLUMN_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-                if(col == null) { col = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                if (col == null)
+                {
+                    col = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-                if(tableQuoted && (!tbl.equals(tableSpec.getName())))
+                if (tableQuoted && (!tbl.equals(tableSpec.getName())))
                 {
                     continue;
                 }
-                if((!tableQuoted) && (!tbl.equalsIgnoreCase(tableSpec.getName())))
+                if ((!tableQuoted) && (!tbl.equalsIgnoreCase(tableSpec.getName())))
                 {
                     continue;
                 }
-
-                if(columnQuoted && (!col.equals(columnSpec.getName())))
+                
+                if (columnQuoted && (!col.equals(columnSpec.getName())))
                 {
                     continue;
                 }
-                if((!columnQuoted) && (!col.equalsIgnoreCase(columnSpec.getName())))
+                if ((!columnQuoted) && (!col.equalsIgnoreCase(columnSpec.getName())))
                 {
                     continue;
                 }
-
+                
                 // Key name ignored
-
+                
                 return true;
             }
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -444,80 +475,80 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         return false;
     }
-
+    
     @Override
     public void setPrimaryKey
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final Map<String, Object> tableProperties
-            ) throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final Map<String, Object> tableProperties
+        ) throws SQLException
     {
         setPrimaryKeyWithoutIndex(connection, schemaSpec, tableSpec, tableProperties);
     }
-
+    
     protected void setPrimaryKeyWithIndex
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final Map<String, Object> tableProperties
-            ) throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final Map<String, Object> tableProperties
+        ) throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         ColumnSpec columnSpec = null;
         for (final ColumnSpec column : tableSpec.getColumnList())
         {
-            if(column.getPrimaryKey() == null)
+            if (column.getPrimaryKey() == null)
             {
                 continue;
             }
-            if(columnSpec != null)
+            if (columnSpec != null)
             {
                 throw new RuntimeException("Multible PKs not supported !!! ... Not Yet");
             }
             columnSpec = column;
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         final PrimaryKeySpec primaryKey = columnSpec.getPrimaryKey();
-
-        if(primaryKey == null)
+        
+        if (primaryKey == null)
         {
             return;
         }
-
+        
         boolean nameQuoted = false;
-
-        if(columnSpec.getQuotedName() != null)
+        
+        if (columnSpec.getQuotedName() != null)
         {
             nameQuoted = primaryKey.getQuotedName().booleanValue();
         }
-
+        
         String indexName = primaryKey.getIndexName();
-        if((indexName == null) || indexName.isEmpty())
+        if ((indexName == null) || indexName.isEmpty())
         {
             indexName = "PKX_" + tableSpec.getName().toUpperCase();
         }
-
-        if(nameQuoted)
+        
+        if (nameQuoted)
         {
             indexName = quotedChar() + indexName + quotedChar();
         }
@@ -525,14 +556,14 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         {
             indexName = objectNameGuidelineFormat(schemaSpec, connection, indexName, "INDEX");
         }
-
+        
         String constraintName = primaryKey.getConstraintName();
-        if((constraintName == null) || constraintName.isEmpty())
+        if ((constraintName == null) || constraintName.isEmpty())
         {
             constraintName = "PK_" + tableSpec.getName().toUpperCase();
         }
-
-        if(nameQuoted)
+        
+        if (nameQuoted)
         {
             constraintName = quotedChar() + constraintName + quotedChar();
         }
@@ -540,28 +571,28 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         {
             constraintName = objectNameGuidelineFormat(schemaSpec, connection, constraintName, "CONSTRAINT");
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String columnPart = columnQuoted ?
-                " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
-
+            " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
+        
         String tableSpace = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getTableSpaceIndex(), "TABLESPACE");
-
-        if((columnSpec.getPrimaryKey().getTableSpace() != null) && (!columnSpec.getPrimaryKey().getTableSpace().isEmpty()))
+        
+        if ((columnSpec.getPrimaryKey().getTableSpace() != null) && (!columnSpec.getPrimaryKey().getTableSpace().isEmpty()))
         {
             tableSpace = objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getPrimaryKey().getTableSpace(), "TABLESPACE");
         }
         String tableSpaceDefinition = "";
-
-        if((tableSpace != null) && (!tableSpace.isEmpty()))
+        
+        if ((tableSpace != null) && (!tableSpace.isEmpty()))
         {
             tableSpaceDefinition = tableSpaceAppendix(connection, schemaSpec, tableSpec, tableProperties, tableSpace, "PRIMARYKEY");
         }
-
+        
         PreparedStatement createPKStatement = null;
         try
         {
@@ -571,7 +602,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(createPKStatement != null)
+            if (createPKStatement != null)
             {
                 try
                 {
@@ -581,70 +612,70 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     protected void setPrimaryKeyWithoutIndex
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final Map<String, Object> tableProperties
-            ) throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final Map<String, Object> tableProperties
+        ) throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         ColumnSpec columnSpec = null;
         for (final ColumnSpec column : tableSpec.getColumnList())
         {
-            if(column.getPrimaryKey() == null)
+            if (column.getPrimaryKey() == null)
             {
                 continue;
             }
-            if(columnSpec != null)
+            if (columnSpec != null)
             {
                 throw new RuntimeException("Multible PKs not supported !!! ... Not Yet");
             }
             columnSpec = column;
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         final PrimaryKeySpec primaryKey = columnSpec.getPrimaryKey();
-
-        if(primaryKey == null)
+        
+        if (primaryKey == null)
         {
             return;
         }
-
+        
         boolean nameQuoted = false;
-
-        if(columnSpec.getQuotedName() != null)
+        
+        if (columnSpec.getQuotedName() != null)
         {
             nameQuoted = primaryKey.getQuotedName().booleanValue();
         }
-
+        
         String constraintName = primaryKey.getConstraintName();
-        if((constraintName == null) || constraintName.isEmpty())
+        if ((constraintName == null) || constraintName.isEmpty())
         {
             constraintName = "PK_" + tableSpec.getName().toUpperCase();
         }
-
-        if(nameQuoted)
+        
+        if (nameQuoted)
         {
             constraintName = quotedChar() + constraintName + quotedChar();
         }
@@ -652,28 +683,28 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         {
             constraintName = objectNameGuidelineFormat(schemaSpec, connection, constraintName, "CONSTRAINT");
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String columnPart = columnQuoted ?
-                " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
-
+            " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
+        
         String tableSpace = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getTableSpaceIndex(), "TABLESPACE");
-
-        if((columnSpec.getPrimaryKey().getTableSpace() != null) && (!columnSpec.getPrimaryKey().getTableSpace().isEmpty()))
+        
+        if ((columnSpec.getPrimaryKey().getTableSpace() != null) && (!columnSpec.getPrimaryKey().getTableSpace().isEmpty()))
         {
             tableSpace = objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getPrimaryKey().getTableSpace(), "TABLESPACE");
         }
         String tableSpaceDefinition = "";
-
-        if((tableSpace != null) && (!tableSpace.isEmpty()))
+        
+        if ((tableSpace != null) && (!tableSpace.isEmpty()))
         {
             tableSpaceDefinition = tableSpaceAppendix(connection, schemaSpec, tableSpec, tableProperties, tableSpace, "PRIMARYKEY");
         }
-
+        
         PreparedStatement createPKStatement = null;
         try
         {
@@ -683,7 +714,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(createPKStatement != null)
+            if (createPKStatement != null)
             {
                 try
                 {
@@ -693,57 +724,57 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     @Override
     public boolean columnExists
-            (
-                    final Connection connection,
-                    final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec,
-                    final ColumnSpec columnSpec,
-                    final Map<String, Object> properties
-            ) throws SQLException
+        (
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final ColumnSpec columnSpec,
+            final Map<String, Object> properties
+        ) throws SQLException
     {
         final String catalog = connection.getCatalog();
         String schema = connection.getSchema();
-
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = schemaSpec.getDbmsSchemaName();
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = tableSpec.getDbmsSchemaName();
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         String cat = null;
         String schem = null;
         String tbl = null;
         String col = null;
-
+        
         ResultSet resultSet = null;
         try
         {
             final DatabaseMetaData databaseMetaData = connection.getMetaData();
             resultSet = databaseMetaData.getColumns
-                                                (
-                                                        catalogSearchPattern(schemaSpec, connection, catalog),
-                                                        schemaSearchPattern(schemaSpec, connection, schema),
-                                                        objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE"),
-                                                        objectSearchPattern(schemaSpec, connection, columnSpec.getName(), columnQuoted, "COLUMN")
-                                                );
+                                            (
+                                                catalogSearchPattern(schemaSpec, connection, catalog),
+                                                schemaSearchPattern(schemaSpec, connection, schema),
+                                                objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE"),
+                                                objectSearchPattern(schemaSpec, connection, columnSpec.getName(), columnQuoted, "COLUMN")
+                                            );
             while (resultSet.next())
             {
                 /*
@@ -756,53 +787,65 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                  * COLUMN_SIZE						size (int)
                  * DECIMAL_DIGITS					digits for float .... (int)
                  * NULLABLE 						nullable
-
+                 
                  */
                 cat = resultSet.getString("TABLE_CAT");
                 schem = resultSet.getString("TABLE_SCHEM");
                 tbl = resultSet.getString("TABLE_NAME");
                 col = resultSet.getString("COLUMN_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-                if(col == null) { col = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                if (col == null)
+                {
+                    col = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-                if(tableQuoted && (!tbl.equals(tableSpec.getName())))
+                if (tableQuoted && (!tbl.equals(tableSpec.getName())))
                 {
                     continue;
                 }
-                if((!tableQuoted) && (!tbl.equalsIgnoreCase(tableSpec.getName())))
+                if ((!tableQuoted) && (!tbl.equalsIgnoreCase(tableSpec.getName())))
                 {
                     continue;
                 }
-
-                if(columnQuoted && (!col.equals(columnSpec.getName())))
+                
+                if (columnQuoted && (!col.equals(columnSpec.getName())))
                 {
                     continue;
                 }
-                if((!columnQuoted) && (!col.equalsIgnoreCase(columnSpec.getName())))
+                if ((!columnQuoted) && (!col.equalsIgnoreCase(columnSpec.getName())))
                 {
                     continue;
                 }
-
+                
                 properties.put("COLUMN_TABLE_CAT", cat);
                 properties.put("COLUMN_TABLE_SCHEM", schem);
                 properties.put("COLUMN_TABLE_NAME", tbl);
-
+                
                 properties.put("COLUMN_COLUMN_NAME", col);
                 properties.put("COLUMN_DATA_TYPE", resultSet.getInt("DATA_TYPE"));
                 properties.put("COLUMN_TYPE_NAME", resultSet.getString("TYPE_NAME"));
@@ -810,13 +853,13 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 properties.put("COLUMN_DECIMAL_DIGITS", resultSet.getInt("DECIMAL_DIGITS"));
                 properties.put("COLUMN_NULLABLE", resultSet.getInt("NULLABLE"));
                 properties.put("COLUMN_COLUMN_DEF", resultSet.getString("COLUMN_DEF"));
-
+                
                 return true;
             }
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -825,7 +868,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 catch (final Exception e) { }
             }
         }
-
+        
         resultSet = null;
         try
         {
@@ -843,53 +886,65 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                  * COLUMN_SIZE						size (int)
                  * DECIMAL_DIGITS					digits for float .... (int)
                  * NULLABLE 						nullable
-
+                 
                  */
                 cat = resultSet.getString("TABLE_CAT");
                 schem = resultSet.getString("TABLE_SCHEM");
                 tbl = resultSet.getString("TABLE_NAME");
                 col = resultSet.getString("COLUMN_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-                if(col == null) { col = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                if (col == null)
+                {
+                    col = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-                if(tableQuoted && (!tbl.equals(tableSpec.getName())))
+                if (tableQuoted && (!tbl.equals(tableSpec.getName())))
                 {
                     continue;
                 }
-                if((!tableQuoted) && (!tbl.equalsIgnoreCase(tableSpec.getName())))
+                if ((!tableQuoted) && (!tbl.equalsIgnoreCase(tableSpec.getName())))
                 {
                     continue;
                 }
-
-                if(columnQuoted && (!col.equals(columnSpec.getName())))
+                
+                if (columnQuoted && (!col.equals(columnSpec.getName())))
                 {
                     continue;
                 }
-                if((!columnQuoted) && (!col.equalsIgnoreCase(columnSpec.getName())))
+                if ((!columnQuoted) && (!col.equalsIgnoreCase(columnSpec.getName())))
                 {
                     continue;
                 }
-
+                
                 properties.put("COLUMN_TABLE_CAT", cat);
                 properties.put("COLUMN_TABLE_SCHEM", schem);
                 properties.put("COLUMN_TABLE_NAME", tbl);
-
+                
                 properties.put("COLUMN_COLUMN_NAME", col);
                 properties.put("COLUMN_DATA_TYPE", resultSet.getInt("DATA_TYPE"));
                 properties.put("COLUMN_TYPE_NAME", resultSet.getString("TYPE_NAME"));
@@ -897,13 +952,13 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 properties.put("COLUMN_DECIMAL_DIGITS", resultSet.getInt("DECIMAL_DIGITS"));
                 properties.put("COLUMN_NULLABLE", resultSet.getInt("NULLABLE"));
                 properties.put("COLUMN_COLUMN_DEF", resultSet.getString("COLUMN_DEF"));
-
+                
                 return true;
             }
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -914,128 +969,128 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         return false;
     }
-
+    
     @Override
     public String determineColumnType
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final ColumnSpec columnSpec, final Map<String, Object> columnProperties
-            ) throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final ColumnSpec columnSpec, final Map<String, Object> columnProperties
+        ) throws SQLException
     {
-        if(columnProperties == null)
+        if (columnProperties == null)
         {
             return null;
         }
         final Object columnTypeName = columnProperties.get("COLUMN_TYPE_NAME");
-
-        if(columnTypeName == null)
+        
+        if (columnTypeName == null)
         {
             return null;
         }
         for (final IColumnType.ColumnType type : IColumnType.ColumnType.values())
         {
-            if(type.toString().equalsIgnoreCase(columnTypeName.toString()))
+            if (type.toString().equalsIgnoreCase(columnTypeName.toString()))
             {
                 return type.toString();
             }
         }
-        if("bool".equalsIgnoreCase(columnTypeName.toString()))
+        if ("bool".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.BOOLEAN.toString();
         }
-        if("text".equalsIgnoreCase(columnTypeName.toString()))
+        if ("text".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.CLOB.toString();
         }
-        if("int2".equalsIgnoreCase(columnTypeName.toString()))
+        if ("int2".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.SMALLINT.toString();
         }
-        if("int4".equalsIgnoreCase(columnTypeName.toString()))
+        if ("int4".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.INTEGER.toString();
         }
-        if("int8".equalsIgnoreCase(columnTypeName.toString()))
+        if ("int8".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.BIGINT.toString();
         }
-        if("float4".equalsIgnoreCase(columnTypeName.toString()))
+        if ("float4".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.REAL.toString();
         }
-        if("float8".equalsIgnoreCase(columnTypeName.toString()))
+        if ("float8".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.DOUBLE.toString();
         }
-        if("varbinary".equalsIgnoreCase(columnTypeName.toString()))
+        if ("varbinary".equalsIgnoreCase(columnTypeName.toString()))
         {
             return IColumnType.ColumnType.BINARY.toString();
         }
         return null;
     }
-
+    
     @Override
     public void createColumn
-            (
-                    final Connection connection,
-                    final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec,
-                    final ColumnSpec columnSpec,
-                    final Map<String, Object> properties
-            ) throws SQLException
+        (
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final ColumnSpec columnSpec,
+            final Map<String, Object> properties
+        ) throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String columnPart = columnQuoted ?
-                " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
-
+            " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
+        
         PreparedStatement createColumnStatement = null;
         try
         {
             final StringBuilder sqlBuilder = new StringBuilder("ALTER TABLE  " + tablePart + " ADD " + columnPart + " ");
-
+            
             final IColumnType columnType = findBestColumnType(connection, schemaSpec, tableSpec, columnSpec);
-
-            if(columnType == null)
+            
+            if (columnType == null)
             {
                 throw new SQLException("No ColumnType Provider found for \"" + columnSpec.getColumntype() + "\"");
             }
-
+            
             sqlBuilder.append(" " + columnType.getTypeExpression(connection, schemaSpec, tableSpec, columnSpec, "TODO", this));
             sqlBuilder.append(" " + columnType.getDefaultValueExpression(connection, schemaSpec, tableSpec, columnSpec, "TODO", this));
-
+            
             createColumnStatement = connection.prepareStatement(sqlBuilder.toString());
             createColumnStatement.executeUpdate();
-
+            
         }
         finally
         {
-            if(createColumnStatement != null)
+            if (createColumnStatement != null)
             {
                 try
                 {
@@ -1044,46 +1099,47 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 catch (final Exception e) { }
             }
         }
-
+        
     }
-
-    @Override public void dropColumn(final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec, final String columnName, final boolean quoted) throws SQLException
+    
+    @Override
+    public void dropColumn(final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec, final String columnName, final boolean quoted) throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String columnPart = quoted ?
-                " " + quotedChar() + columnName + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnName, "COLUMN") + " ";
-
+            " " + quotedChar() + columnName + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnName, "COLUMN") + " ";
+        
         PreparedStatement createColumnStatement = null;
         try
         {
-
+            
             createColumnStatement = connection.prepareStatement("ALTER TABLE  " + tablePart + " DROP COLUMN " + columnPart + " ");
             createColumnStatement.executeUpdate();
-
+            
         }
         finally
         {
-            if(createColumnStatement != null)
+            if (createColumnStatement != null)
             {
                 try
                 {
@@ -1093,23 +1149,23 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     @Override
     public boolean isValidColumnProperties
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final ColumnSpec columnSpec, final Map<String, Object> columnProperties
-            ) throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final ColumnSpec columnSpec, final Map<String, Object> columnProperties
+        ) throws SQLException
     {
-
+        
         boolean valid = true;
-
+        
         // Nullable
-
-        if(columnProperties.get("COLUMN_NULLABLE") != null) // exists
+        
+        if (columnProperties.get("COLUMN_NULLABLE") != null) // exists
         {
             final boolean nullable = ((Integer) columnProperties.get("COLUMN_NULLABLE")).intValue() > 0;
-            if(nullable != columnSpec.getNullable())
+            if (nullable != columnSpec.getNullable())
             {
                 valid = false;
                 columnProperties.put("INVALID_NULLABLE", true);
@@ -1117,41 +1173,41 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         else // not exists (nullable is default)
         {
-            if(!columnSpec.getNullable())
+            if (!columnSpec.getNullable())
             {
                 valid = false;
                 columnProperties.put("INVALID_NULLABLE", true);
             }
         }
-
+        
         // TYPE
-
-        if(columnProperties.get("COLUMN_TYPE_NAME") != null) // exists
+        
+        if (columnProperties.get("COLUMN_TYPE_NAME") != null) // exists
         {
             final String type = determineColumnType(connection, schemaSpec, tableSpec, columnSpec, columnProperties);
-            if(type != null)
+            if (type != null)
             {
-                if(!type.equalsIgnoreCase(columnSpec.getColumntype()))
+                if (!type.equalsIgnoreCase(columnSpec.getColumntype()))
                 {
                     valid = false;
                     columnProperties.put("INVALID_TYPE", true);
                 }
             }
         }
-
-        if(columnProperties.containsKey("COLUMN_COLUMN_DEF")) // exists
+        
+        if (columnProperties.containsKey("COLUMN_COLUMN_DEF")) // exists
         {
             String defaultValue = columnSpec.getDefaultValue();
-            if((defaultValue == null) || defaultValue.isEmpty())
+            if ((defaultValue == null) || defaultValue.isEmpty())
             {
-                if((columnProperties.get("COLUMN_COLUMN_DEF") != null) && (!((String) columnProperties.get("COLUMN_COLUMN_DEF")).isEmpty()))
+                if ((columnProperties.get("COLUMN_COLUMN_DEF") != null) && (!((String) columnProperties.get("COLUMN_COLUMN_DEF")).isEmpty()))
                 {
                     if
                     (!
-                            (
-                                    ((String) columnProperties.get("COLUMN_COLUMN_DEF")).equalsIgnoreCase("null") ||
-                                    ((String) columnProperties.get("COLUMN_COLUMN_DEF")).equalsIgnoreCase("null ")
-                            )
+                        (
+                            ((String) columnProperties.get("COLUMN_COLUMN_DEF")).equalsIgnoreCase("null") ||
+                            ((String) columnProperties.get("COLUMN_COLUMN_DEF")).equalsIgnoreCase("null ")
+                        )
                     )
                     {
                         valid = false;
@@ -1161,83 +1217,83 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
             else
             {
-                if(columnSpec.getDefaultValueByFunction())
+                if (columnSpec.getDefaultValueByFunction())
                 {
                     defaultValue = getFunctionExpression(defaultValue);
                 }
-
-                if(!defaultValue.equalsIgnoreCase((String) columnProperties.get("COLUMN_COLUMN_DEF")))
+                
+                if (!defaultValue.equalsIgnoreCase((String) columnProperties.get("COLUMN_COLUMN_DEF")))
                 {
                     valid = false;
                     columnProperties.put("INVALID_DEFAULT", true);
                 }
             }
         }
-
-        if(columnProperties.get("COLUMN_COLUMN_SIZE") != null) // exists
+        
+        if (columnProperties.get("COLUMN_COLUMN_SIZE") != null) // exists
         {
             if
             (
-                    (
-                            IColumnType.ColumnType.CHAR.toString().equals(columnSpec.getColumntype())
-                            ||
-                            IColumnType.ColumnType.VARCHAR.toString().equals(columnSpec.getColumntype())
-                    )
-                    &&
-                    columnSpec.getSize() > 0
+                (
+                    IColumnType.ColumnType.CHAR.toString().equals(columnSpec.getColumntype())
+                    ||
+                    IColumnType.ColumnType.VARCHAR.toString().equals(columnSpec.getColumntype())
+                )
+                &&
+                columnSpec.getSize() > 0
             )
             {
-                if(((int) columnProperties.get("COLUMN_COLUMN_SIZE")) != columnSpec.getSize())
+                if (((int) columnProperties.get("COLUMN_COLUMN_SIZE")) != columnSpec.getSize())
                 {
                     valid = false;
                     columnProperties.put("INVALID_SIZE", true);
                 }
             }
         }
-
+        
         return valid;
     }
-
+    
     @Override
     public void setValidColumnProperties
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final ColumnSpec columnSpec, final Map<String, Object> columnProperties
-            ) throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final ColumnSpec columnSpec, final Map<String, Object> columnProperties
+        ) throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String columnPart = columnQuoted ?
-                " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
-
+            " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
+        
         final boolean nullable = columnSpec.getNullable();
-
-        if(columnProperties.get("INVALID_NULLABLE") != null)
+        
+        if (columnProperties.get("INVALID_NULLABLE") != null)
         {
             PreparedStatement updateNullableStatment = null;
             try
@@ -1248,7 +1304,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
             finally
             {
-                if(updateNullableStatment != null)
+                if (updateNullableStatment != null)
                 {
                     try
                     {
@@ -1258,35 +1314,35 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 }
             }
         }
-
+        
         if
         (
-                (columnProperties.get("INVALID_SIZE") != null) ||
-                (columnProperties.get("INVALID_DEFAULT") != null) ||
-                (columnProperties.get("INVALID_TYPE") != null)
+            (columnProperties.get("INVALID_SIZE") != null) ||
+            (columnProperties.get("INVALID_DEFAULT") != null) ||
+            (columnProperties.get("INVALID_TYPE") != null)
         )
         {
             PreparedStatement createColumnStatement = null;
             try
             {
                 final StringBuilder sqlBuilder = new StringBuilder("ALTER TABLE  " + tablePart + " ALTER " + columnPart + " ");
-
+                
                 final IColumnType columnType = findBestColumnType(connection, schemaSpec, tableSpec, columnSpec);
-
-                if(columnType == null)
+                
+                if (columnType == null)
                 {
                     throw new SQLException("No ColumnType Provider found for \"" + columnSpec.getColumntype() + "\"");
                 }
-
+                
                 sqlBuilder.append(" " + columnType.getTypeExpression(connection, schemaSpec, tableSpec, columnSpec, "TODO", this));
                 sqlBuilder.append(" " + columnType.getDefaultValueExpression(connection, schemaSpec, tableSpec, columnSpec, "TODO", this));
-
+                
                 createColumnStatement = connection.prepareStatement(sqlBuilder.toString());
                 createColumnStatement.executeUpdate();
             }
             finally
             {
-                if(createColumnStatement != null)
+                if (createColumnStatement != null)
                 {
                     try
                     {
@@ -1296,24 +1352,24 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 }
             }
         }
-
+        
         if
         (
-                (columnProperties.get("INVALID_DEFAULT") != null) &&
-                (columnSpec.getDefaultValue() == null)
+            (columnProperties.get("INVALID_DEFAULT") != null) &&
+            (columnSpec.getDefaultValue() == null)
         )
         {
             PreparedStatement createColumnStatement = null;
             try
             {
                 final String sql = "ALTER TABLE  " + tablePart + " ALTER " + columnPart + " DROP DEFAULT ";
-
+                
                 createColumnStatement = connection.prepareStatement(sql);
                 createColumnStatement.executeUpdate();
             }
             finally
             {
-                if(createColumnStatement != null)
+                if (createColumnStatement != null)
                 {
                     try
                     {
@@ -1324,61 +1380,61 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     @Override
     public boolean isValidForeignKey
-            (
-                    final Connection connection, final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec, final ColumnSpec columnSpec, final Map<String, Object> columnProperties
-            )
-            throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec,
+            final TableSpec tableSpec, final ColumnSpec columnSpec, final Map<String, Object> columnProperties
+        )
+        throws SQLException
     {
         final String catalog = connection.getCatalog();
         String schema = connection.getSchema();
-
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = schemaSpec.getDbmsSchemaName();
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = tableSpec.getDbmsSchemaName();
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         String cat = null;
         String schem = null;
         String tbl = null;
         String col = null;
         String keyName = null;
-
+        
         boolean keyQuoted = false;
-        if((columnSpec.getForeignKey() != null) && (columnSpec.getForeignKey().getQuotedKeyName() != null))
+        if ((columnSpec.getForeignKey() != null) && (columnSpec.getForeignKey().getQuotedKeyName() != null))
         {
             keyQuoted = columnSpec.getForeignKey().getQuotedKeyName().booleanValue();
         }
-
+        
         ResultSet resultSet = null;
         try
         {
             final DatabaseMetaData databaseMetaData = connection.getMetaData();
             resultSet = databaseMetaData.getImportedKeys
-                                                (
-                                                        catalogSearchPattern(schemaSpec, connection, catalog),
-                                                        schemaSearchPattern(schemaSpec, connection, schema),
-                                                        objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE")
-                                                );
+                                            (
+                                                catalogSearchPattern(schemaSpec, connection, catalog),
+                                                schemaSearchPattern(schemaSpec, connection, schema),
+                                                objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE")
+                                            );
             while (resultSet.next())
             {
                 /*
@@ -1425,80 +1481,92 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                  * PK_NAME: 			PRIMARY_KEY_4
                  * DEFERRABILITY:		7
                  */
-
+                
                 cat = resultSet.getString("FKTABLE_CAT");
                 schem = resultSet.getString("FKTABLE_SCHEM");
                 tbl = resultSet.getString("FKTABLE_NAME");
                 col = resultSet.getString("FKCOLUMN_NAME");
                 keyName = resultSet.getString("FK_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-                if(keyName == null) { keyName = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                if (keyName == null)
+                {
+                    keyName = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-
+                
                 boolean tableNameMatch = tableQuoted && tbl.equals(tableSpec.getName());
-                if((!tableQuoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
+                if ((!tableQuoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
                 {
                     tableNameMatch = true;
                 }
-
+                
                 boolean columnNameMatch = columnQuoted && col.equals(columnSpec.getName());
-                if((!columnQuoted) && col.equalsIgnoreCase(columnSpec.getName()))
+                if ((!columnQuoted) && col.equalsIgnoreCase(columnSpec.getName()))
                 {
                     columnNameMatch = true;
                 }
-
-                if((columnSpec.getForeignKey() == null) && tableNameMatch && columnNameMatch)
+                
+                if ((columnSpec.getForeignKey() == null) && tableNameMatch && columnNameMatch)
                 {
                     return false;
                 }
-
-                if(columnSpec.getForeignKey() == null)
+                
+                if (columnSpec.getForeignKey() == null)
                 {
                     continue;
                 }
-
+                
                 boolean keyNameMatch = keyQuoted && (keyName.equals(columnSpec.getForeignKey().getConstraintName() == null ? "" : columnSpec.getForeignKey().getConstraintName()));
-                if((!keyQuoted) && (keyName.equalsIgnoreCase(columnSpec.getForeignKey().getConstraintName() == null ? "" : columnSpec.getForeignKey().getConstraintName())))
+                if ((!keyQuoted) && (keyName.equalsIgnoreCase(columnSpec.getForeignKey().getConstraintName() == null ? "" : columnSpec.getForeignKey().getConstraintName())))
                 {
                     keyNameMatch = true;
                 }
-
-                if(keyNameMatch && ((!columnNameMatch) || (!tableNameMatch)))
+                
+                if (keyNameMatch && ((!columnNameMatch) || (!tableNameMatch)))
                 {
                     columnProperties.put("CLEAN_FK", true);
                     return false;
                 }
-
-                if((!columnNameMatch) || (!tableNameMatch))
+                
+                if ((!columnNameMatch) || (!tableNameMatch))
                 {
                     continue;
                 }
-
-                if(!keyNameMatch)
+                
+                if (!keyNameMatch)
                 {
                     continue;
                 }
-
+                
                 if
                 (
-                        resultSet.getString("PKTABLE_NAME").equalsIgnoreCase(columnSpec.getForeignKey().getTableName()) &&
-                        resultSet.getString("PKCOLUMN_NAME").equalsIgnoreCase(columnSpec.getForeignKey().getReferencedColumnName())
+                    resultSet.getString("PKTABLE_NAME").equalsIgnoreCase(columnSpec.getForeignKey().getTableName()) &&
+                    resultSet.getString("PKCOLUMN_NAME").equalsIgnoreCase(columnSpec.getForeignKey().getReferencedColumnName())
                 )
                 {
                     return true;
@@ -1509,7 +1577,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -1518,59 +1586,59 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 catch (final Exception e) { }
             }
         }
-
+        
         return columnSpec.getForeignKey() == null;
     }
-
+    
     protected void cleanColumnForeignKeys
-            (
-                    final Connection connection, final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec, final ColumnSpec columnSpec
-            )
-            throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec,
+            final TableSpec tableSpec, final ColumnSpec columnSpec
+        )
+        throws SQLException
     {
         final String catalog = connection.getCatalog();
         String schema = connection.getSchema();
-
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = schemaSpec.getDbmsSchemaName();
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = tableSpec.getDbmsSchemaName();
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         boolean columnQuoted = false;
-        if(columnSpec.getQuotedName() != null)
+        if (columnSpec.getQuotedName() != null)
         {
             columnQuoted = columnSpec.getQuotedName().booleanValue();
         }
-
+        
         String cat = null;
         String schem = null;
         String tbl = null;
         String col = null;
         String keyName = null;
-
+        
         final List<String> toDelete = new ArrayList<>();
-
+        
         ResultSet resultSet = null;
         try
         {
             final DatabaseMetaData databaseMetaData = connection.getMetaData();
             resultSet = databaseMetaData.getImportedKeys
-                                                (
-                                                        catalogSearchPattern(schemaSpec, connection, catalog),
-                                                        schemaSearchPattern(schemaSpec, connection, schema),
-                                                        objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE")
-                                                );
+                                            (
+                                                catalogSearchPattern(schemaSpec, connection, catalog),
+                                                schemaSearchPattern(schemaSpec, connection, schema),
+                                                objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE")
+                                            );
             while (resultSet.next())
             {
                 /*
@@ -1617,55 +1685,67 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                  * PK_NAME: 			PRIMARY_KEY_4
                  * DEFERRABILITY:		7
                  */
-
+                
                 cat = resultSet.getString("FKTABLE_CAT");
                 schem = resultSet.getString("FKTABLE_SCHEM");
                 tbl = resultSet.getString("FKTABLE_NAME");
                 col = resultSet.getString("FKCOLUMN_NAME");
                 keyName = resultSet.getString("FK_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-                if(keyName == null) { keyName = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                if (keyName == null)
+                {
+                    keyName = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog) || cat.equalsIgnoreCase(schema)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-
+                
                 boolean tableNameMatch = tableQuoted && tbl.equals(tableSpec.getName());
-                if((!tableQuoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
+                if ((!tableQuoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
                 {
                     tableNameMatch = true;
                 }
-
+                
                 boolean columnNameMatch = columnQuoted && col.equals(columnSpec.getName());
-                if((!columnQuoted) && col.equalsIgnoreCase(columnSpec.getName()))
+                if ((!columnQuoted) && col.equalsIgnoreCase(columnSpec.getName()))
                 {
                     columnNameMatch = true;
                 }
-
-                if((!columnNameMatch) || (!tableNameMatch))
+                
+                if ((!columnNameMatch) || (!tableNameMatch))
                 {
                     continue;
                 }
-
+                
                 toDelete.add(keyName);
             }
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -1674,49 +1754,50 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 catch (final Exception e) { }
             }
         }
-
+        
         for (final String toDeleteKey : toDelete)
         {
             dropForeignKey(connection, schemaSpec, tableSpec, toDeleteKey, true);
         }
     }
-
-    @Override public void dropForeignKey(final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec, final String keyName, final boolean quoted) throws SQLException
+    
+    @Override
+    public void dropForeignKey(final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec, final String keyName, final boolean quoted) throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String keyPart = quoted ?
-                " " + quotedChar() + keyName + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, keyName, "FOREIGNKEY") + " ";
-
+            " " + quotedChar() + keyName + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, keyName, "FOREIGNKEY") + " ";
+        
         PreparedStatement createColumnStatement = null;
         try
         {
             createColumnStatement = connection.prepareStatement("ALTER TABLE  " + tablePart + " DROP CONSTRAINT " + keyPart + " ");
             createColumnStatement.executeUpdate();
-
+            
         }
         finally
         {
-            if(createColumnStatement != null)
+            if (createColumnStatement != null)
             {
                 try
                 {
@@ -1726,63 +1807,63 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     @Override
     public void setValidForeignKey
-            (
-                    final Connection connection, final SchemaSpec schemaSpec,
-                    final TableSpec tableSpec, final ColumnSpec columnSpec, final Map<String, Object> columnProperties
-            )
-            throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec,
+            final TableSpec tableSpec, final ColumnSpec columnSpec, final Map<String, Object> columnProperties
+        )
+        throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         final boolean tableQuoted = tableSpec.getQuotedName() != null && tableSpec.getQuotedName().booleanValue();
         final boolean columnQuoted = columnSpec.getQuotedName() != null && columnSpec.getQuotedName().booleanValue();
         final boolean keyQuoted = columnSpec.getForeignKey() != null && columnSpec.getForeignKey().getQuotedKeyName() != null && columnSpec.getForeignKey().getQuotedKeyName().booleanValue();
         final boolean refTableQuoted = columnSpec.getForeignKey() != null && columnSpec.getForeignKey().getQuotedRefTableName() != null && columnSpec.getForeignKey().getQuotedRefTableName().booleanValue();
         final boolean refColumnQuoted = columnSpec.getForeignKey() != null && columnSpec.getForeignKey().getQuotedRefColumnName() != null && columnSpec.getForeignKey().getQuotedRefColumnName().booleanValue();
-
-        if((columnProperties.get("CLEAN_FK") != null) && ((Boolean) columnProperties.get("CLEAN_FK")).booleanValue() && (columnSpec.getForeignKey() != null))
+        
+        if ((columnProperties.get("CLEAN_FK") != null) && ((Boolean) columnProperties.get("CLEAN_FK")).booleanValue() && (columnSpec.getForeignKey() != null))
         {
             dropForeignKey(connection, schemaSpec, tableSpec, columnSpec.getForeignKey().getConstraintName(), keyQuoted);
         }
-
+        
         cleanColumnForeignKeys(connection, schemaSpec, tableSpec, columnSpec);
-
-        if(columnSpec.getForeignKey() == null)
+        
+        if (columnSpec.getForeignKey() == null)
         {
             return;
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String columnPart = columnQuoted ?
-                " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
-
+            " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
+        
         final String constraintPart = keyQuoted ?
-                " " + quotedChar() + columnSpec.getForeignKey().getConstraintName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getForeignKey().getConstraintName(), "FOREIGNKEY") + " ";
-
+            " " + quotedChar() + columnSpec.getForeignKey().getConstraintName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getForeignKey().getConstraintName(), "FOREIGNKEY") + " ";
+        
         final String refTablePart = refTableQuoted ?
-                " " + schema + "." + quotedChar() + columnSpec.getForeignKey().getTableName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getForeignKey().getTableName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + columnSpec.getForeignKey().getTableName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getForeignKey().getTableName(), "TABLE") + " ";
+        
         final String refColumnPart = refColumnQuoted ?
-                " " + quotedChar() + columnSpec.getForeignKey().getReferencedColumnName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getForeignKey().getReferencedColumnName(), "COLUMN") + " ";
-
+            " " + quotedChar() + columnSpec.getForeignKey().getReferencedColumnName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getForeignKey().getReferencedColumnName(), "COLUMN") + " ";
+        
         PreparedStatement createFKStatement = null;
         try
         {
@@ -1793,7 +1874,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(createFKStatement != null)
+            if (createFKStatement != null)
             {
                 try
                 {
@@ -1803,92 +1884,92 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     @Override
     public boolean isValidIndex
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final IndexSpec indexSpec, final Map<String, Object> columnIndexProperties
-            )
-            throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final IndexSpec indexSpec, final Map<String, Object> columnIndexProperties
+        )
+        throws SQLException
     {
         final String catalog = connection.getCatalog();
         String schema = connection.getSchema();
-
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = schemaSpec.getDbmsSchemaName();
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = tableSpec.getDbmsSchemaName();
         }
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         boolean indexQuoted = false;
-        if(indexSpec.getQuotedName() != null)
+        if (indexSpec.getQuotedName() != null)
         {
             indexQuoted = indexSpec.getQuotedName().booleanValue();
         }
-
+        
         String cat = null;
         String schem = null;
         String tbl = null;
         String col = null;
         String idx = null;
-
+        
         ResultSet resultSet = null;
         try
         {
-
+            
             ColumnSpec contextColumn = null;
             final List<ColumnSpec> columnListOfIndex = new ArrayList<ColumnSpec>();
             for (final ColumnSpec column : indexSpec.getColumns())
             {
                 columnListOfIndex.add(column);
-                if(column.getName().equalsIgnoreCase(DatabaseCommonElements.CONTEXT))
+                if (column.getName().equalsIgnoreCase(DatabaseCommonElements.CONTEXT))
                 {
                     contextColumn = column;
                 }
             }
-
-            if(indexSpec.getIncludeContext() && (contextColumn == null))
+            
+            if (indexSpec.getIncludeContext() && (contextColumn == null))
             {
                 contextColumn = new ColumnSpec(tableSpec, DatabaseCommonElements.CONTEXT, IColumnType.ColumnType.CHAR.toString(), false, 36);
                 columnListOfIndex.add(contextColumn);
             }
-
-            if(columnListOfIndex.isEmpty())
+            
+            if (columnListOfIndex.isEmpty())
             {
                 return false;
             }
-
-            if(indexSpec.getIndexName() == null)
+            
+            if (indexSpec.getIndexName() == null)
             {
                 return false;
             }
-
-            if(indexSpec.getIndexName().isEmpty())
+            
+            if (indexSpec.getIndexName().isEmpty())
             {
                 return false;
             }
-
+            
             final Map<String, Short> columnExists = new HashMap<String, Short>();
             boolean unique = false;
-
+            
             final DatabaseMetaData databaseMetaData = connection.getMetaData();
             resultSet = databaseMetaData.getIndexInfo
-                                                (
-                                                        catalogSearchPattern(schemaSpec, connection, catalog),
-                                                        schemaSearchPattern(schemaSpec, connection, schema),
-                                                        objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE"),
-                                                        false, false
-                                                );
+                                            (
+                                                catalogSearchPattern(schemaSpec, connection, catalog),
+                                                schemaSearchPattern(schemaSpec, connection, schema),
+                                                objectSearchPattern(schemaSpec, connection, tableSpec.getName(), tableQuoted, "TABLE"),
+                                                false, false
+                                            );
             while (resultSet.next())
             {
                 /*
@@ -1939,67 +2020,79 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                  * 	PAGES : 0
                  * 	FILTER_CONDITION:
                  */
-
+                
                 cat = resultSet.getString("TABLE_CAT");
                 schem = resultSet.getString("TABLE_SCHEM");
                 tbl = resultSet.getString("TABLE_NAME");
                 col = resultSet.getString("COLUMN_NAME");
                 idx = resultSet.getString("INDEX_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(cat == null) { cat = ""; }
-                if(schem == null) { schem = ""; }
-                if(tbl == null) { tbl = ""; }
-                if(idx == null) { idx = ""; }
-
-                if(!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog)))
+                
+                if (cat == null)
+                {
+                    cat = "";
+                }
+                if (schem == null)
+                {
+                    schem = "";
+                }
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                if (idx == null)
+                {
+                    idx = "";
+                }
+                
+                if (!(cat.isEmpty() || cat.equalsIgnoreCase("null") || cat.equalsIgnoreCase(catalog)))
                 {
                     continue;
                 }
-                if(!schem.equalsIgnoreCase(schema))
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-
+                
                 boolean tableNameMatch = tableQuoted && tbl.equals(tableSpec.getName());
-                if((!tableQuoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
+                if ((!tableQuoted) && tbl.equalsIgnoreCase(tableSpec.getName()))
                 {
                     tableNameMatch = true;
                 }
-
-                if(!tableNameMatch)
+                
+                if (!tableNameMatch)
                 {
                     continue;
                 }
-
+                
                 boolean indexNameMatch = indexQuoted && (idx.equals(indexSpec.getIndexName()));
-                if((!indexQuoted) && (idx.equalsIgnoreCase(indexSpec.getIndexName())))
+                if ((!indexQuoted) && (idx.equalsIgnoreCase(indexSpec.getIndexName())))
                 {
                     indexNameMatch = true;
                 }
-
-                if(!indexNameMatch)
+                
+                if (!indexNameMatch)
                 {
                     continue;
                 }
-
+                
                 unique = !resultSet.getBoolean("NON_UNIQUE");
                 columnExists.put(col.toUpperCase(), resultSet.getShort("ORDINAL_POSITION"));
             }
             resultSet.close();
-
+            
             boolean diff = false;
             boolean keyExists = !columnExists.isEmpty();
-
-            if(unique != indexSpec.getUnique())
+            
+            if (unique != indexSpec.getUnique())
             {
                 diff = true;
             }
-            else if((columnExists.size() != columnListOfIndex.size()))
+            else if ((columnExists.size() != columnListOfIndex.size()))
             {
                 diff = true;
             }
@@ -2007,25 +2100,25 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             {
                 for (final ColumnSpec column : columnListOfIndex)
                 {
-                    if(!columnExists.containsKey(column.getName().toUpperCase()))
+                    if (!columnExists.containsKey(column.getName().toUpperCase()))
                     {
                         diff = true;
                         break;
                     }
                 }
             }
-
-            if(keyExists && diff)
+            
+            if (keyExists && diff)
             {
                 columnIndexProperties.put("CLEAR_INDEX", true);
-
+                
                 keyExists = false;
             }
             return keyExists;
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -2035,75 +2128,75 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     @Override
     public void setValidIndex
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final IndexSpec indexSpec, final Map<String, Object> columnIndexProperties
-            )
-            throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final IndexSpec indexSpec, final Map<String, Object> columnIndexProperties
+        )
+        throws SQLException
     {
         final String schema = connection.getSchema();
-
+        
         boolean tableQuoted = false;
-        if(tableSpec.getQuotedName() != null)
+        if (tableSpec.getQuotedName() != null)
         {
             tableQuoted = tableSpec.getQuotedName().booleanValue();
         }
-
+        
         boolean indexQuoted = false;
-        if(indexSpec.getQuotedName() != null)
+        if (indexSpec.getQuotedName() != null)
         {
             indexQuoted = indexSpec.getQuotedName().booleanValue();
         }
-
+        
         ColumnSpec contextColumn = null;
         final List<ColumnSpec> columnListOfIndex = new ArrayList<ColumnSpec>();
         for (final ColumnSpec column : indexSpec.getColumns())
         {
             columnListOfIndex.add(column);
-            if(column.getName().equalsIgnoreCase(DatabaseCommonElements.CONTEXT))
+            if (column.getName().equalsIgnoreCase(DatabaseCommonElements.CONTEXT))
             {
                 contextColumn = column;
             }
         }
-
-        if(indexSpec.getIncludeContext() && (contextColumn == null))
+        
+        if (indexSpec.getIncludeContext() && (contextColumn == null))
         {
             contextColumn = new ColumnSpec(tableSpec, DatabaseCommonElements.CONTEXT, IColumnType.ColumnType.CHAR.toString(), false, 36);
             columnListOfIndex.add(contextColumn);
         }
-
-        if((columnIndexProperties.get("CLEAR_INDEX") != null) && ((Boolean) columnIndexProperties.get("CLEAR_INDEX")).booleanValue())
+        
+        if ((columnIndexProperties.get("CLEAR_INDEX") != null) && ((Boolean) columnIndexProperties.get("CLEAR_INDEX")).booleanValue())
         {
             dropIndex(connection, schemaSpec, tableSpec, indexSpec.getIndexName(), indexSpec.getQuotedName() != null && indexSpec.getQuotedName().booleanValue());
         }
-
+        
         final String tablePart = tableQuoted ?
-                " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
-                " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
-
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
+            " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
+        
         final String indexPart = indexQuoted ?
-                " " + quotedChar() + indexSpec.getIndexName() + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, indexSpec.getIndexName(), "INDEX") + " ";
-
+            " " + quotedChar() + indexSpec.getIndexName() + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, indexSpec.getIndexName(), "INDEX") + " ";
+        
         String tableSpace = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getTableSpaceIndex(), "TABLESPACE");
-
-        if((indexSpec.getTableSpace() != null) && (!indexSpec.getTableSpace().isEmpty()))
+        
+        if ((indexSpec.getTableSpace() != null) && (!indexSpec.getTableSpace().isEmpty()))
         {
             tableSpace = objectNameGuidelineFormat(schemaSpec, connection, indexSpec.getTableSpace(), "TABLESPACE");
         }
         String tableSpaceDefinition = "";
-
-        if((tableSpace != null) && (!tableSpace.isEmpty()))
+        
+        if ((tableSpace != null) && (!tableSpace.isEmpty()))
         {
             tableSpaceDefinition = tableSpaceAppendix(connection, schemaSpec, tableSpec, columnIndexProperties, tableSpace, "INDEX");
         }
-
+        
         final StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("CREATE ");
-        if(indexSpec.getUnique())
+        if (indexSpec.getUnique())
         {
             sqlBuilder.append("UNIQUE ");
         }
@@ -2114,21 +2207,21 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         for (final ColumnSpec columnSpec : columnListOfIndex)
         {
             boolean columnQuoted = false;
-            if(columnSpec.getQuotedName() != null)
+            if (columnSpec.getQuotedName() != null)
             {
                 columnQuoted = columnSpec.getQuotedName().booleanValue();
             }
-
+            
             final String columnPart = columnQuoted ?
-                    " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
-                    " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
-
+                " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
+                " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
+            
             sqlBuilder.append(separator + columnPart);
             separator = ",";
         }
         sqlBuilder.append(") ");
         sqlBuilder.append(tableSpaceDefinition);
-
+        
         PreparedStatement createIndexStatement = null;
         try
         {
@@ -2137,7 +2230,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(createIndexStatement != null)
+            if (createIndexStatement != null)
             {
                 try
                 {
@@ -2147,29 +2240,29 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
+    
     @Override
     public void dropIndex
-            (
-                    final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
-                    final String indexName, final boolean quoted
-            )
-            throws SQLException
+        (
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final String indexName, final boolean quoted
+        )
+        throws SQLException
     {
         String schema = connection.getSchema();
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, schemaSpec.getDbmsSchemaName(), "SCHEMA");
         }
-        if((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
+        if ((tableSpec.getDbmsSchemaName() != null) && (!tableSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getDbmsSchemaName(), "SCHEMA");
         }
-
+        
         final String indexPart = quoted ?
-                " " + quotedChar() + indexName + quotedChar() + " " :
-                " " + objectNameGuidelineFormat(schemaSpec, connection, indexName, "INDEX") + " ";
-
+            " " + quotedChar() + indexName + quotedChar() + " " :
+            " " + objectNameGuidelineFormat(schemaSpec, connection, indexName, "INDEX") + " ";
+        
         PreparedStatement createColumnStatement = null;
         try
         {
@@ -2178,7 +2271,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(createColumnStatement != null)
+            if (createColumnStatement != null)
             {
                 try
                 {
@@ -2188,32 +2281,33 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             }
         }
     }
-
-    @Override public void dropDummyColumns(final Connection connection, final SchemaSpec schemaSpec) throws SQLException
+    
+    @Override
+    public void dropDummyColumns(final Connection connection, final SchemaSpec schemaSpec) throws SQLException
     {
         final Map<String, String> tableIndex = new HashMap<String, String>();
         final Map<String, Map<String, String>> colIndex = new HashMap<String, Map<String, String>>();
-
-        if(schemaSpec.getListTableSpec() != null)
+        
+        if (schemaSpec.getListTableSpec() != null)
         {
             for (final TableSpec tableSpec : schemaSpec.getListTableSpec())
             {
                 tableIndex.put(tableSpec.getName().toUpperCase(), tableSpec.getName());
             }
         }
-
+        
         String schema = connection.getSchema();
-
-        if((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
+        
+        if ((schemaSpec.getDbmsSchemaName() != null) && (!schemaSpec.getDbmsSchemaName().isEmpty()))
         {
             schema = schemaSpec.getDbmsSchemaName();
         }
-
+        
         String tbl = null;
         String col = null;
         String cat = null;
         String schem = null;
-
+        
         ResultSet resultSet = null;
         try
         {
@@ -2231,33 +2325,39 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                  * COLUMN_SIZE						size (int)
                  * DECIMAL_DIGITS					digits for float .... (int)
                  * NULLABLE 						nullable
-
+                 
                  */
                 cat = resultSet.getString("TABLE_CAT");
                 schem = resultSet.getString("TABLE_SCHEM");
                 tbl = resultSet.getString("TABLE_NAME");
                 col = resultSet.getString("COLUMN_NAME");
-
-                if(schem == null)
+                
+                if (schem == null)
                 {
                     schem = cat;
                 }
-
-                if(tbl == null) { tbl = ""; }
-                if(col == null) { col = ""; }
-
-                if(!tableIndex.containsKey(tbl.toUpperCase()))
+                
+                if (tbl == null)
+                {
+                    tbl = "";
+                }
+                if (col == null)
+                {
+                    col = "";
+                }
+                
+                if (!tableIndex.containsKey(tbl.toUpperCase()))
                 {
                     continue;
                 }
-
-                if(!schem.equalsIgnoreCase(schema))
+                
+                if (!schem.equalsIgnoreCase(schema))
                 {
                     continue;
                 }
-
+                
                 Map<String, String> cols = colIndex.get(tbl);
-                if(cols == null)
+                if (cols == null)
                 {
                     cols = new HashMap<String, String>();
                     colIndex.put(tbl, cols);
@@ -2267,7 +2367,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         finally
         {
-            if(resultSet != null)
+            if (resultSet != null)
             {
                 try
                 {
@@ -2276,125 +2376,127 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
                 catch (final Exception e) { }
             }
         }
-
+        
         for (final Entry<String, Map<String, String>> colEntry : colIndex.entrySet())
         {
             final TableSpec tableSpec = new TableSpec(colEntry.getKey(), schemaSpec);
             tableSpec.setQuotedName(true);
-
+            
             String colName = null;
             for (final String columnName : colEntry.getValue().keySet())
             {
-                if(columnName.equalsIgnoreCase("SODEACDFLTCOL"))
+                if (columnName.equalsIgnoreCase("SODEACDFLTCOL"))
                 {
                     colName = columnName;
                     break;
                 }
             }
-
-            if((colName != null) && (colEntry.getValue().size() > 1))
+            
+            if ((colName != null) && (colEntry.getValue().size() > 1))
             {
                 dropColumn(connection, schemaSpec, tableSpec, colName, true);
             }
         }
     }
-
-    @Override public String getFunctionExpression(final String function)
+    
+    @Override
+    public String getFunctionExpression(final String function)
     {
         return function + "()";
     }
-
-    @Override public boolean tableRequiresColumn()
+    
+    @Override
+    public boolean tableRequiresColumn()
     {
         return false;
     }
-
+    
     @Override
     public String objectSearchPattern(final SchemaSpec schemaSpec, final Connection connection, final String name, final boolean quoted, final String type)
     {
         return quoted ? name : objectNameGuidelineFormat(schemaSpec, connection, name, type);
     }
-
+    
     @Override
     public String catalogSearchPattern(final SchemaSpec schemaSpec, final Connection connection, final String catalog)
     {
         return catalog;
     }
-
+    
     @Override
     public String schemaSearchPattern(final SchemaSpec schemaSpec, final Connection connection, final String schema)
     {
         return objectNameGuidelineFormat(schemaSpec, connection, schema, "SCHEMA");
     }
-
+    
     @Override
     public String objectNameGuidelineFormat(final SchemaSpec schemaSpec, final Connection connection, final String name, final String type)
     {
         return name;
     }
-
+    
     @Override
     public char quotedChar()
     {
         return '"';
     }
-
+    
     protected IColumnType findBestColumnType(final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec, final ColumnSpec columnSpec) throws SQLException
     {
         // boolean FALLBACK,STANDARD,SPECIFIC
-
+        
         Applicability best = Applicability.NONE;
         IColumnType columnType = null;
         boolean typeMatch = false;
         for (final IColumnType check : this.columnDriverList)
         {
             final List<String> list = check.getTypeList();
-
-            if(list == null)
+            
+            if (list == null)
             {
                 continue;
             }
-
+            
             typeMatch = false;
-
+            
             for (final String typeItem : list)
             {
-                if(typeItem.equalsIgnoreCase(columnSpec.getColumntype()))
+                if (typeItem.equalsIgnoreCase(columnSpec.getColumntype()))
                 {
                     typeMatch = true;
                     break;
                 }
             }
-
-            if(!typeMatch)
+            
+            if (!typeMatch)
             {
                 continue;
             }
-
+            
             final Applicability applicability = check.getApplicability(connection, schemaSpec, tableSpec, columnSpec, connection.getMetaData().getDatabaseProductName(), this);
-            if(applicability == null)
+            if (applicability == null)
             {
                 continue;
             }
-            if(applicability == Applicability.NONE)
+            if (applicability == Applicability.NONE)
             {
                 continue;
             }
-            if(columnType == null)
-            {
-                columnType = check;
-                best = applicability;
-                continue;
-            }
-
-            if((best == Applicability.FALLBACK) && ((applicability == Applicability.STANDARD) || (applicability == Applicability.SPECIFIC)))
+            if (columnType == null)
             {
                 columnType = check;
                 best = applicability;
                 continue;
             }
-
-            if((best == Applicability.STANDARD) && (applicability == Applicability.SPECIFIC))
+            
+            if ((best == Applicability.FALLBACK) && ((applicability == Applicability.STANDARD) || (applicability == Applicability.SPECIFIC)))
+            {
+                columnType = check;
+                best = applicability;
+                continue;
+            }
+            
+            if ((best == Applicability.STANDARD) && (applicability == Applicability.SPECIFIC))
             {
                 columnType = check;
                 best = applicability;
@@ -2402,7 +2504,7 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         }
         return columnType;
     }
-
+    
     @Override
     public boolean schemaExists(final Connection connection, final String schemaName) throws SQLException
     {
@@ -2413,88 +2515,90 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
         {
             final String tableSchema = resultSet.getString(1);        // TABLE_SCHEM String => schema name
             // String tableCatalog = resultSet.getString(2);	// TABLE_CATALOG String => catalog name (may be null)
-            if(tableSchema.equalsIgnoreCase(schemaName))
+            if (tableSchema.equalsIgnoreCase(schemaName))
             {
                 exist = true;
                 break;
             }
         }
         resultSet.close();
-
+        
         return exist;
     }
-
-    @Override public void createSchema(final Connection connection, final String schemaName, final Map<String, Object> properties) throws SQLException
+    
+    @Override
+    public void createSchema(final Connection connection, final String schemaName, final Map<String, Object> properties) throws SQLException
     {
         final String sql = "CREATE SCHEMA IF NOT EXISTS " + objectNameGuidelineFormat(null, connection, schemaName, "SCHEMA") + " AUTHORIZATION " + connection.getMetaData().getUserName();
         final PreparedStatement prepStat = connection.prepareStatement(sql);
         prepStat.executeUpdate();
         prepStat.close();
     }
-
+    
     protected boolean confirmDropSchema(final Connection connection, final String schemaName, final Map<String, Object> properties) throws SQLException
     {
-        if(properties == null)
+        if (properties == null)
         {
             throw new SQLException("no confirm informations to drop schema");
         }
-
-        if(properties.get("YES_I_REALLY_WANT_DROP_SCHEMA_" + schemaName.toUpperCase()) == null)
+        
+        if (properties.get("YES_I_REALLY_WANT_DROP_SCHEMA_" + schemaName.toUpperCase()) == null)
         {
             throw new SQLException("no main confirmation to drop schema");
         }
-
-        if(!((Boolean) properties.get("YES_I_REALLY_WANT_DROP_SCHEMA_" + schemaName.toUpperCase())).booleanValue())
+        
+        if (!((Boolean) properties.get("YES_I_REALLY_WANT_DROP_SCHEMA_" + schemaName.toUpperCase())).booleanValue())
         {
             throw new SQLException("no main confirmation to drop schema");
         }
-
-        if(properties.get("OF_COURSE_I_HAVE_A_BACKUP_OF_ALL_IMPORTANT_DATASETS") == null)
+        
+        if (properties.get("OF_COURSE_I_HAVE_A_BACKUP_OF_ALL_IMPORTANT_DATASETS") == null)
         {
             throw new SQLException("no backup confirmation of all important datasets to drop schema");
         }
-
-        if(!((Boolean) properties.get("OF_COURSE_I_HAVE_A_BACKUP_OF_ALL_IMPORTANT_DATASETS")).booleanValue())
+        
+        if (!((Boolean) properties.get("OF_COURSE_I_HAVE_A_BACKUP_OF_ALL_IMPORTANT_DATASETS")).booleanValue())
         {
             throw new SQLException("no backup confirmation of all important datasets to drop schema");
         }
         return true;
     }
-
-    @Override public void dropSchema(final Connection connection, final String schemaName, final Map<String, Object> properties) throws SQLException
+    
+    @Override
+    public void dropSchema(final Connection connection, final String schemaName, final Map<String, Object> properties) throws SQLException
     {
-        if(!confirmDropSchema(connection, schemaName, properties))
+        if (!confirmDropSchema(connection, schemaName, properties))
         {
             throw new SQLException("you should confirm drop schema");
         }
         final PreparedStatement prepStat = connection.prepareStatement("DROP SCHEMA " + objectNameGuidelineFormat(null, connection, schemaName, "SCHEMA") + " CASCADE ");
         prepStat.executeUpdate();
         prepStat.close();
-
+        
     }
-
+    
     @Override
     public Blob createBlob(final Connection connection) throws SQLException
     {
         return connection.createBlob();
     }
-
+    
     @Override
     public Blob getBlob(final Connection connection, final ResultSet resultSet, final int columnIndex) throws SQLException
     {
         return resultSet.getBlob(columnIndex);
     }
-
+    
     @Override
     public Blob getBlob(final Connection connection, final ResultSet resultSet, final String columnLabel) throws SQLException
     {
         return resultSet.getBlob(columnLabel);
     }
-
+    
     @Override
     public void setBlob(final Connection connection, final PreparedStatement preparedStatement, final Blob blob, final int parameterIndex) throws SQLException
     {
-        if(blob == null)
+        if (blob == null)
         {
             preparedStatement.setNull(parameterIndex, Types.BLOB);
         }
@@ -2503,13 +2607,13 @@ public class DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
             preparedStatement.setBlob(parameterIndex, blob);
         }
     }
-
+    
     @Override
     public boolean requireCleanBlob(final Connection connection)
     {
         return false;
     }
-
+    
     @Override
     public void cleanBlob(final Connection connection, final Blob blob) throws SQLException { }
 }

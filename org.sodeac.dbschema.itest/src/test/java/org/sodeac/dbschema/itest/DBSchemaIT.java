@@ -28,33 +28,36 @@ import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 public class DBSchemaIT extends AbstractDBSchemaIT
 {
     public static final String SCHEMA_NAME = "SODEAC_TEST";
-
-    public DBSchemaIT(final String dbType) { super(dbType); }
-
+    
+    public DBSchemaIT(final String dbType)
+    {
+        super(dbType);
+    }
+    
     @Test
     public void test000001createSchema() throws SQLException, ClassNotFoundException, IOException
     {
-        if(!this.testConnection.enabled)
+        if (!this.testConnection.enabled)
         {
             return;
         }
         final Connection connection = this.testConnection.connection;
         final IDatabaseSchemaDriver driver = this.databaseSchemaProcessor.getDatabaseSchemaDriver(connection);
-
+        
         final Map<String, Object> confirmMap = new HashMap<String, Object>();
         confirmMap.put("YES_I_REALLY_WANT_DROP_SCHEMA_" + SCHEMA_NAME.toUpperCase(), true);
         confirmMap.put("OF_COURSE_I_HAVE_A_BACKUP_OF_ALL_IMPORTANT_DATASETS", true);
-
-        if(driver.schemaExists(connection, SCHEMA_NAME))
+        
+        if (driver.schemaExists(connection, SCHEMA_NAME))
         {
             driver.dropSchema(connection, SCHEMA_NAME, confirmMap);
         }
-
+        
         assertFalse("test schema should not exist", driver.schemaExists(connection, SCHEMA_NAME));
-
+        
         driver.createSchema(connection, SCHEMA_NAME, null);
         assertTrue("test schema should exist", driver.schemaExists(connection, SCHEMA_NAME));
-
+        
         driver.dropSchema(connection, SCHEMA_NAME, confirmMap);
         assertFalse("test schema should not exist", driver.schemaExists(connection, SCHEMA_NAME));
     }
