@@ -22,7 +22,7 @@ import org.osgi.framework.Bundle;
 
 public class TestTools
 {
-    public static ProvisionOption<?> reactorBundle(String artifactId, String version)
+    public static ProvisionOption<?> reactorBundle(final String artifactId, final String version)
     {
         String fileName = String.format("%s/../%s/target/%s-%s.jar", PathUtils.getBaseDir(), artifactId, artifactId, version);
         
@@ -33,7 +33,7 @@ public class TestTools
                 String url = "file:" + new File(fileName).getCanonicalPath();
                 return bundle(url);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 e.printStackTrace();
             }
@@ -49,7 +49,7 @@ public class TestTools
                     String url = "file:" + new File(fileName).getCanonicalPath();
                     return bundle(url);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     e.printStackTrace();
                 }
@@ -58,7 +58,7 @@ public class TestTools
         return null;
     }
     
-    public static String getBundleStateName(int state)
+    public static String getBundleStateName(final int state)
     {
         switch (state)
         {
@@ -102,7 +102,7 @@ public class TestTools
             Thread.sleep(2000);
             return String.format("%09X", diff);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             if (e instanceof RuntimeException)
             {

@@ -6,19 +6,18 @@ An OSGi service inserts and updates database tables, columns and keys. The datab
 
 ## Installation
 
-- runs with Apache Karaf 4.4.10 -> OSGi 8.0.0
+- runs with Apache Karaf 4.4.10 → OSGi 8.0.0
 - `mvn clean install`
 
-### Karaf
-
-#### Debugging
+### via Karaf commands
 
 ```bash
-# open karaf console in debug mode
-karaf debug
+# open karaf console
+karaf
 ```
 
 ```bash
+
 # --- project bundle
 install -s mvn:org.sodeac/org.sodeac.dbschema.api/2.0.0-SNAPSHOT
 install -s mvn:org.sodeac/org.sodeac.dbschema.provider/2.0.0-SNAPSHOT
@@ -27,7 +26,9 @@ install -s mvn:org.sodeac/org.sodeac.dbschema.driver.h2/2.0.0-SNAPSHOT
 install -s mvn:org.sodeac/org.sodeac.dbschema.driver.postgresql/2.0.0-SNAPSHOT
 install -s mvn:org.sodeac/org.sodeac.dbschema.driver.oracle/2.0.0-SNAPSHOT
 
-bundle:watch org.sodeac.dbschema.api org.sodeac.dbschema.provider org.sodeac.dbschema.driver.base org.sodeac.dbschema.driver.h2 org.sodeac.dbschema.driver.postgresql org.sodeac.dbschema.driver.oracle ```
+# Enable auto-repackage for SNAPSHOT bundles.
+#bundle:watch org.sodeac.dbschema.api org.sodeac.dbschema.provider org.sodeac.dbschema.driver.base org.sodeac.dbschema.driver.h2 org.sodeac.dbschema.driver.postgresql org.sodeac.dbschema.driver.oracle 
+```
 
 ## Purpose
 
@@ -87,88 +88,38 @@ private final IDatabaseSchemaProcessor databaseSchemaProcessor = null;
 
 ### Usage: create simple [schema](https://oss.sonatype.org/service/local/repositories/releases/archive/org/sodeac/org.sodeac.dbschema.api/1.0.0/org.sodeac.dbschema.api-1.0.0-javadoc.jar/!/org/sodeac/dbschema/api/SchemaSpec.html) with java fluent api
 
-```java
+``` java
 SchemaSpec spec = new SchemaSpec("business");
-spec.
+spec.setDbmsSchemaName(connection.getSchema());
 
-setDbmsSchemaName(connection.getSchema());
+spec.addTable("company")		
+.addColumn("id", IColumnType.ColumnType.CHAR.toString(),false,36)
+	.setPrimaryKey()
+	.endColumnDefinition()
+.addColumn("company_name", IColumnType.ColumnType.VARCHAR.toString(),false,256)
+	.endColumnDefinition()
+.addColumn("established_since", IColumnType.ColumnType.DATE.toString(),true)
+	.endColumnDefinition()
+;
 
-        spec.
+spec.addTable("employee")	
+.addColumn("id", IColumnType.ColumnType.CHAR.toString(),false,36)
+	.setPrimaryKey()
+	.endColumnDefinition()
+.addColumn("company_id", IColumnType.ColumnType.CHAR.toString(),true,36)
+	.setForeignKey("fk1_employee", "company","id")
+	.endColumnDefinition()
+.addColumn("employee_name", IColumnType.ColumnType.VARCHAR.toString(),false,256)
+	.endColumnDefinition()
+.addColumn("birthday", IColumnType.ColumnType.DATE.toString(),false)
+	.endColumnDefinition()
+.addColumn("date_of_joining", IColumnType.ColumnType.DATE.toString(),false)
+	.endColumnDefinition()
+.addColumn("date_of_leaving", IColumnType.ColumnType.DATE.toString(),true)
+	.endColumnDefinition()
+;
 
-addTable("company")		
-.
-
-addColumn("id",IColumnType.ColumnType.CHAR.toString(),false,36)
-        .
-
-setPrimaryKey()
-	.
-
-endColumnDefinition()
-.
-
-addColumn("company_name",IColumnType.ColumnType.VARCHAR.toString(),false,256)
-        .
-
-endColumnDefinition()
-.
-
-addColumn("established_since",IColumnType.ColumnType.DATE.toString(),true)
-        .
-
-endColumnDefinition()
-        ;
-
-spec.
-
-addTable("employee")	
-.
-
-addColumn("id",IColumnType.ColumnType.CHAR.toString(),false,36)
-        .
-
-setPrimaryKey()
-	.
-
-endColumnDefinition()
-.
-
-addColumn("company_id",IColumnType.ColumnType.CHAR.toString(),true,36)
-        .
-
-setForeignKey("fk1_employee","company","id")
-	.
-
-endColumnDefinition()
-.
-
-addColumn("employee_name",IColumnType.ColumnType.VARCHAR.toString(),false,256)
-        .
-
-endColumnDefinition()
-.
-
-addColumn("birthday",IColumnType.ColumnType.DATE.toString(),false)
-        .
-
-endColumnDefinition()
-.
-
-addColumn("date_of_joining",IColumnType.ColumnType.DATE.toString(),false)
-        .
-
-endColumnDefinition()
-.
-
-addColumn("date_of_leaving",IColumnType.ColumnType.DATE.toString(),true)
-        .
-
-endColumnDefinition()
-        ;
-
-schemaProcessor.
-
-checkSchemaSpec(spec, connection);
+schemaProcessor.checkSchemaSpec(spec, connection);
 ```
 
 ## Supported dbm systems

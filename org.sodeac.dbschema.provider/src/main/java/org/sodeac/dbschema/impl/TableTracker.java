@@ -22,50 +22,50 @@ public class TableTracker
     private boolean created = false;
     private boolean exits = false;
     private Map<String, Object> tableProperties = null;
-    private List<ColumnTracker> columnTrackerList = new ArrayList<ColumnTracker>();
+    private final List<ColumnTracker> columnTrackerList = new ArrayList<ColumnTracker>();
     
     public boolean isCreated()
     {
-        return created;
+        return this.created;
     }
     
-    public void setCreated(boolean created)
+    public void setCreated(final boolean created)
     {
         this.created = created;
     }
     
     public boolean isExits()
     {
-        return exits;
+        return this.exits;
     }
     
-    public void setExits(boolean exits)
+    public void setExits(final boolean exits)
     {
         this.exits = exits;
     }
     
     public Map<String, Object> getTableProperties()
     {
-        return tableProperties;
+        return this.tableProperties;
     }
     
-    public void setTableProperties(Map<String, Object> tableProperties)
+    public void setTableProperties(final Map<String, Object> tableProperties)
     {
         this.tableProperties = tableProperties;
     }
     
     public TableSpec getTableSpec()
     {
-        return tableSpec;
+        return this.tableSpec;
     }
     
-    public void setTableSpec(TableSpec tableSpec)
+    public void setTableSpec(final TableSpec tableSpec)
     {
         this.tableSpec = tableSpec;
     }
     
     public List<ColumnTracker> getColumnTrackerList()
     {
-        return columnTrackerList;
+        return this.columnTrackerList;
     }
 }

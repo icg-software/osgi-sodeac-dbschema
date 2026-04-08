@@ -26,7 +26,7 @@ public class SchemaSpec
      *
      * @param domain name of domain and dbms schema name
      */
-    public SchemaSpec(String domain)
+    public SchemaSpec(final String domain)
     {
         super();
         this.domain = domain;
@@ -39,14 +39,14 @@ public class SchemaSpec
      * @param domain         name of domain
      * @param dbmsSchemaName name of schema
      */
-    public SchemaSpec(String domain, String dbmsSchemaName)
+    public SchemaSpec(final String domain, final String dbmsSchemaName)
     {
         super();
         this.domain = domain;
         this.dbmsSchemaName = dbmsSchemaName;
     }
     
-    private List<TableSpec> listTableSpec = new ArrayList<TableSpec>();
+    private final List<TableSpec> listTableSpec = new ArrayList<TableSpec>();
     private String domain = null;
     private String dbmsSchemaName = null;
     private String tableSpaceData = null;
@@ -62,7 +62,7 @@ public class SchemaSpec
      */
     public List<TableSpec> getListTableSpec()
     {
-        return listTableSpec;
+        return this.listTableSpec;
     }
     
     /**
@@ -72,9 +72,9 @@ public class SchemaSpec
      *
      * @return table specification
      */
-    public TableSpec getTable(String name)
+    public TableSpec getTable(final String name)
     {
-        for (TableSpec table : this.listTableSpec)
+        for (final TableSpec table : this.listTableSpec)
         {
             if (table.getName().equals(name))
             {
@@ -91,7 +91,7 @@ public class SchemaSpec
      */
     public String getDomain()
     {
-        return domain;
+        return this.domain;
     }
     
     /**
@@ -101,7 +101,7 @@ public class SchemaSpec
      */
     public String getDbmsSchemaName()
     {
-        return dbmsSchemaName;
+        return this.dbmsSchemaName;
     }
     
     /**
@@ -111,7 +111,7 @@ public class SchemaSpec
      *
      * @return schema spec
      */
-    public SchemaSpec setDbmsSchemaName(String dbmsSchemaName)
+    public SchemaSpec setDbmsSchemaName(final String dbmsSchemaName)
     {
         this.dbmsSchemaName = dbmsSchemaName;
         return this;
@@ -124,7 +124,7 @@ public class SchemaSpec
      *
      * @return created tablespec
      */
-    public TableSpec addTable(String name)
+    public TableSpec addTable(final String name)
     {
         TableSpec tableSpec = new TableSpec(name, this);
         this.listTableSpec.add(tableSpec);
@@ -138,7 +138,7 @@ public class SchemaSpec
      */
     public List<IDatabaseSchemaUpdateListener> getUpdateListenerList()
     {
-        return updateListenerList;
+        return this.updateListenerList;
     }
     
     /**
@@ -146,13 +146,13 @@ public class SchemaSpec
      *
      * @param updateListener for updateListener for schema update process
      */
-    public void addUpdateListener(IDatabaseSchemaUpdateListener updateListener)
+    public void addUpdateListener(final IDatabaseSchemaUpdateListener updateListener)
     {
         if (this.updateListenerList == null)
         {
             this.updateListenerList = new ArrayList<IDatabaseSchemaUpdateListener>();
         }
-        for (IDatabaseSchemaUpdateListener exists : this.updateListenerList)
+        for (final IDatabaseSchemaUpdateListener exists : this.updateListenerList)
         {
             if (updateListener == exists)
             {
@@ -169,7 +169,7 @@ public class SchemaSpec
      */
     public String getTableSpaceData()
     {
-        return tableSpaceData;
+        return this.tableSpaceData;
     }
     
     /**
@@ -179,7 +179,7 @@ public class SchemaSpec
      *
      * @return schemaSpec
      */
-    public SchemaSpec setTableSpaceData(String tableSpaceData)
+    public SchemaSpec setTableSpaceData(final String tableSpaceData)
     {
         this.tableSpaceData = tableSpaceData;
         return this;
@@ -192,7 +192,7 @@ public class SchemaSpec
      */
     public String getTableSpaceIndex()
     {
-        return tableSpaceIndex;
+        return this.tableSpaceIndex;
     }
     
     /**
@@ -202,7 +202,7 @@ public class SchemaSpec
      *
      * @return schemaspec
      */
-    public SchemaSpec setTableSpaceIndex(String tableSpaceIndex)
+    public SchemaSpec setTableSpaceIndex(final String tableSpaceIndex)
     {
         this.tableSpaceIndex = tableSpaceIndex;
         return this;
@@ -215,7 +215,7 @@ public class SchemaSpec
      */
     public boolean getSkipChecks()
     {
-        return skipChecks;
+        return this.skipChecks;
     }
     
     /**
@@ -225,7 +225,7 @@ public class SchemaSpec
      *
      * @return schema spec
      */
-    public SchemaSpec setSkipChecks(boolean skipChecks)
+    public SchemaSpec setSkipChecks(final boolean skipChecks)
     {
         this.skipChecks = skipChecks;
         return this;
@@ -241,7 +241,7 @@ public class SchemaSpec
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public SchemaSpec applyTemplate(Class<?> schemaTemplateClass) throws InstantiationException, IllegalAccessException
+    public SchemaSpec applyTemplate(final Class<?> schemaTemplateClass) throws InstantiationException, IllegalAccessException
     {
         ISchemaTemplate instanceOfTemplate = (ISchemaTemplate) schemaTemplateClass.newInstance();
         instanceOfTemplate.schemaTemplateApply(this);
@@ -255,7 +255,7 @@ public class SchemaSpec
      */
     public boolean getLogUpdates()
     {
-        return logUpdates;
+        return this.logUpdates;
     }
     
     /**
@@ -263,7 +263,7 @@ public class SchemaSpec
      *
      * @param logUpdates flag to log schema updates
      */
-    public void setLogUpdates(boolean logUpdates)
+    public void setLogUpdates(final boolean logUpdates)
     {
         this.logUpdates = logUpdates;
     }
@@ -271,7 +271,7 @@ public class SchemaSpec
     @Override
     public String toString()
     {
-        return "SchemaSpec " + domain + " / " + dbmsSchemaName;
+        return "SchemaSpec " + this.domain + " / " + this.dbmsSchemaName;
     }
     
 }

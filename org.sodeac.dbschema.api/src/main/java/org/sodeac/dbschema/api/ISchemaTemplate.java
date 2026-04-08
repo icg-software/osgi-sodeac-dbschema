@@ -24,5 +24,5 @@ public interface ISchemaTemplate
      *
      * @param schemaSpec
      */
-    public void schemaTemplateApply(SchemaSpec schemaSpec);
+    void schemaTemplateApply(SchemaSpec schemaSpec);
 }

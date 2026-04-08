@@ -24,7 +24,7 @@ import org.sodeac.dbschema.driver.base.DefaultDatabaseSchemaDriver;
 public class H2DatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
 {
     @Override
-    public int handle(Connection connection) throws SQLException
+    public int handle(final Connection connection) throws SQLException
     {
         if (connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("H2"))
         {
@@ -36,15 +36,15 @@ public class H2DatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     @Override
     public void setPrimaryKey
         (
-            Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec,
-            Map<String, Object> tableProperties
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final Map<String, Object> tableProperties
         ) throws SQLException
     {
         super.setPrimaryKeyWithIndex(connection, schemaSpec, tableSpec, tableProperties);
     }
     
     @Override
-    public String objectNameGuidelineFormat(SchemaSpec schemaSpec, Connection connection, String name, String type)
+    public String objectNameGuidelineFormat(final SchemaSpec schemaSpec, final Connection connection, final String name, final String type)
     {
         return name == null ? name : name.toUpperCase();
     }

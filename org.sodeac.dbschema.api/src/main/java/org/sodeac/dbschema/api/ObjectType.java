@@ -80,14 +80,14 @@ public enum ObjectType
      */
     SCHEMA_CONVERT_SCHEMA(16);
     
-    private ObjectType(int intValue)
+    ObjectType(final int intValue)
     {
         this.intValue = intValue;
     }
     
     private static volatile Set<ObjectType> ALL = null;
     
-    private int intValue;
+    private final int intValue;
     
     /**
      * getter for all object types
@@ -111,9 +111,9 @@ public enum ObjectType
      *
      * @return object type enum represents by {@code value}
      */
-    public static ObjectType findByInteger(int value)
+    public static ObjectType findByInteger(final int value)
     {
-        for (ObjectType actionType : getAll())
+        for (final ObjectType actionType : getAll())
         {
             if (actionType.intValue == value)
             {
@@ -130,9 +130,9 @@ public enum ObjectType
      *
      * @return enum represents by {@code name}
      */
-    public static ObjectType findByName(String name)
+    public static ObjectType findByName(final String name)
     {
-        for (ObjectType actionType : getAll())
+        for (final ObjectType actionType : getAll())
         {
             if (actionType.name().equalsIgnoreCase(name))
             {

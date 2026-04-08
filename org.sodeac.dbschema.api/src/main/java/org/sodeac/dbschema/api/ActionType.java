@@ -34,14 +34,14 @@ public enum ActionType
      */
     UPDATE(2);
     
-    private ActionType(int intValue)
+    ActionType(final int intValue)
     {
         this.intValue = intValue;
     }
     
     private static volatile Set<ActionType> ALL = null;
     
-    private int intValue;
+    private final int intValue;
     
     /**
      * getter for all action types
@@ -65,9 +65,9 @@ public enum ActionType
      *
      * @return action type enum represents by {@code value}
      */
-    public static ActionType findByInteger(int value)
+    public static ActionType findByInteger(final int value)
     {
-        for (ActionType actionType : getAll())
+        for (final ActionType actionType : getAll())
         {
             if (actionType.intValue == value)
             {
@@ -84,9 +84,9 @@ public enum ActionType
      *
      * @return enum represents by {@code name}
      */
-    public static ActionType findByName(String name)
+    public static ActionType findByName(final String name)
     {
-        for (ActionType actionType : getAll())
+        for (final ActionType actionType : getAll())
         {
             if (actionType.name().equalsIgnoreCase(name))
             {

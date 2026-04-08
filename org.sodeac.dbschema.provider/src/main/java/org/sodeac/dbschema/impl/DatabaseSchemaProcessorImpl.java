@@ -49,49 +49,49 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
     @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
     protected volatile LogService logService = null;
     
-    private DriverManager<IDatabaseSchemaDriver> schemaDriverList = new DriverManager<IDatabaseSchemaDriver>();
-    private DriverManager<IColumnType> columnDriverList = new DriverManager<IColumnType>();
+    private final DriverManager<IDatabaseSchemaDriver> schemaDriverList = new DriverManager<IDatabaseSchemaDriver>();
+    private final DriverManager<IColumnType> columnDriverList = new DriverManager<IColumnType>();
     
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void bindSchemaDriver(IDatabaseSchemaDriver type, ServiceReference<IDatabaseSchemaDriver> serviceReference)
+    public void bindSchemaDriver(final IDatabaseSchemaDriver type, final ServiceReference<IDatabaseSchemaDriver> serviceReference)
     {
         this.schemaDriverList.add(type, serviceReference);
     }
     
-    public void unbindSchemaDriver(IDatabaseSchemaDriver type, ServiceReference<IDatabaseSchemaDriver> serviceReference)
+    public void unbindSchemaDriver(final IDatabaseSchemaDriver type, final ServiceReference<IDatabaseSchemaDriver> serviceReference)
     {
         this.schemaDriverList.remove(type, serviceReference);
     }
     
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void bindColumnType(IColumnType type, ServiceReference<IColumnType> serviceReference)
+    public void bindColumnType(final IColumnType type, final ServiceReference<IColumnType> serviceReference)
     {
         this.columnDriverList.add(type, serviceReference);
     }
     
-    public void unbindColumnType(IColumnType type, ServiceReference<IColumnType> serviceReference)
+    public void unbindColumnType(final IColumnType type, final ServiceReference<IColumnType> serviceReference)
     {
         this.columnDriverList.remove(type, serviceReference);
     }
     
     @Activate
-    private void activate(ComponentContext context, Map<String, ?> properties)
+    private void activate(final ComponentContext context, final Map<String, ?> properties)
     {
         this.context = context;
     }
     
     @Deactivate
-    private void deactivate(ComponentContext context)
+    private void deactivate(final ComponentContext context)
     {
         this.context = null;
     }
     
     @Override
-    public IDatabaseSchemaDriver getDatabaseSchemaDriver(Connection connection) throws SQLException
+    public IDatabaseSchemaDriver getDatabaseSchemaDriver(final Connection connection) throws SQLException
     {
         int currentLevel = -1;
         IDatabaseSchemaDriver currentDriver = null;
-        for (IDatabaseSchemaDriver driver : this.schemaDriverList.getDriverList())
+        for (final IDatabaseSchemaDriver driver : this.schemaDriverList.getDriverList())
         {
             int level = driver.handle(connection);
             if (level > -1)
@@ -113,7 +113,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
     }
     
     @Override
-    public boolean checkSchemaSpec(SchemaSpec schemaSpec, Connection connection) throws SQLException
+    public boolean checkSchemaSpec(final SchemaSpec schemaSpec, final Connection connection) throws SQLException
     {
         
         if (schemaSpec == null)
@@ -144,13 +144,13 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
             
             Dictionary<ObjectType, Object> objects = new Hashtable<>();
             objects.put(ObjectType.SCHEMA, schemaSpec);
-            for (IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
+            for (final IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
             {
                 try
                 {
                     updateListener.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.PRE, connection, domain, objects, driver, null);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     this.logError(e, schemaSpec, "Error on UpdateListener.Schema.Check.Pre " + schemaSpec.getDomain(), checkProperties);
                 }
@@ -163,13 +163,13 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
         
         if (schemaSpec.getListTableSpec() != null)
         {
-            for (TableSpec tableSpec : schemaSpec.getListTableSpec())
+            for (final TableSpec tableSpec : schemaSpec.getListTableSpec())
             {
                 try
                 {
                     tableTrackerList.add(TableProcessor.checkTableDefinition(this, connection, driver, schemaSpec, tableSpec, domain, checkProperties));
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     this.logError(e, schemaSpec, "Error on checkSchema " + schemaSpec.getDomain(), checkProperties);
                 }
@@ -182,13 +182,13 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
         
         // create columns
         
-        for (TableTracker tableTracker : tableTrackerList)
+        for (final TableTracker tableTracker : tableTrackerList)
         {
             if (tableTracker.isExits())
             {
                 if (tableTracker.getTableSpec().getColumnList() != null)
                 {
-                    for (ColumnSpec columnSpec : tableTracker.getTableSpec().getColumnList())
+                    for (final ColumnSpec columnSpec : tableTracker.getTableSpec().getColumnList())
                     {
                         tableTracker.getColumnTrackerList().add(ColumnProcessor.checkColumnDefinition
                                                                                    (
@@ -212,17 +212,17 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
             {
                 Dictionary<ObjectType, Object> objects = new Hashtable<>();
                 objects.put(ObjectType.SCHEMA, schemaSpec);
-                for (IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
+                for (final IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
                 {
                     try
                     {
                         updateListener.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, domain, objects, driver, null);
                     }
-                    catch (SQLException e)
+                    catch (final SQLException e)
                     {
                         logSQLException(e);
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
                         this.logError(e, schemaSpec, "Convert Schema " + schemaSpec.getDomain() + " Error on UpdateListener.Schema.Check.Pre ", checkProperties);
                     }
@@ -233,17 +233,17 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
                     }
                 }
                 
-                for (IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
+                for (final IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
                 {
                     try
                     {
                         updateListener.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.PRE, connection, domain, objects, driver, null);
                     }
-                    catch (SQLException e)
+                    catch (final SQLException e)
                     {
                         logSQLException(e);
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
                         this.logError(e, schemaSpec, "Convert Schema " + schemaSpec.getDomain() + " Error on UpdateListener.Schema.Update.Pre ", checkProperties);
                     }
@@ -252,11 +252,11 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
                     {
                         updateListener.onAction(ActionType.UPDATE, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, domain, objects, driver, null);
                     }
-                    catch (SQLException e)
+                    catch (final SQLException e)
                     {
                         logSQLException(e);
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
                         this.logError(e, schemaSpec, "Convert Schema " + schemaSpec.getDomain() + " Error on UpdateListener.Schema.Update.Post ", checkProperties);
                     }
@@ -267,17 +267,17 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
                     }
                 }
                 
-                for (IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
+                for (final IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
                 {
                     try
                     {
                         updateListener.onAction(ActionType.CHECK, ObjectType.SCHEMA_CONVERT_SCHEMA, PhaseType.POST, connection, domain, objects, driver, null);
                     }
-                    catch (SQLException e)
+                    catch (final SQLException e)
                     {
                         logSQLException(e);
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
                         this.logError(e, schemaSpec, "Convert Schema " + schemaSpec.getDomain() + " Error on UpdateListener.Schema.Check.Post ", checkProperties);
                     }
@@ -289,7 +289,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
                 }
             }
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             this.logError(e, schemaSpec, "Error on schema ConvertPhase " + schemaSpec.getDomain(), checkProperties);
         }
@@ -308,25 +308,25 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
             }
             connection.clearWarnings();
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             logSQLException(e);
             try
             {
                 connection.clearWarnings();
             }
-            catch (Exception e2) { }
+            catch (final Exception e2) { }
         }
         
         // column properties
         
-        for (TableTracker tableTracker : tableTrackerList)
+        for (final TableTracker tableTracker : tableTrackerList)
         {
             if (tableTracker.isExits())
             {
                 if (tableTracker.getTableSpec().getColumnList() != null)
                 {
-                    for (ColumnTracker columnTracker : tableTracker.getColumnTrackerList())
+                    for (final ColumnTracker columnTracker : tableTracker.getColumnTrackerList())
                     {
                         if (columnTracker.isExits())
                         {
@@ -361,7 +361,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
         
         if (!schemaSpec.getSkipChecks())
         {
-            for (TableTracker tableTracker : tableTrackerList)
+            for (final TableTracker tableTracker : tableTrackerList)
             {
                 if (tableTracker.isExits())
                 {
@@ -381,13 +381,13 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
                 }
             }
             
-            for (TableTracker tableTracker : tableTrackerList)
+            for (final TableTracker tableTracker : tableTrackerList)
             {
                 if (tableTracker.isExits())
                 {
                     if (tableTracker.getTableSpec().getColumnList() != null)
                     {
-                        for (ColumnTracker columnTracker : tableTracker.getColumnTrackerList())
+                        for (final ColumnTracker columnTracker : tableTracker.getColumnTrackerList())
                         {
                             if (columnTracker.isExits())
                             {
@@ -411,11 +411,11 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
         {
             driver.dropDummyColumns(connection, schemaSpec);
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             logSQLException(e);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             this.logError(e, schemaSpec, "Error on drop dummy columns " + schemaSpec.getDomain(), checkProperties);
         }
@@ -430,17 +430,17 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
             
             Dictionary<ObjectType, Object> objects = new Hashtable<>();
             objects.put(ObjectType.SCHEMA, schemaSpec);
-            for (IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
+            for (final IDatabaseSchemaUpdateListener updateListener : schemaSpec.getUpdateListenerList())
             {
                 try
                 {
                     updateListener.onAction(ActionType.CHECK, ObjectType.SCHEMA, PhaseType.POST, connection, domain, objects, driver, null);
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     this.logError(e, schemaSpec, "Error on UpdateListener.Schema.Check.Post " + schemaSpec.getDomain(), checkProperties);
                 }
@@ -455,7 +455,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
         return checkProperties.getUnusableExceptionList().isEmpty();
     }
     
-    protected void logSQLException(SQLException e)
+    protected void logSQLException(final SQLException e)
     {
         if (this.logService == null)
         {
@@ -491,7 +491,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
         
     }
     
-    protected void logError(Throwable throwable, SchemaSpec schema, String msg, CheckProperties checkProperties)
+    protected void logError(final Throwable throwable, final SchemaSpec schema, final String msg, final CheckProperties checkProperties)
     {
         if (throwable instanceof SchemaUnusableException)
         {
@@ -512,7 +512,7 @@ public class DatabaseSchemaProcessorImpl implements IDatabaseSchemaProcessor
         }
         else
         {
-            System.err.println("" + msg);
+            System.err.println(msg);
             if (throwable != null)
             {
                 throwable.printStackTrace();

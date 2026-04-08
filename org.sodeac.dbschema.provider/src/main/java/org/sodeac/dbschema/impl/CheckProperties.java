@@ -22,20 +22,20 @@ public class CheckProperties
     
     public boolean isInterrupted()
     {
-        return interrupted;
+        return this.interrupted;
     }
     
-    public void setInterrupted(boolean interrupted)
+    public void setInterrupted(final boolean interrupted)
     {
         this.interrupted = interrupted;
     }
     
     public List<SchemaUnusableException> getUnusableExceptionList()
     {
-        return unusableExceptionList;
+        return this.unusableExceptionList;
     }
     
-    public void setUnusableExceptionList(List<SchemaUnusableException> unusableExceptionList)
+    public void setUnusableExceptionList(final List<SchemaUnusableException> unusableExceptionList)
     {
         this.unusableExceptionList = unusableExceptionList;
     }

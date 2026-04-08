@@ -12,6 +12,7 @@
 package org.sodeac.dbschema.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class IndexSpec
      * @param indexName name of index
      * @param column    affected column
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, ColumnSpec column)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final ColumnSpec column)
     {
         this(tableSpec, indexName, column, false);
     }
@@ -41,7 +42,7 @@ public class IndexSpec
      * @param indexName name of index
      * @param columns   affected columns
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, List<ColumnSpec> columns)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final List<ColumnSpec> columns)
     {
         this(tableSpec, indexName, columns, false);
     }
@@ -54,7 +55,7 @@ public class IndexSpec
      * @param column    affected column
      * @param unique    if true, index is unique, otherwise not
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, ColumnSpec column, boolean unique)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final ColumnSpec column, final boolean unique)
     {
         super();
         this.tableSpec = tableSpec;
@@ -73,7 +74,7 @@ public class IndexSpec
      * @param unique         if true, index is unique, otherwise not
      * @param includeContext if true, column {@link DatabaseCommonElements#CONTEXT} is a member of index
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, ColumnSpec column, boolean unique, boolean includeContext)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final ColumnSpec column, final boolean unique, final boolean includeContext)
     {
         super();
         this.tableSpec = tableSpec;
@@ -92,7 +93,7 @@ public class IndexSpec
      * @param columns   affected columns
      * @param unique    if true, index is unique, otherwise not
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, List<ColumnSpec> columns, boolean unique)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final List<ColumnSpec> columns, final boolean unique)
     {
         super();
         this.tableSpec = tableSpec;
@@ -113,16 +114,13 @@ public class IndexSpec
      * @param columns   affected columns
      * @param unique    if true, index is unique, otherwise not
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, ColumnSpec[] columns, boolean unique)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final ColumnSpec[] columns, final boolean unique)
     {
         super();
         this.tableSpec = tableSpec;
         this.indexName = indexName;
         this.columns = new ArrayList<ColumnSpec>();
-        for (int i = 0; i < columns.length; i++)
-        {
-            this.columns.add(columns[i]);
-        }
+        Collections.addAll(this.columns, columns);
         this.unique = unique;
     }
     
@@ -135,7 +133,7 @@ public class IndexSpec
      * @param unique         if true, index is unique, otherwise not
      * @param includeContext if true, column {@link DatabaseCommonElements#CONTEXT} is a member of index
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, List<ColumnSpec> columns, boolean unique, boolean includeContext)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final List<ColumnSpec> columns, final boolean unique, final boolean includeContext)
     {
         super();
         this.tableSpec = tableSpec;
@@ -157,16 +155,13 @@ public class IndexSpec
      * @param unique         if true, index is unique, otherwise not
      * @param includeContext if true, column {@link DatabaseCommonElements#CONTEXT} is a member of index
      */
-    public IndexSpec(TableSpec tableSpec, String indexName, ColumnSpec[] columns, boolean unique, boolean includeContext)
+    public IndexSpec(final TableSpec tableSpec, final String indexName, final ColumnSpec[] columns, final boolean unique, final boolean includeContext)
     {
         super();
         this.tableSpec = tableSpec;
         this.indexName = indexName;
         this.columns = new ArrayList<ColumnSpec>();
-        for (int i = 0; i < columns.length; i++)
-        {
-            this.columns.add(columns[i]);
-        }
+        Collections.addAll(this.columns, columns);
         this.unique = unique;
     }
     
@@ -185,7 +180,7 @@ public class IndexSpec
      *
      * @return index specification
      */
-    public IndexSpec setIncludeContext(boolean includeContext)
+    public IndexSpec setIncludeContext(final boolean includeContext)
     {
         this.includeContext = includeContext;
         return this;
@@ -198,7 +193,7 @@ public class IndexSpec
      */
     public boolean getUnique()
     {
-        return unique;
+        return this.unique;
     }
     
     /**
@@ -208,7 +203,7 @@ public class IndexSpec
      */
     public String getIndexName()
     {
-        return indexName;
+        return this.indexName;
     }
     
     /**
@@ -218,7 +213,7 @@ public class IndexSpec
      */
     public Boolean getQuotedName()
     {
-        return quotedName;
+        return this.quotedName;
     }
     
     /**
@@ -228,7 +223,7 @@ public class IndexSpec
      *
      * @return index specification
      */
-    public IndexSpec setQuotedName(Boolean quotedName)
+    public IndexSpec setQuotedName(final Boolean quotedName)
     {
         this.quotedName = quotedName;
         return this;
@@ -241,7 +236,7 @@ public class IndexSpec
      */
     public String getTableSpace()
     {
-        return tableSpace;
+        return this.tableSpace;
     }
     
     /**
@@ -251,7 +246,7 @@ public class IndexSpec
      *
      * @return index specification
      */
-    public IndexSpec setTableSpace(String tableSpace)
+    public IndexSpec setTableSpace(final String tableSpace)
     {
         this.tableSpace = tableSpace;
         return this;
@@ -264,7 +259,7 @@ public class IndexSpec
      */
     public List<ColumnSpec> getColumns()
     {
-        return columns;
+        return this.columns;
     }
     
     /**
@@ -274,7 +269,7 @@ public class IndexSpec
      */
     public boolean getIncludeContext()
     {
-        return includeContext;
+        return this.includeContext;
     }
     
     /**
@@ -284,7 +279,7 @@ public class IndexSpec
      */
     public TableSpec getTableSpec()
     {
-        return tableSpec;
+        return this.tableSpec;
     }
     
     /**
@@ -300,6 +295,6 @@ public class IndexSpec
     @Override
     public String toString()
     {
-        return "IndexSpec " + indexName;
+        return "IndexSpec " + this.indexName;
     }
 }

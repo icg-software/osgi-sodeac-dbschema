@@ -30,11 +30,11 @@ public class DriverManager<T>
     
     private Lock lock = null;
     private volatile List<T> driverList = new ArrayList<T>();
-    private List<Reference> referenceList = new ArrayList<Reference>();
+    private final List<Reference> referenceList = new ArrayList<Reference>();
     
-    public void add(T service, ServiceReference<T> serviceReference)
+    public void add(final T service, final ServiceReference<T> serviceReference)
     {
-        lock.lock();
+        this.lock.lock();
         try
         {
             Reference reference = new Reference();
@@ -46,33 +46,33 @@ public class DriverManager<T>
         }
         finally
         {
-            lock.unlock();
+            this.lock.unlock();
         }
     }
     
-    public void remove(T service, ServiceReference<T> serviceReference)
+    public void remove(final T service, final ServiceReference<T> serviceReference)
     {
-        lock.lock();
+        this.lock.lock();
         try
         {
             List<Reference> toRemove = new ArrayList<Reference>();
-            for (Reference ref : referenceList)
+            for (final Reference ref : this.referenceList)
             {
                 if (ref == service)
                 {
                     toRemove.add(ref);
                 }
             }
-            for (Reference rm : toRemove)
+            for (final Reference rm : toRemove)
             {
                 System.out.println("RM " + rm.service);
-                referenceList.remove(rm);
+                this.referenceList.remove(rm);
             }
             reCreateDriverList();
         }
         finally
         {
-            lock.unlock();
+            this.lock.unlock();
         }
     }
     
@@ -80,7 +80,7 @@ public class DriverManager<T>
     {
         Map<String, Map<String, List<Reference>>> structuredReferences = new HashMap<String, Map<String, List<Reference>>>();
         
-        for (Reference reference : referenceList)
+        for (final Reference reference : this.referenceList)
         {
             String className = reference.service.getClass().getCanonicalName();
             String bundleName = reference.serviceReference.getBundle().getSymbolicName();
@@ -102,12 +102,12 @@ public class DriverManager<T>
         
         List<T> newDriverList = new ArrayList<>();
         
-        for (Entry<String, Map<String, List<Reference>>> entry1 : structuredReferences.entrySet())
+        for (final Entry<String, Map<String, List<Reference>>> entry1 : structuredReferences.entrySet())
         {
-            for (Entry<String, List<Reference>> entry2 : entry1.getValue().entrySet())
+            for (final Entry<String, List<Reference>> entry2 : entry1.getValue().entrySet())
             {
                 Reference highest = null;
-                for (Reference current : entry2.getValue())
+                for (final Reference current : entry2.getValue())
                 {
                     if (highest == null)
                     {
@@ -137,6 +137,6 @@ public class DriverManager<T>
     
     public List<T> getDriverList()
     {
-        return driverList;
+        return this.driverList;
     }
 }

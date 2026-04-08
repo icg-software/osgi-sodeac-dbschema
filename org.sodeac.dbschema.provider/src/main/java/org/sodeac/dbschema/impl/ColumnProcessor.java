@@ -31,7 +31,7 @@ import org.sodeac.dbschema.api.TableSpec;
 
 public class ColumnProcessor
 {
-    public static ColumnTracker checkColumnDefinition(DatabaseSchemaProcessorImpl schemaProcessor, Connection connection, IDatabaseSchemaDriver driver, SchemaSpec schema, TableSpec table, ColumnSpec column, String databaseID, Map<String, Object> tableProperties, CheckProperties checkProperties)
+    public static ColumnTracker checkColumnDefinition(final DatabaseSchemaProcessorImpl schemaProcessor, final Connection connection, final IDatabaseSchemaDriver driver, final SchemaSpec schema, final TableSpec table, final ColumnSpec column, final String databaseID, final Map<String, Object> tableProperties, final CheckProperties checkProperties)
     {
         ColumnTracker columnTracker = new ColumnTracker();
         columnTracker.setColumnSpec(column);
@@ -43,17 +43,17 @@ public class ColumnProcessor
                 objects.put(ObjectType.SCHEMA, schema);
                 objects.put(ObjectType.TABLE, table);
                 objects.put(ObjectType.COLUMN, column);
-                for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                 {
                     try
                     {
                         updateListener.onAction(ActionType.CHECK, ObjectType.COLUMN, PhaseType.PRE, connection, databaseID, objects, driver, null);
                     }
-                    catch (SQLException e)
+                    catch (final SQLException e)
                     {
                         schemaProcessor.logSQLException(e);
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
                         schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Column.Check.Pre ", checkProperties);
                     }
@@ -68,7 +68,7 @@ public class ColumnProcessor
             Map<String, Object> columnProperties = new HashMap<String, Object>();
             if (tableProperties != null)
             {
-                for (Entry<String, Object> entry : tableProperties.entrySet())
+                for (final Entry<String, Object> entry : tableProperties.entrySet())
                 {
                     columnProperties.put(entry.getKey(), entry.getValue());
                 }
@@ -89,17 +89,17 @@ public class ColumnProcessor
                     objects.put(ObjectType.SCHEMA, schema);
                     objects.put(ObjectType.TABLE, table);
                     objects.put(ObjectType.COLUMN, column);
-                    for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                    for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                     {
                         try
                         {
                             updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN, PhaseType.PRE, connection, databaseID, objects, driver, null);
                         }
-                        catch (SQLException e)
+                        catch (final SQLException e)
                         {
                             schemaProcessor.logSQLException(e);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Column.Insert.Pre ", checkProperties);
                         }
@@ -120,12 +120,12 @@ public class ColumnProcessor
                     columnTracker.setExits(true);
                     columnTracker.setCreated(true);
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     exc = e;
                     schemaProcessor.logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     exc = e;
                     schemaProcessor.logError(e, schema, "Column " + table.getName() + "." + column.getName() + " can not create ", checkProperties);
@@ -144,17 +144,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN, PhaseType.POST, connection, databaseID, objects, driver, exc);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Column.Insert.Post ", checkProperties);
                             }
@@ -168,11 +168,11 @@ public class ColumnProcessor
                 }
             }
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error ", checkProperties);
         }
@@ -188,17 +188,17 @@ public class ColumnProcessor
             objects.put(ObjectType.SCHEMA, schema);
             objects.put(ObjectType.TABLE, table);
             objects.put(ObjectType.COLUMN, column);
-            for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+            for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
             {
                 try
                 {
                     updateListener.onAction(ActionType.CHECK, ObjectType.COLUMN, PhaseType.POST, connection, databaseID, objects, driver, null);
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     schemaProcessor.logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Column.Check.Post", checkProperties);
                 }
@@ -219,20 +219,20 @@ public class ColumnProcessor
             }
             connection.clearWarnings();
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
             try
             {
                 connection.clearWarnings();
             }
-            catch (Exception e2) { }
+            catch (final Exception e2) { }
         }
         
         return columnTracker;
     }
     
-    public static void checkColumnProperties(DatabaseSchemaProcessorImpl schemaProcessor, Connection connection, IDatabaseSchemaDriver driver, SchemaSpec schema, TableSpec table, ColumnSpec column, ColumnTracker columnTracker, String databaseID, Map<String, Object> columnProperties, CheckProperties checkProperties)
+    public static void checkColumnProperties(final DatabaseSchemaProcessorImpl schemaProcessor, final Connection connection, final IDatabaseSchemaDriver driver, final SchemaSpec schema, final TableSpec table, final ColumnSpec column, final ColumnTracker columnTracker, final String databaseID, final Map<String, Object> columnProperties, final CheckProperties checkProperties)
     {
         if (!columnTracker.isExits())
         {
@@ -257,17 +257,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_NULLABLE, PhaseType.PRE, connection, databaseID, objects, driver, null);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Nullable.Pre ", checkProperties);
                             }
@@ -293,17 +293,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_SIZE, PhaseType.PRE, connection, databaseID, objects, driver, null);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Size.Pre ", checkProperties);
                             }
@@ -328,17 +328,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_TYPE, PhaseType.PRE, connection, databaseID, objects, driver, null);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Type.Pre ", checkProperties);
                             }
@@ -364,17 +364,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_DEFAULT_VALUE, PhaseType.PRE, connection, databaseID, objects, driver, null);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.defaultvalue.Pre ", checkProperties);
                             }
@@ -393,12 +393,12 @@ public class ColumnProcessor
                 {
                     driver.setValidColumnProperties(connection, schema, table, column, columnProperties);
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     exc = e;
                     schemaProcessor.logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     exc = e;
                     schemaProcessor.logError(e, schema, "Column properties for " + table.getName() + "." + column.getName() + " can not update", checkProperties);
@@ -417,17 +417,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_NULLABLE, PhaseType.POST, connection, databaseID, objects, driver, exc);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Nullable.Post ", checkProperties);
                             }
@@ -445,17 +445,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_SIZE, PhaseType.POST, connection, databaseID, objects, driver, exc);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Size.Post ", checkProperties);
                             }
@@ -473,17 +473,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_TYPE, PhaseType.POST, connection, databaseID, objects, driver, exc);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.Type.Post ", checkProperties);
                             }
@@ -501,17 +501,17 @@ public class ColumnProcessor
                         objects.put(ObjectType.SCHEMA, schema);
                         objects.put(ObjectType.TABLE, table);
                         objects.put(ObjectType.COLUMN, column);
-                        for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                        for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                         {
                             try
                             {
                                 updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_DEFAULT_VALUE, PhaseType.POST, connection, databaseID, objects, driver, exc);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.defaultvalu.Post ", checkProperties);
                             }
@@ -526,7 +526,7 @@ public class ColumnProcessor
                 
             }
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
         }
@@ -540,18 +540,18 @@ public class ColumnProcessor
             }
             connection.clearWarnings();
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
             try
             {
                 connection.clearWarnings();
             }
-            catch (Exception e2) { }
+            catch (final Exception e2) { }
         }
     }
     
-    public static void createColumnKeys(DatabaseSchemaProcessorImpl schemaProcessor, Connection connection, IDatabaseSchemaDriver driver, SchemaSpec schema, TableSpec table, ColumnSpec column, ColumnTracker columnTracker, String databaseID, Map<String, Object> columnProperties, CheckProperties checkProperties)
+    public static void createColumnKeys(final DatabaseSchemaProcessorImpl schemaProcessor, final Connection connection, final IDatabaseSchemaDriver driver, final SchemaSpec schema, final TableSpec table, final ColumnSpec column, final ColumnTracker columnTracker, final String databaseID, final Map<String, Object> columnProperties, final CheckProperties checkProperties)
     {
         if (!columnTracker.isExits())
         {
@@ -573,17 +573,17 @@ public class ColumnProcessor
                     objects.put(ObjectType.SCHEMA, schema);
                     objects.put(ObjectType.TABLE, table);
                     objects.put(ObjectType.COLUMN, column);
-                    for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                    for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                     {
                         try
                         {
                             updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_FOREIGN_KEY, PhaseType.PRE, connection, databaseID, objects, driver, null);
                         }
-                        catch (SQLException e)
+                        catch (final SQLException e)
                         {
                             schemaProcessor.logSQLException(e);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.FK.Pre ", checkProperties);
                         }
@@ -601,12 +601,12 @@ public class ColumnProcessor
                 {
                     driver.setValidForeignKey(connection, schema, table, column, columnProperties);
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     exc = e;
                     schemaProcessor.logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     exc = e;
                     schemaProcessor.logError(e, schema, "Column foreign key for " + table.getName() + "." + column.getName() + " can not update", checkProperties);
@@ -623,17 +623,17 @@ public class ColumnProcessor
                     objects.put(ObjectType.SCHEMA, schema);
                     objects.put(ObjectType.TABLE, table);
                     objects.put(ObjectType.COLUMN, column);
-                    for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                    for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                     {
                         try
                         {
                             updateListener.onAction(ActionType.UPDATE, ObjectType.COLUMN_FOREIGN_KEY, PhaseType.POST, connection, databaseID, objects, driver, exc);
                         }
-                        catch (SQLException e)
+                        catch (final SQLException e)
                         {
                             schemaProcessor.logSQLException(e);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Col " + column.getName() + " Error on UpdateListener.FK.Post", checkProperties);
                         }
@@ -647,7 +647,7 @@ public class ColumnProcessor
             }
             
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
         }
@@ -661,14 +661,14 @@ public class ColumnProcessor
             }
             connection.clearWarnings();
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
             try
             {
                 connection.clearWarnings();
             }
-            catch (Exception e2) { }
+            catch (final Exception e2) { }
         }
     }
 }

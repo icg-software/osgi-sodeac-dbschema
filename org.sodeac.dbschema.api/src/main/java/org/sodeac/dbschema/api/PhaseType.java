@@ -34,14 +34,14 @@ public enum PhaseType
      */
     POST(2);
     
-    private PhaseType(int intValue)
+    PhaseType(final int intValue)
     {
         this.intValue = intValue;
     }
     
     private static volatile Set<PhaseType> ALL = null;
     
-    private int intValue;
+    private final int intValue;
     
     public static Set<PhaseType> getAll()
     {
@@ -53,9 +53,9 @@ public enum PhaseType
         return PhaseType.ALL;
     }
     
-    public static PhaseType findByInteger(int value)
+    public static PhaseType findByInteger(final int value)
     {
-        for (PhaseType actionType : getAll())
+        for (final PhaseType actionType : getAll())
         {
             if (actionType.intValue == value)
             {
@@ -65,9 +65,9 @@ public enum PhaseType
         return null;
     }
     
-    public static PhaseType findByName(String name)
+    public static PhaseType findByName(final String name)
     {
-        for (PhaseType actionType : getAll())
+        for (final PhaseType actionType : getAll())
         {
             if (actionType.name().equalsIgnoreCase(name))
             {

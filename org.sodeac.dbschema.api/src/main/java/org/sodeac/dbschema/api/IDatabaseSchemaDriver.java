@@ -20,16 +20,14 @@ import java.util.Map;
 
 public interface IDatabaseSchemaDriver
 {
-    public static final int HANDLE_NONE = -1;
-    public static final int HANDLE_FALLBACK = 0;
-    public static final int HANDLE_DEFAULT = 10000;
+    int HANDLE_NONE = -1;
+    int HANDLE_FALLBACK = 0;
+    int HANDLE_DEFAULT = 10000;
     
-    public static final String REQUIRED_DEFAULT_COLUMN = "SodeacDfltCol";
+    String REQUIRED_DEFAULT_COLUMN = "SodeacDfltCol";
     
-    public static enum Function
+    enum Function
     {CURRENT_TIMESTAMP, CURRENT_DATE, CURRENT_TIME}
-    
-    ;
     
     /**
      * Methode to request the compatibility to handle the {@link Connection} as schema driver.
@@ -41,7 +39,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public int handle(Connection connection) throws SQLException;
+    int handle(Connection connection) throws SQLException;
     
     /**
      * getter for schema driver type / database
@@ -52,14 +50,14 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public String getType(Connection connection) throws SQLException;
+    String getType(Connection connection) throws SQLException;
     
     /**
      * setter for complete list of column type implementations
      *
      * @param columnDriverList complete list of column type implementations
      */
-    public void setColumnDriverList(List<IColumnType> columnDriverList);
+    void setColumnDriverList(List<IColumnType> columnDriverList);
     
     /**
      * create a new schema
@@ -70,7 +68,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void createSchema(Connection connection, String schemaName, Map<String, Object> properties) throws SQLException;
+    void createSchema(Connection connection, String schemaName, Map<String, Object> properties) throws SQLException;
     
     /**
      * check the schema exists
@@ -82,7 +80,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public boolean schemaExists(Connection connection, String schemaName) throws SQLException;
+    boolean schemaExists(Connection connection, String schemaName) throws SQLException;
     
     /**
      * drops a schema
@@ -93,7 +91,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void dropSchema(Connection connection, String schemaName, Map<String, Object> properties) throws SQLException;
+    void dropSchema(Connection connection, String schemaName, Map<String, Object> properties) throws SQLException;
     
     /**
      * check existence of table by {@code tableSpec}.
@@ -107,7 +105,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public boolean tableExists(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
+    boolean tableExists(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
     
     /**
      *
@@ -120,7 +118,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void createTable(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
+    void createTable(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
     
     /**
      *
@@ -135,7 +133,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public boolean primaryKeyExists(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
+    boolean primaryKeyExists(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
     
     /**
      * create primary key
@@ -147,7 +145,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void setPrimaryKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
+    void setPrimaryKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, Map<String, Object> tableProperties) throws SQLException;
     
     /**
      *
@@ -163,7 +161,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public boolean columnExists(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
+    boolean columnExists(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
     
     /**
      *
@@ -179,7 +177,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public String determineColumnType(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
+    String determineColumnType(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
     
     /**
      * create column
@@ -192,7 +190,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void createColumn(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
+    void createColumn(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
     
     /**
      * drop column
@@ -205,7 +203,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void dropColumn(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, String columnName, boolean quoted) throws SQLException;
+    void dropColumn(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, String columnName, boolean quoted) throws SQLException;
     
     /**
      * check column properties (default-value, type, nullable)
@@ -220,7 +218,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public boolean isValidColumnProperties(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
+    boolean isValidColumnProperties(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
     
     /**
      * set valid column properties (default-value, type, nullable)
@@ -233,7 +231,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void setValidColumnProperties(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
+    void setValidColumnProperties(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
     
     /**
      *
@@ -249,7 +247,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public boolean isValidForeignKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
+    boolean isValidForeignKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
     
     /**
      * create or update foreign key setting for {@code columnSpec}
@@ -262,7 +260,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void setValidForeignKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
+    void setValidForeignKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, Map<String, Object> columnProperties) throws SQLException;
     
     /**
      * drop foreign key
@@ -275,7 +273,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void dropForeignKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, String keyName, boolean quoted) throws SQLException;
+    void dropForeignKey(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, String keyName, boolean quoted) throws SQLException;
     
     /**
      * check valid index setup
@@ -290,7 +288,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public boolean isValidIndex(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, IndexSpec indexSpec, Map<String, Object> indexProperties) throws SQLException;
+    boolean isValidIndex(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, IndexSpec indexSpec, Map<String, Object> indexProperties) throws SQLException;
     
     /**
      * setup valid index by {@code indexSpec}
@@ -303,7 +301,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void setValidIndex(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, IndexSpec indexSpec, Map<String, Object> indexProperties) throws SQLException;
+    void setValidIndex(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, IndexSpec indexSpec, Map<String, Object> indexProperties) throws SQLException;
     
     /**
      * drop index with indexName
@@ -316,7 +314,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void dropIndex(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, String indexName, boolean quoted) throws SQLException;
+    void dropIndex(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, String indexName, boolean quoted) throws SQLException;
     
     /**
      * clean schema from columns created with table-objects by dbms can not create tables without columns
@@ -326,7 +324,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void dropDummyColumns(Connection connection, SchemaSpec schemaSpec) throws SQLException;
+    void dropDummyColumns(Connection connection, SchemaSpec schemaSpec) throws SQLException;
     
     /**
      * convert function name to  function syntax
@@ -335,14 +333,14 @@ public interface IDatabaseSchemaDriver
      *
      * @return valid function syntax
      */
-    public String getFunctionExpression(String function);
+    String getFunctionExpression(String function);
     
     /**
      *
      *
      * @return true, of dbms requires a column on table creation, otherwise false
      */
-    public boolean tableRequiresColumn();
+    boolean tableRequiresColumn();
     
     /**
      *
@@ -352,7 +350,7 @@ public interface IDatabaseSchemaDriver
      *
      * @return catalog filter object for jdbc meta api
      */
-    public String catalogSearchPattern(SchemaSpec schemaSpec, Connection connection, String catalog);
+    String catalogSearchPattern(SchemaSpec schemaSpec, Connection connection, String catalog);
     
     /**
      *
@@ -362,7 +360,7 @@ public interface IDatabaseSchemaDriver
      *
      * @return schema filter object for jdbc meta api
      */
-    public String schemaSearchPattern(SchemaSpec schemaSpec, Connection connection, String schema);
+    String schemaSearchPattern(SchemaSpec schemaSpec, Connection connection, String schema);
     
     /**
      *
@@ -374,7 +372,7 @@ public interface IDatabaseSchemaDriver
      *
      * @return filter object for jdbc meta api
      */
-    public String objectSearchPattern(SchemaSpec schemaSpec, Connection connection, String name, boolean quoted, String type);
+    String objectSearchPattern(SchemaSpec schemaSpec, Connection connection, String name, boolean quoted, String type);
     
     /**
      * convert object name (e.g. table name, column name, key name ) to dbms conform name
@@ -386,13 +384,13 @@ public interface IDatabaseSchemaDriver
      *
      * @return jdbc specific object name
      */
-    public String objectNameGuidelineFormat(SchemaSpec schemaSpec, Connection connection, String name, String type);
+    String objectNameGuidelineFormat(SchemaSpec schemaSpec, Connection connection, String name, String type);
     
     /**
      *
      * @return character to quote an identifier
      */
-    public char quotedChar();
+    char quotedChar();
     
     /**
      * create new blob to store binary data
@@ -403,7 +401,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public Blob createBlob(Connection connection) throws SQLException;
+    Blob createBlob(Connection connection) throws SQLException;
     
     /**
      * fetch existing blob from resultset
@@ -416,7 +414,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public Blob getBlob(Connection connection, ResultSet resultSet, int columnIndex) throws SQLException;
+    Blob getBlob(Connection connection, ResultSet resultSet, int columnIndex) throws SQLException;
     
     /**
      * fetch existing blob from resultset
@@ -429,7 +427,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public Blob getBlob(Connection connection, ResultSet resultSet, String columnLabel) throws SQLException;
+    Blob getBlob(Connection connection, ResultSet resultSet, String columnLabel) throws SQLException;
     
     /**
      * store blob into database
@@ -441,7 +439,7 @@ public interface IDatabaseSchemaDriver
      *
      * @throws SQLException
      */
-    public void setBlob(Connection connection, PreparedStatement preparedStatement, Blob blob, int parameterIndex) throws SQLException;
+    void setBlob(Connection connection, PreparedStatement preparedStatement, Blob blob, int parameterIndex) throws SQLException;
     
     /**
      * get necessity to manually clean blobs
@@ -450,7 +448,7 @@ public interface IDatabaseSchemaDriver
      *
      * @return true, if dbms does no clean content automatically after removing blob row or similar actions, otherwise false
      */
-    public boolean requireCleanBlob(Connection connection);
+    boolean requireCleanBlob(Connection connection);
     
     /**
      *
@@ -459,5 +457,5 @@ public interface IDatabaseSchemaDriver
      * @param connection underlying connection
      * @param blob       blob to clean
      */
-    public void cleanBlob(Connection connection, Blob blob) throws SQLException;
+    void cleanBlob(Connection connection, Blob blob) throws SQLException;
 }

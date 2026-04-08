@@ -26,24 +26,22 @@ public interface IColumnType
      * Embedded column types
      *
      */
-    public static enum ColumnType
+    enum ColumnType
     {CHAR, VARCHAR, CLOB, BOOLEAN, SMALLINT, INTEGER, BIGINT, REAL, DOUBLE, TIMESTAMP, DATE, TIME, BINARY, BLOB}
     
     /**
      * Priority value for driver
      *
      */
-    public static enum Applicability
+    enum Applicability
     {NONE, FALLBACK, STANDARD, SPECIFIC}
-    
-    ;
     
     /**
      * Getter for supported column types
      *
      * @return list of string represent of supported column types
      */
-    public List<String> getTypeList();
+    List<String> getTypeList();
     
     /**
      * checks the applicability of this driver to column type
@@ -59,7 +57,7 @@ public interface IColumnType
      *
      * @throws SQLException
      */
-    public default Applicability getApplicability(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, String dbProduct, IDatabaseSchemaDriver schemaDriver) throws SQLException
+    default Applicability getApplicability(final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec, final ColumnSpec columnSpec, final String dbProduct, final IDatabaseSchemaDriver schemaDriver) throws SQLException
     {
         return Applicability.STANDARD;
     }
@@ -78,7 +76,7 @@ public interface IColumnType
      *
      * @throws SQLException
      */
-    public String getTypeExpression(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, String dbProduct, IDatabaseSchemaDriver schemaDriver) throws SQLException;
+    String getTypeExpression(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, String dbProduct, IDatabaseSchemaDriver schemaDriver) throws SQLException;
     
     /**
      * return the expression for default type of column in create or alter column command
@@ -94,5 +92,5 @@ public interface IColumnType
      *
      * @throws SQLException
      */
-    public String getDefaultValueExpression(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, String dbProduct, IDatabaseSchemaDriver schemaDriver) throws SQLException;
+    String getDefaultValueExpression(Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec, ColumnSpec columnSpec, String dbProduct, IDatabaseSchemaDriver schemaDriver) throws SQLException;
 }

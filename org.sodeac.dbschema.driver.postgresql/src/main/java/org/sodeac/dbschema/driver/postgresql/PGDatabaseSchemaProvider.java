@@ -37,7 +37,7 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     // https://www.techonthenet.com/postgresql/index.php
     
     @Override
-    public int handle(Connection connection) throws SQLException
+    public int handle(final Connection connection) throws SQLException
     {
         if (connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("PostgreSQL"))
         {
@@ -49,12 +49,12 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     @Override
     protected String tableSpaceAppendix
         (
-            Connection connection,
-            SchemaSpec schemaSpec,
-            TableSpec tableSpec,
-            Map<String, Object> properties,
-            String tableSpace,
-            String type
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final Map<String, Object> properties,
+            final String tableSpace,
+            final String type
         )
     {
         if ("PRIMARYKEY".equals(type))
@@ -68,8 +68,8 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     @Override
     public String determineColumnType
         (
-            Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec,
-            ColumnSpec columnSpec, Map<String, Object> columnProperties
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final ColumnSpec columnSpec, final Map<String, Object> columnProperties
         ) throws SQLException
     {
         if (columnProperties == null)
@@ -99,11 +99,11 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     @Override
     public boolean columnExists
         (
-            Connection connection,
-            SchemaSpec schemaSpec,
-            TableSpec tableSpec,
-            ColumnSpec columnSpec,
-            Map<String, Object> properties
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final ColumnSpec columnSpec,
+            final Map<String, Object> properties
         ) throws SQLException
     {
         boolean columnExists = super.columnExists(connection, schemaSpec, tableSpec, columnSpec, properties);
@@ -127,8 +127,8 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     @Override
     public void setValidColumnProperties
         (
-            Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec,
-            ColumnSpec columnSpec, Map<String, Object> columnProperties
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final ColumnSpec columnSpec, final Map<String, Object> columnProperties
         ) throws SQLException
     {
         String schema = connection.getSchema();
@@ -154,11 +154,11 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
         }
         
         String tablePart = tableQuoted ?
-            " " + schema + "." + quotedChar() + "" + tableSpec.getName() + "" + quotedChar() + " " :
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
             " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
         
         String columnPart = columnQuoted ?
-            " " + quotedChar() + "" + columnSpec.getName() + "" + quotedChar() + " " :
+            " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
             " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
         
         boolean nullable = columnSpec.getNullable();
@@ -180,7 +180,7 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
                     {
                         updateNullableStatment.close();
                     }
-                    catch (Exception e) { }
+                    catch (final Exception e) { }
                 }
             }
         }
@@ -216,7 +216,7 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
                     {
                         createColumnStatement.close();
                     }
-                    catch (Exception e) { }
+                    catch (final Exception e) { }
                 }
             }
         }
@@ -259,32 +259,33 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
                     {
                         createColumnStatement.close();
                     }
-                    catch (Exception e) { }
+                    catch (final Exception e) { }
                 }
             }
         }
     }
     
-    public String getFunctionExpression(String function)
+    @Override
+    public String getFunctionExpression(final String function)
     {
         return function;
     }
     
     @Override
-    public String objectNameGuidelineFormat(SchemaSpec schemaSpec, Connection connection, String name, String type)
+    public String objectNameGuidelineFormat(final SchemaSpec schemaSpec, final Connection connection, final String name, final String type)
     {
         return name == null ? name : name.toLowerCase();
     }
     
     @Override
-    public Blob createBlob(Connection connection) throws SQLException
+    public Blob createBlob(final Connection connection) throws SQLException
     {
         org.postgresql.core.BaseConnection nativeConnection = connection.unwrap(org.postgresql.core.BaseConnection.class);
         return new LargeObjectBlob(nativeConnection);
     }
     
     @Override
-    public Blob getBlob(Connection connection, ResultSet resultSet, int columnIndex) throws SQLException
+    public Blob getBlob(final Connection connection, final ResultSet resultSet, final int columnIndex) throws SQLException
     {
         long oid = resultSet.getLong(columnIndex);
         if (resultSet.wasNull())
@@ -296,7 +297,7 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     }
     
     @Override
-    public Blob getBlob(Connection connection, ResultSet resultSet, String columnLabel) throws SQLException
+    public Blob getBlob(final Connection connection, final ResultSet resultSet, final String columnLabel) throws SQLException
     {
         long oid = resultSet.getLong(columnLabel);
         if (resultSet.wasNull())
@@ -308,7 +309,7 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     }
     
     @Override
-    public void setBlob(Connection connection, PreparedStatement preparedStatement, Blob blob, int parameterIndex) throws SQLException
+    public void setBlob(final Connection connection, final PreparedStatement preparedStatement, final Blob blob, final int parameterIndex) throws SQLException
     {
         if (blob == null)
         {
@@ -343,7 +344,7 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
                 os.flush();
                 loBlob = deepCopy;
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 if (e instanceof SQLException)
                 {
@@ -357,22 +358,22 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
                 {
                     is.close();
                 }
-                catch (Exception e) { }
+                catch (final Exception e) { }
                 try
                 {
                     os.close();
                 }
-                catch (Exception e) { }
+                catch (final Exception e) { }
                 try
                 {
                     deepCopy.free();
                 }
-                catch (Exception e) { }
+                catch (final Exception e) { }
                 try
                 {
                     largeObject.close();
                 }
-                catch (Exception e) { }
+                catch (final Exception e) { }
             }
         }
         long oid = loBlob.getOID();
@@ -380,13 +381,13 @@ public class PGDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implem
     }
     
     @Override
-    public boolean requireCleanBlob(Connection connection)
+    public boolean requireCleanBlob(final Connection connection)
     {
         return true;
     }
     
     @Override
-    public void cleanBlob(Connection connection, Blob blob) throws SQLException
+    public void cleanBlob(final Connection connection, final Blob blob) throws SQLException
     {
         if (blob == null)
         {

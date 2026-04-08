@@ -30,7 +30,7 @@ import org.sodeac.dbschema.api.TableSpec;
 
 public class TableProcessor
 {
-    public static TableTracker checkTableDefinition(DatabaseSchemaProcessorImpl schemaProcessor, Connection connection, IDatabaseSchemaDriver driver, SchemaSpec schema, TableSpec table, String databaseID, CheckProperties checkProperties)
+    public static TableTracker checkTableDefinition(final DatabaseSchemaProcessorImpl schemaProcessor, final Connection connection, final IDatabaseSchemaDriver driver, final SchemaSpec schema, final TableSpec table, final String databaseID, final CheckProperties checkProperties)
     {
         TableTracker tableTracker = new TableTracker();
         tableTracker.setTableSpec(table);
@@ -41,17 +41,17 @@ public class TableProcessor
                 Dictionary<ObjectType, Object> objects = new Hashtable<>();
                 objects.put(ObjectType.SCHEMA, schema);
                 objects.put(ObjectType.TABLE, table);
-                for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                 {
                     try
                     {
                         updateListener.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, objects, driver, null);
                     }
-                    catch (SQLException e)
+                    catch (final SQLException e)
                     {
                         schemaProcessor.logSQLException(e);
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
                         schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.Table.Check.Pre ", checkProperties);
                     }
@@ -78,17 +78,17 @@ public class TableProcessor
                     Dictionary<ObjectType, Object> objects = new Hashtable<>();
                     objects.put(ObjectType.SCHEMA, schema);
                     objects.put(ObjectType.TABLE, table);
-                    for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                    for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                     {
                         try
                         {
                             updateListener.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.PRE, connection, databaseID, objects, driver, null);
                         }
-                        catch (SQLException e)
+                        catch (final SQLException e)
                         {
                             schemaProcessor.logSQLException(e);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.Table.Insert.Pre ", checkProperties);
                         }
@@ -109,12 +109,12 @@ public class TableProcessor
                     tableTracker.setCreated(true);
                     tableTracker.setExits(true);
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     exc = e;
                     schemaProcessor.logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     exc = e;
                     schemaProcessor.logError(e, schema, "Table " + table.getName() + " can not create ", checkProperties);
@@ -130,17 +130,17 @@ public class TableProcessor
                     Dictionary<ObjectType, Object> objects = new Hashtable<>();
                     objects.put(ObjectType.SCHEMA, schema);
                     objects.put(ObjectType.TABLE, table);
-                    for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                    for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                     {
                         try
                         {
                             updateListener.onAction(ActionType.UPDATE, ObjectType.TABLE, PhaseType.POST, connection, databaseID, objects, driver, exc);
                         }
-                        catch (SQLException e)
+                        catch (final SQLException e)
                         {
                             schemaProcessor.logSQLException(e);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.Table.Insert.Post ", checkProperties);
                         }
@@ -153,11 +153,11 @@ public class TableProcessor
                 }
             }
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error", checkProperties);
         }
@@ -172,17 +172,17 @@ public class TableProcessor
             Dictionary<ObjectType, Object> objects = new Hashtable<>();
             objects.put(ObjectType.SCHEMA, schema);
             objects.put(ObjectType.TABLE, table);
-            for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+            for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
             {
                 try
                 {
                     updateListener.onAction(ActionType.CHECK, ObjectType.TABLE, PhaseType.POST, connection, databaseID, objects, driver, null);
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     schemaProcessor.logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.Table.Check.Post", checkProperties);
                 }
@@ -203,20 +203,20 @@ public class TableProcessor
             }
             connection.clearWarnings();
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
             try
             {
                 connection.clearWarnings();
             }
-            catch (Exception e2) { }
+            catch (final Exception e2) { }
         }
         
         return tableTracker;
     }
     
-    public static void createTableKeys(DatabaseSchemaProcessorImpl schemaProcessor, Connection connection, IDatabaseSchemaDriver driver, SchemaSpec schema, TableSpec table, TableTracker tableTracker, String databaseID, CheckProperties checkProperties)
+    public static void createTableKeys(final DatabaseSchemaProcessorImpl schemaProcessor, final Connection connection, final IDatabaseSchemaDriver driver, final SchemaSpec schema, final TableSpec table, final TableTracker tableTracker, final String databaseID, final CheckProperties checkProperties)
     {
         if (!tableTracker.isExits())
         {
@@ -238,17 +238,17 @@ public class TableProcessor
                     Dictionary<ObjectType, Object> objects = new Hashtable<>();
                     objects.put(ObjectType.SCHEMA, schema);
                     objects.put(ObjectType.TABLE, table);
-                    for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                    for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                     {
                         try
                         {
                             updateListener.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.PRE, connection, databaseID, objects, driver, null);
                         }
-                        catch (SQLException e)
+                        catch (final SQLException e)
                         {
                             schemaProcessor.logSQLException(e);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.PrimaryKey.Pre ", checkProperties);
                         }
@@ -266,12 +266,12 @@ public class TableProcessor
                 {
                     driver.setPrimaryKey(connection, schema, table, tableTracker.getTableProperties());
                 }
-                catch (SQLException e)
+                catch (final SQLException e)
                 {
                     exc = e;
                     schemaProcessor.logSQLException(e);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
                     exc = e;
                     schemaProcessor.logError(e, schema, "Primary Key for Table " + table.getName() + " can not create ", checkProperties);
@@ -287,17 +287,17 @@ public class TableProcessor
                     Dictionary<ObjectType, Object> objects = new Hashtable<>();
                     objects.put(ObjectType.SCHEMA, schema);
                     objects.put(ObjectType.TABLE, table);
-                    for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                    for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                     {
                         try
                         {
                             updateListener.onAction(ActionType.UPDATE, ObjectType.TABLE_PRIMARY_KEY, PhaseType.POST, connection, databaseID, objects, driver, exc);
                         }
-                        catch (SQLException e)
+                        catch (final SQLException e)
                         {
                             schemaProcessor.logSQLException(e);
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
                             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.PrimaryKey.Post ", checkProperties);
                         }
@@ -310,11 +310,11 @@ public class TableProcessor
                 }
             }
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error handle primary key ", checkProperties);
         }
@@ -333,18 +333,18 @@ public class TableProcessor
             }
             connection.clearWarnings();
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
             try
             {
                 connection.clearWarnings();
             }
-            catch (Exception e2) { }
+            catch (final Exception e2) { }
         }
     }
     
-    public static void createTableIndices(DatabaseSchemaProcessorImpl schemaProcessor, Connection connection, IDatabaseSchemaDriver driver, SchemaSpec schema, TableSpec table, TableTracker tableTracker, String databaseID, CheckProperties checkProperties)
+    public static void createTableIndices(final DatabaseSchemaProcessorImpl schemaProcessor, final Connection connection, final IDatabaseSchemaDriver driver, final SchemaSpec schema, final TableSpec table, final TableTracker tableTracker, final String databaseID, final CheckProperties checkProperties)
     {
         if (!tableTracker.isExits())
         {
@@ -355,7 +355,7 @@ public class TableProcessor
         {
             if (table.getColumnIndexList() != null)
             {
-                for (IndexSpec indexSpec : table.getColumnIndexList())
+                for (final IndexSpec indexSpec : table.getColumnIndexList())
                 {
                     try
                     {
@@ -376,17 +376,17 @@ public class TableProcessor
                                 objects.put(ObjectType.SCHEMA, schema);
                                 objects.put(ObjectType.TABLE, table);
                                 objects.put(ObjectType.TABLE_INDEX, indexSpec);
-                                for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                                for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                                 {
                                     try
                                     {
                                         updateListener.onAction(ActionType.UPDATE, ObjectType.TABLE_INDEX, PhaseType.PRE, connection, databaseID, objects, driver, null);
                                     }
-                                    catch (SQLException e)
+                                    catch (final SQLException e)
                                     {
                                         schemaProcessor.logSQLException(e);
                                     }
-                                    catch (Exception e)
+                                    catch (final Exception e)
                                     {
                                         schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.Index.Pre", checkProperties);
                                     }
@@ -403,12 +403,12 @@ public class TableProcessor
                             {
                                 driver.setValidIndex(connection, schema, table, indexSpec, columnIndexProperties);
                             }
-                            catch (SQLException e)
+                            catch (final SQLException e)
                             {
                                 exc = e;
                                 schemaProcessor.logSQLException(e);
                             }
-                            catch (Exception e)
+                            catch (final Exception e)
                             {
                                 exc = e;
                                 schemaProcessor.logError(e, schema, "Index " + indexSpec.getIndexName() + " can not create ", checkProperties);
@@ -425,17 +425,17 @@ public class TableProcessor
                                 objects.put(ObjectType.SCHEMA, schema);
                                 objects.put(ObjectType.TABLE, table);
                                 objects.put(ObjectType.TABLE_INDEX, indexSpec);
-                                for (IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
+                                for (final IDatabaseSchemaUpdateListener updateListener : table.getUpdateListenerList())
                                 {
                                     try
                                     {
                                         updateListener.onAction(ActionType.UPDATE, ObjectType.TABLE_INDEX, PhaseType.POST, connection, databaseID, objects, driver, exc);
                                     }
-                                    catch (SQLException e)
+                                    catch (final SQLException e)
                                     {
                                         schemaProcessor.logSQLException(e);
                                     }
-                                    catch (Exception e)
+                                    catch (final Exception e)
                                     {
                                         schemaProcessor.logError(e, schema, "Table " + table.getName() + " Error on UpdateListener.Index.Post", checkProperties);
                                     }
@@ -448,11 +448,11 @@ public class TableProcessor
                             }
                         }
                     }
-                    catch (SQLException e)
+                    catch (final SQLException e)
                     {
                         schemaProcessor.logSQLException(e);
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
                         schemaProcessor.logError(e, schema, "error: " + indexSpec.getIndexName(), checkProperties);
                     }
@@ -460,7 +460,7 @@ public class TableProcessor
                 
             }
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             schemaProcessor.logError(e, schema, e.getMessage(), checkProperties);
         }
@@ -479,14 +479,14 @@ public class TableProcessor
             }
             connection.clearWarnings();
         }
-        catch (SQLException e)
+        catch (final SQLException e)
         {
             schemaProcessor.logSQLException(e);
             try
             {
                 connection.clearWarnings();
             }
-            catch (Exception e2) { }
+            catch (final Exception e2) { }
         }
     }
 }

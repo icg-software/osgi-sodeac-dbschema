@@ -27,7 +27,7 @@ public class DefaultSodeacSchemaTemplate implements ITableTemplate, ISchemaTempl
      * Creates sodeac common column settings in table
      */
     @Override
-    public void tableTemplateApply(TableSpec tableSpec)
+    public void tableTemplateApply(final TableSpec tableSpec)
     {
         tableSpec.addUpdateListener(this);
         
@@ -82,7 +82,7 @@ public class DefaultSodeacSchemaTemplate implements ITableTemplate, ISchemaTempl
      * Creates sodeac common tables in schema
      */
     @Override
-    public void schemaTemplateApply(SchemaSpec schemaSpec)
+    public void schemaTemplateApply(final SchemaSpec schemaSpec)
     {
         /*
          * Table ContextGroup
@@ -119,9 +119,9 @@ public class DefaultSodeacSchemaTemplate implements ITableTemplate, ISchemaTempl
     @Override
     public void onAction
         (
-            ActionType actionType, ObjectType objectType, PhaseType phaseType, Connection connection,
-            String databaseID, Dictionary<ObjectType, Object> objects, IDatabaseSchemaDriver driver,
-            Exception exception
+            final ActionType actionType, final ObjectType objectType, final PhaseType phaseType, final Connection connection,
+            final String databaseID, final Dictionary<ObjectType, Object> objects, final IDatabaseSchemaDriver driver,
+            final Exception exception
         ) throws SQLException
     {
     }

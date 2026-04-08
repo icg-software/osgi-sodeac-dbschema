@@ -29,22 +29,22 @@ public class SchemaUnusableException extends RuntimeException
         super();
     }
     
-    public SchemaUnusableException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+    public SchemaUnusableException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
     
-    public SchemaUnusableException(String message, Throwable cause)
+    public SchemaUnusableException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
     
-    public SchemaUnusableException(String message)
+    public SchemaUnusableException(final String message)
     {
         super(message);
     }
     
-    public SchemaUnusableException(Throwable cause)
+    public SchemaUnusableException(final Throwable cause)
     {
         super(cause);
     }

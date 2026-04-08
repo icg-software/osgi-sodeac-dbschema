@@ -30,7 +30,7 @@ import org.sodeac.dbschema.driver.base.DefaultDatabaseSchemaDriver;
 public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver implements IDatabaseSchemaDriver
 {
     @Override
-    public int handle(Connection connection) throws SQLException
+    public int handle(final Connection connection) throws SQLException
     {
         if (connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
         {
@@ -42,8 +42,8 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
     @Override
     public void setValidColumnProperties
         (
-            Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec,
-            ColumnSpec columnSpec, Map<String, Object> columnProperties
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final ColumnSpec columnSpec, final Map<String, Object> columnProperties
         ) throws SQLException
     {
         String schema = connection.getSchema();
@@ -69,11 +69,11 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
         }
         
         String tablePart = tableQuoted ?
-            " " + schema + "." + quotedChar() + "" + tableSpec.getName() + "" + quotedChar() + " " :
+            " " + schema + "." + quotedChar() + tableSpec.getName() + quotedChar() + " " :
             " " + schema + "." + objectNameGuidelineFormat(schemaSpec, connection, tableSpec.getName(), "TABLE") + " ";
         
         String columnPart = columnQuoted ?
-            " " + quotedChar() + "" + columnSpec.getName() + "" + quotedChar() + " " :
+            " " + quotedChar() + columnSpec.getName() + quotedChar() + " " :
             " " + objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getName(), "COLUMN") + " ";
         
         if
@@ -115,7 +115,7 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
                     {
                         createColumnStatement.close();
                     }
-                    catch (Exception e) { }
+                    catch (final Exception e) { }
                 }
             }
             
@@ -151,7 +151,7 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
                         {
                             createColumnStatement.close();
                         }
-                        catch (Exception e) { }
+                        catch (final Exception e) { }
                     }
                 }
             }
@@ -161,12 +161,12 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
     @Override
     protected String tableSpaceAppendix
         (
-            Connection connection,
-            SchemaSpec schemaSpec,
-            TableSpec tableSpec,
-            Map<String, Object> properties,
-            String tableSpace,
-            String type
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final Map<String, Object> properties,
+            final String tableSpace,
+            final String type
         )
     {
         if ("PRIMARYKEY".equals(type))
@@ -179,8 +179,8 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
     @Override
     public String determineColumnType
         (
-            Connection connection, SchemaSpec schemaSpec, TableSpec tableSpec,
-            ColumnSpec columnSpec, Map<String, Object> columnProperties
+            final Connection connection, final SchemaSpec schemaSpec, final TableSpec tableSpec,
+            final ColumnSpec columnSpec, final Map<String, Object> columnProperties
         ) throws SQLException
     {
         if (columnProperties == null)
@@ -274,19 +274,19 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
     }
     
     @Override
-    public String catalogSearchPattern(SchemaSpec schemaSpec, Connection connection, String catalog)
+    public String catalogSearchPattern(final SchemaSpec schemaSpec, final Connection connection, final String catalog)
     {
         return null;
     }
     
     @Override
-    public String objectNameGuidelineFormat(SchemaSpec schemaSpec, Connection connection, String name, String type)
+    public String objectNameGuidelineFormat(final SchemaSpec schemaSpec, final Connection connection, final String name, final String type)
     {
         return name == null ? name : name.toUpperCase();
     }
     
     @Override
-    public String getFunctionExpression(String function)
+    public String getFunctionExpression(final String function)
     {
         if (function.equalsIgnoreCase(IDatabaseSchemaDriver.Function.CURRENT_TIME.toString()))
         {
@@ -296,7 +296,7 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
     }
     
     @Override
-    public void createSchema(Connection connection, String schemaName, Map<String, Object> properties) throws SQLException
+    public void createSchema(final Connection connection, final String schemaName, final Map<String, Object> properties) throws SQLException
     {
         String password = schemaName;
         String permissions = "WITH ADMIN OPTION";
@@ -324,7 +324,8 @@ public class OracleDatabaseSchemaProvider extends DefaultDatabaseSchemaDriver im
         prepStat.close();
     }
     
-    public void dropSchema(Connection connection, String schemaName, Map<String, Object> properties) throws SQLException
+    @Override
+    public void dropSchema(final Connection connection, final String schemaName, final Map<String, Object> properties) throws SQLException
     {
         if (!super.confirmDropSchema(connection, schemaName, properties))
         {

@@ -23,40 +23,40 @@ public class ColumnTracker
     
     public boolean isCreated()
     {
-        return created;
+        return this.created;
     }
     
-    public void setCreated(boolean created)
+    public void setCreated(final boolean created)
     {
         this.created = created;
     }
     
     public boolean isExits()
     {
-        return exits;
+        return this.exits;
     }
     
-    public void setExits(boolean exits)
+    public void setExits(final boolean exits)
     {
         this.exits = exits;
     }
     
     public ColumnSpec getColumnSpec()
     {
-        return columnSpec;
+        return this.columnSpec;
     }
     
-    public void setColumnSpec(ColumnSpec columnSpec)
+    public void setColumnSpec(final ColumnSpec columnSpec)
     {
         this.columnSpec = columnSpec;
     }
     
     public Map<String, Object> getColumnProperties()
     {
-        return columnProperties;
+        return this.columnProperties;
     }
     
-    public void setColumnProperties(Map<String, Object> columnProperties)
+    public void setColumnProperties(final Map<String, Object> columnProperties)
     {
         this.columnProperties = columnProperties;
     }

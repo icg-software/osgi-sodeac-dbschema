@@ -30,22 +30,22 @@ public class TerminateException extends RuntimeException
         super();
     }
     
-    public TerminateException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace)
+    public TerminateException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace)
     {
         super(message, cause, enableSuppression, writableStackTrace);
     }
     
-    public TerminateException(String message, Throwable cause)
+    public TerminateException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
     
-    public TerminateException(String message)
+    public TerminateException(final String message)
     {
         super(message);
     }
     
-    public TerminateException(Throwable cause)
+    public TerminateException(final Throwable cause)
     {
         super(cause);
     }

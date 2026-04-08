@@ -24,8 +24,8 @@ public class TableSpec
 {
     private String name = null;
     private String dbmsSchemaName = null;
-    private List<ColumnSpec> columnList = new ArrayList<ColumnSpec>();
-    private List<IndexSpec> columnIndexList = new ArrayList<IndexSpec>();
+    private final List<ColumnSpec> columnList = new ArrayList<ColumnSpec>();
+    private final List<IndexSpec> columnIndexList = new ArrayList<IndexSpec>();
     private List<IDatabaseSchemaUpdateListener> updateListenerList = null;
     private SchemaSpec schema = null;
     private Boolean quotedName = null;
@@ -39,7 +39,7 @@ public class TableSpec
      * @param name   table name
      * @param schema schema specification
      */
-    public TableSpec(String name, SchemaSpec schema)
+    public TableSpec(final String name, final SchemaSpec schema)
     {
         super();
         this.name = name;
@@ -54,7 +54,7 @@ public class TableSpec
      *
      * @return created column specification
      */
-    public ColumnSpec addColumn(String name, String columntype)
+    public ColumnSpec addColumn(final String name, final String columntype)
     {
         ColumnSpec columnSpec = new ColumnSpec(this, name, columntype);
         this.columnList.add(columnSpec);
@@ -71,7 +71,7 @@ public class TableSpec
      *
      * @return created column specification
      */
-    public ColumnSpec addColumn(String name, String columntype, boolean nullable)
+    public ColumnSpec addColumn(final String name, final String columntype, final boolean nullable)
     {
         ColumnSpec columnSpec = new ColumnSpec(this, name, columntype, nullable);
         this.columnList.add(columnSpec);
@@ -88,7 +88,7 @@ public class TableSpec
      *
      * @return created column specification
      */
-    public ColumnSpec addColumn(String name, String columntype, boolean nullable, int size)
+    public ColumnSpec addColumn(final String name, final String columntype, final boolean nullable, final int size)
     {
         ColumnSpec columnSpec = new ColumnSpec(this, name, columntype, nullable, size);
         this.columnList.add(columnSpec);
@@ -103,7 +103,7 @@ public class TableSpec
      *
      * @return created index specification
      */
-    public IndexSpec addColumnIndex(String indexName, String column)
+    public IndexSpec addColumnIndex(final String indexName, final String column)
     {
         ColumnSpec columnSpec = getColumn(column);
         if (columnSpec == null)
@@ -124,7 +124,7 @@ public class TableSpec
      *
      * @return created index specification
      */
-    public IndexSpec addColumnIndex(String indexName, String column, boolean unique)
+    public IndexSpec addColumnIndex(final String indexName, final String column, final boolean unique)
     {
         ColumnSpec columnSpec = getColumn(column);
         if (columnSpec == null)
@@ -146,7 +146,7 @@ public class TableSpec
      *
      * @return created index specification
      */
-    public IndexSpec addColumnIndex(String indexName, String column, boolean unique, boolean includeContext)
+    public IndexSpec addColumnIndex(final String indexName, final String column, final boolean unique, final boolean includeContext)
     {
         ColumnSpec columnSpec = getColumn(column);
         if (columnSpec == null)
@@ -167,10 +167,10 @@ public class TableSpec
      *
      * @return created index specification
      */
-    public IndexSpec addColumnIndex(String indexName, String[] columns, boolean unique)
+    public IndexSpec addColumnIndex(final String indexName, final String[] columns, final boolean unique)
     {
         List<ColumnSpec> columnList = new ArrayList<ColumnSpec>();
-        for (String column : columns)
+        for (final String column : columns)
         {
             ColumnSpec columnSpec = getColumn(column);
             if (columnSpec == null)
@@ -198,10 +198,10 @@ public class TableSpec
      *
      * @return
      */
-    public IndexSpec addColumnIndex(String indexName, String[] columns, boolean unique, boolean includeContext)
+    public IndexSpec addColumnIndex(final String indexName, final String[] columns, final boolean unique, final boolean includeContext)
     {
         List<ColumnSpec> columnList = new ArrayList<ColumnSpec>();
-        for (String column : columns)
+        for (final String column : columns)
         {
             ColumnSpec columnSpec = getColumn(column);
             if (columnSpec == null)
@@ -226,7 +226,7 @@ public class TableSpec
      */
     public String getName()
     {
-        return name;
+        return this.name;
     }
     
     /**
@@ -236,7 +236,7 @@ public class TableSpec
      */
     public List<ColumnSpec> getColumnList()
     {
-        return columnList;
+        return this.columnList;
     }
     
     /**
@@ -246,9 +246,9 @@ public class TableSpec
      *
      * @return column specification
      */
-    public ColumnSpec getColumn(String name)
+    public ColumnSpec getColumn(final String name)
     {
-        for (ColumnSpec column : this.columnList)
+        for (final ColumnSpec column : this.columnList)
         {
             if (column.getName().equals(name))
             {
@@ -265,9 +265,9 @@ public class TableSpec
      *
      * @return true, if column with given name exists, otherwise false
      */
-    public boolean containsColumns(String name)
+    public boolean containsColumns(final String name)
     {
-        for (ColumnSpec column : this.columnList)
+        for (final ColumnSpec column : this.columnList)
         {
             if (column.getName().equals(name))
             {
@@ -287,7 +287,7 @@ public class TableSpec
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public TableSpec applyTemplate(Class<?> tableTemplateClass) throws InstantiationException, IllegalAccessException
+    public TableSpec applyTemplate(final Class<?> tableTemplateClass) throws InstantiationException, IllegalAccessException
     {
         ITableTemplate instanceOfTemplate = (ITableTemplate) tableTemplateClass.newInstance();
         instanceOfTemplate.tableTemplateApply(this);
@@ -301,7 +301,7 @@ public class TableSpec
      */
     public Boolean getQuotedName()
     {
-        return quotedName;
+        return this.quotedName;
     }
     
     /**
@@ -311,7 +311,7 @@ public class TableSpec
      *
      * @return table specification
      */
-    public TableSpec setQuotedName(Boolean quotedName)
+    public TableSpec setQuotedName(final Boolean quotedName)
     {
         this.quotedName = quotedName;
         return this;
@@ -324,7 +324,7 @@ public class TableSpec
      */
     public String getTableSpace()
     {
-        return tableSpace;
+        return this.tableSpace;
     }
     
     /**
@@ -334,7 +334,7 @@ public class TableSpec
      *
      * @return table specification
      */
-    public TableSpec setTableSpace(String tableSpace)
+    public TableSpec setTableSpace(final String tableSpace)
     {
         this.tableSpace = tableSpace;
         return this;
@@ -347,7 +347,7 @@ public class TableSpec
      */
     public List<IndexSpec> getColumnIndexList()
     {
-        return columnIndexList;
+        return this.columnIndexList;
     }
     
     /**
@@ -357,7 +357,7 @@ public class TableSpec
      */
     public String getDbmsSchemaName()
     {
-        return dbmsSchemaName;
+        return this.dbmsSchemaName;
     }
     
     /**
@@ -367,7 +367,7 @@ public class TableSpec
      *
      * @return table specification
      */
-    public TableSpec setDbmsSchemaName(String dbmsSchemaName)
+    public TableSpec setDbmsSchemaName(final String dbmsSchemaName)
     {
         this.dbmsSchemaName = dbmsSchemaName;
         return this;
@@ -390,7 +390,7 @@ public class TableSpec
      */
     public SchemaSpec getSchemaSpec()
     {
-        return schema;
+        return this.schema;
     }
     
     /**
@@ -400,7 +400,7 @@ public class TableSpec
      */
     public List<IDatabaseSchemaUpdateListener> getUpdateListenerList()
     {
-        return updateListenerList;
+        return this.updateListenerList;
     }
     
     /**
@@ -410,7 +410,7 @@ public class TableSpec
      *
      * @return table specification
      */
-    public TableSpec addUpdateListener(IDatabaseSchemaUpdateListener updateListener)
+    public TableSpec addUpdateListener(final IDatabaseSchemaUpdateListener updateListener)
     {
         if (this.updateListenerList == null)
         {
@@ -427,7 +427,7 @@ public class TableSpec
     @Override
     public String toString()
     {
-        return "TableSpec " + name;
+        return "TableSpec " + this.name;
     }
     
 }

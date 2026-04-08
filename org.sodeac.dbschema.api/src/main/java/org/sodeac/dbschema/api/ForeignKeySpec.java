@@ -32,7 +32,7 @@ public class ForeignKeySpec
      * @param constraintName      name of foreignkey
      * @param referencedTableName name of referenced table
      */
-    public ForeignKeySpec(String constraintName, String referencedTableName)
+    public ForeignKeySpec(final String constraintName, final String referencedTableName)
     {
         super();
         this.constraintName = constraintName;
@@ -46,7 +46,7 @@ public class ForeignKeySpec
      * @param referencedTableName  name of referenced table
      * @param referencedColumnName name of referenced column
      */
-    public ForeignKeySpec(String constraintName, String referencedTableName, String referencedColumnName)
+    public ForeignKeySpec(final String constraintName, final String referencedTableName, final String referencedColumnName)
     {
         super();
         this.constraintName = constraintName;
@@ -61,7 +61,7 @@ public class ForeignKeySpec
      */
     public String getConstraintName()
     {
-        return constraintName;
+        return this.constraintName;
     }
     
     /**
@@ -71,7 +71,7 @@ public class ForeignKeySpec
      *
      * @return foreign key specification
      */
-    public ForeignKeySpec setConstraintName(String constraintName)
+    public ForeignKeySpec setConstraintName(final String constraintName)
     {
         this.constraintName = constraintName;
         return this;
@@ -84,7 +84,7 @@ public class ForeignKeySpec
      */
     public String getTableName()
     {
-        return referencedTableName;
+        return this.referencedTableName;
     }
     
     /**
@@ -94,7 +94,7 @@ public class ForeignKeySpec
      *
      * @return foreign key specification
      */
-    public ForeignKeySpec setReferencedTableName(String referencedTableName)
+    public ForeignKeySpec setReferencedTableName(final String referencedTableName)
     {
         this.referencedTableName = referencedTableName;
         return this;
@@ -107,7 +107,7 @@ public class ForeignKeySpec
      */
     public String getReferencedColumnName()
     {
-        return referencedColumnName;
+        return this.referencedColumnName;
     }
     
     /**
@@ -117,7 +117,7 @@ public class ForeignKeySpec
      *
      * @return foreign key specification
      */
-    public ForeignKeySpec setReferencedColumnName(String referencedColumnName)
+    public ForeignKeySpec setReferencedColumnName(final String referencedColumnName)
     {
         this.referencedColumnName = referencedColumnName;
         return this;
@@ -130,7 +130,7 @@ public class ForeignKeySpec
      */
     public Boolean getQuotedRefTableName()
     {
-        return quotedRefTableName;
+        return this.quotedRefTableName;
     }
     
     /**
@@ -140,7 +140,7 @@ public class ForeignKeySpec
      *
      * @return
      */
-    public ForeignKeySpec setQuotedRefTableName(Boolean quotedRefTableName)
+    public ForeignKeySpec setQuotedRefTableName(final Boolean quotedRefTableName)
     {
         this.quotedRefTableName = quotedRefTableName;
         return this;
@@ -153,7 +153,7 @@ public class ForeignKeySpec
      */
     public Boolean getQuotedRefColumnName()
     {
-        return quotedRefColumnName;
+        return this.quotedRefColumnName;
     }
     
     /**
@@ -163,7 +163,7 @@ public class ForeignKeySpec
      *
      * @return foreign key specification
      */
-    public ForeignKeySpec setQuotedRefColumnName(Boolean quotedRefColumnName)
+    public ForeignKeySpec setQuotedRefColumnName(final Boolean quotedRefColumnName)
     {
         this.quotedRefColumnName = quotedRefColumnName;
         return this;
@@ -176,7 +176,7 @@ public class ForeignKeySpec
      */
     public Boolean getQuotedKeyName()
     {
-        return quotedKeyName;
+        return this.quotedKeyName;
     }
     
     /**
@@ -186,7 +186,7 @@ public class ForeignKeySpec
      *
      * @return foreign key specification
      */
-    public ForeignKeySpec setQuotedKeyName(Boolean quotedName)
+    public ForeignKeySpec setQuotedKeyName(final Boolean quotedName)
     {
         this.quotedKeyName = quotedName;
         return this;

@@ -37,7 +37,7 @@ public class ColumnSpec
      * @param name       column-name
      * @param columntype string represent of {@link IColumnType}
      */
-    public ColumnSpec(TableSpec tableSpec, String name, String columntype)
+    public ColumnSpec(final TableSpec tableSpec, final String name, final String columntype)
     {
         super();
         this.name = name;
@@ -53,7 +53,7 @@ public class ColumnSpec
      * @param columntype string represent of {@link IColumnType}
      * @param nullable   capability to store null values
      */
-    public ColumnSpec(TableSpec tableSpec, String name, String columntype, boolean nullable)
+    public ColumnSpec(final TableSpec tableSpec, final String name, final String columntype, final boolean nullable)
     {
         super();
         this.name = name;
@@ -71,7 +71,7 @@ public class ColumnSpec
      * @param nullable   capability to store null values
      * @param size       column-size
      */
-    public ColumnSpec(TableSpec tableSpec, String name, String columntype, boolean nullable, int size)
+    public ColumnSpec(final TableSpec tableSpec, final String name, final String columntype, final boolean nullable, final int size)
     {
         super();
         this.name = name;
@@ -88,7 +88,7 @@ public class ColumnSpec
      */
     public boolean getNullable()
     {
-        return nullable;
+        return this.nullable;
     }
     
     /**
@@ -98,7 +98,7 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setNullable(boolean nullable)
+    public ColumnSpec setNullable(final boolean nullable)
     {
         this.nullable = nullable;
         return this;
@@ -111,7 +111,7 @@ public class ColumnSpec
      */
     public String getName()
     {
-        return name;
+        return this.name;
     }
     
     /**
@@ -121,7 +121,7 @@ public class ColumnSpec
      */
     public String getColumntype()
     {
-        return columntype;
+        return this.columntype;
     }
     
     /**
@@ -131,7 +131,7 @@ public class ColumnSpec
      */
     public int getSize()
     {
-        return size;
+        return this.size;
     }
     
     /**
@@ -141,7 +141,7 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setSize(int size)
+    public ColumnSpec setSize(final int size)
     {
         this.size = size;
         return this;
@@ -154,7 +154,7 @@ public class ColumnSpec
      */
     public String getDefaultValue()
     {
-        return defaultValue;
+        return this.defaultValue;
     }
     
     /**
@@ -164,7 +164,7 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setDefaultValue(String defaultValue)
+    public ColumnSpec setDefaultValue(final String defaultValue)
     {
         this.defaultValue = defaultValue;
         return this;
@@ -177,7 +177,7 @@ public class ColumnSpec
      */
     public PrimaryKeySpec getPrimaryKey()
     {
-        return primaryKey;
+        return this.primaryKey;
     }
     
     /**
@@ -187,7 +187,7 @@ public class ColumnSpec
      */
     public ColumnSpec setPrimaryKey()
     {
-        this.primaryKey = new PrimaryKeySpec("PK_" + tableSpec.getName().toUpperCase(), "PKX_" + tableSpec.getName().toUpperCase());
+        this.primaryKey = new PrimaryKeySpec("PK_" + this.tableSpec.getName().toUpperCase(), "PKX_" + this.tableSpec.getName().toUpperCase());
         return this;
     }
     
@@ -203,11 +203,11 @@ public class ColumnSpec
     {
         if (constraintName == null)
         {
-            constraintName = "PK_" + tableSpec.getName().toUpperCase();
+            constraintName = "PK_" + this.tableSpec.getName().toUpperCase();
         }
         if (indexName == null)
         {
-            indexName = "PKX_" + tableSpec.getName().toUpperCase();
+            indexName = "PKX_" + this.tableSpec.getName().toUpperCase();
         }
         this.primaryKey = new PrimaryKeySpec(constraintName, indexName);
         return this;
@@ -222,15 +222,15 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setPrimaryKey(String constraintName, String indexName, Boolean quotedName)
+    public ColumnSpec setPrimaryKey(String constraintName, String indexName, final Boolean quotedName)
     {
         if (constraintName == null)
         {
-            constraintName = "PK_" + tableSpec.getName().toUpperCase();
+            constraintName = "PK_" + this.tableSpec.getName().toUpperCase();
         }
         if (indexName == null)
         {
-            indexName = "PKX_" + tableSpec.getName().toUpperCase();
+            indexName = "PKX_" + this.tableSpec.getName().toUpperCase();
         }
         this.primaryKey = new PrimaryKeySpec(constraintName, indexName);
         this.primaryKey.setQuotedName(quotedName);
@@ -247,15 +247,15 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setPrimaryKey(String constraintName, String indexName, Boolean quotedName, String tableSpace)
+    public ColumnSpec setPrimaryKey(String constraintName, String indexName, final Boolean quotedName, final String tableSpace)
     {
         if (constraintName == null)
         {
-            constraintName = "PK_" + tableSpec.getName().toUpperCase();
+            constraintName = "PK_" + this.tableSpec.getName().toUpperCase();
         }
         if (indexName == null)
         {
-            indexName = "PKX_" + tableSpec.getName().toUpperCase();
+            indexName = "PKX_" + this.tableSpec.getName().toUpperCase();
         }
         this.primaryKey = new PrimaryKeySpec(constraintName, indexName);
         this.primaryKey.setTableSpace(tableSpace);
@@ -270,7 +270,7 @@ public class ColumnSpec
      */
     public ForeignKeySpec getForeignKey()
     {
-        return foreignKey;
+        return this.foreignKey;
     }
     
     /**
@@ -281,7 +281,7 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setForeignKey(String constraintName, String referencedTableName)
+    public ColumnSpec setForeignKey(final String constraintName, final String referencedTableName)
     {
         this.foreignKey = new ForeignKeySpec(constraintName, referencedTableName);
         return this;
@@ -296,7 +296,7 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setForeignKey(String constraintName, String referencedTableName, String referencedColumnName)
+    public ColumnSpec setForeignKey(final String constraintName, final String referencedTableName, final String referencedColumnName)
     {
         this.foreignKey = new ForeignKeySpec(constraintName, referencedTableName, referencedColumnName);
         return this;
@@ -309,7 +309,7 @@ public class ColumnSpec
      */
     public Boolean getQuotedName()
     {
-        return quotedName;
+        return this.quotedName;
     }
     
     /**
@@ -319,7 +319,7 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setQuotedName(Boolean quotedName)
+    public ColumnSpec setQuotedName(final Boolean quotedName)
     {
         this.quotedName = quotedName;
         return this;
@@ -352,7 +352,7 @@ public class ColumnSpec
      */
     public boolean getDefaultValueByFunction()
     {
-        return defaultValueByFunction;
+        return this.defaultValueByFunction;
     }
     
     /**
@@ -362,7 +362,7 @@ public class ColumnSpec
      *
      * @return column specification
      */
-    public ColumnSpec setDefaultValueByFunction(boolean defaultValueByFunction)
+    public ColumnSpec setDefaultValueByFunction(final boolean defaultValueByFunction)
     {
         this.defaultValueByFunction = defaultValueByFunction;
         return this;
@@ -371,7 +371,7 @@ public class ColumnSpec
     @Override
     public String toString()
     {
-        return "ColumnSpec " + name;
+        return "ColumnSpec " + this.name;
     }
     
 }

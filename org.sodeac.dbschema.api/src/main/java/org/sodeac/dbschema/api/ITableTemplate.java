@@ -23,5 +23,5 @@ public interface ITableTemplate
      *
      * @param tableSpec
      */
-    public void tableTemplateApply(TableSpec tableSpec);
+    void tableTemplateApply(TableSpec tableSpec);
 }	

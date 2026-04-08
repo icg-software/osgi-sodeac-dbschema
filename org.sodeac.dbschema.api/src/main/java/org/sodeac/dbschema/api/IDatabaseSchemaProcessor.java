@@ -30,7 +30,7 @@ public interface IDatabaseSchemaProcessor
      *
      * @throws SQLException
      */
-    public IDatabaseSchemaDriver getDatabaseSchemaDriver(Connection connection) throws SQLException;
+    IDatabaseSchemaDriver getDatabaseSchemaDriver(Connection connection) throws SQLException;
     
     /**
      * create or update a database schema by specification objects
@@ -42,5 +42,5 @@ public interface IDatabaseSchemaProcessor
      *
      * @throws SQLException
      */
-    public boolean checkSchemaSpec(SchemaSpec schemaSpec, Connection connection) throws SQLException;
+    boolean checkSchemaSpec(SchemaSpec schemaSpec, Connection connection) throws SQLException;
 }

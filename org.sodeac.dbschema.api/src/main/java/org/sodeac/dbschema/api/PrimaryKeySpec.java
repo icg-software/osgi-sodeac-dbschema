@@ -30,7 +30,7 @@ public class PrimaryKeySpec
      * @param constraintName name of foreignkey
      * @param indexName      name of index
      */
-    public PrimaryKeySpec(String constraintName, String indexName)
+    public PrimaryKeySpec(final String constraintName, final String indexName)
     {
         super();
         this.indexName = indexName;
@@ -44,7 +44,7 @@ public class PrimaryKeySpec
      */
     public String getIndexName()
     {
-        return indexName;
+        return this.indexName;
     }
     
     /**
@@ -54,7 +54,7 @@ public class PrimaryKeySpec
      *
      * @return primary key specification
      */
-    public PrimaryKeySpec setIndexName(String indexName)
+    public PrimaryKeySpec setIndexName(final String indexName)
     {
         this.indexName = indexName;
         return this;
@@ -67,7 +67,7 @@ public class PrimaryKeySpec
      */
     public String getConstraintName()
     {
-        return constraintName;
+        return this.constraintName;
     }
     
     /**
@@ -77,7 +77,7 @@ public class PrimaryKeySpec
      *
      * @return primary key specification
      */
-    public PrimaryKeySpec setConstraintName(String constraintName)
+    public PrimaryKeySpec setConstraintName(final String constraintName)
     {
         this.constraintName = constraintName;
         return this;
@@ -90,7 +90,7 @@ public class PrimaryKeySpec
      */
     public Boolean getQuotedName()
     {
-        return quotedName;
+        return this.quotedName;
     }
     
     /**
@@ -100,7 +100,7 @@ public class PrimaryKeySpec
      *
      * @return primary key specification
      */
-    public PrimaryKeySpec setQuotedName(Boolean quotedName)
+    public PrimaryKeySpec setQuotedName(final Boolean quotedName)
     {
         this.quotedName = quotedName;
         return this;
@@ -113,7 +113,7 @@ public class PrimaryKeySpec
      */
     public String getTableSpace()
     {
-        return tableSpace;
+        return this.tableSpace;
     }
     
     /**
@@ -123,7 +123,7 @@ public class PrimaryKeySpec
      *
      * @return primary key specification
      */
-    public PrimaryKeySpec setTableSpace(String tableSpace)
+    public PrimaryKeySpec setTableSpace(final String tableSpace)
     {
         this.tableSpace = tableSpace;
         return this;
