@@ -10,23 +10,30 @@
  *******************************************************************************/
 package org.sodeac.dbschema.itest;
 
+import java.io.Serializable;
 import java.sql.Connection;
 
-public class TestConnection
+import lombok.ToString;
+
+@ToString
+public class TestConnection implements Serializable
 {
-	public TestConnection()
-	{
-		super();
-	}
-	
-	public TestConnection(boolean enabled)
-	{
-		super();
-		this.enabled = enabled;
-	}
-	public Connection connection;
-	public boolean enabled = false;
-	public String dbmsSchemaName = null;
-	public String tableSpaceIndex = null;
-	public String tableSpaceData = null;
+    private static final long serialVersionUID = 1L;
+    
+    public transient Connection connection;
+    public boolean enabled = false;
+    public String dbmsSchemaName = null;
+    public String tableSpaceIndex = null;
+    public String tableSpaceData = null;
+    
+    public TestConnection()
+    {
+        super();
+    }
+    
+    public TestConnection(final boolean enabled)
+    {
+        super();
+        this.enabled = enabled;
+    }
 }

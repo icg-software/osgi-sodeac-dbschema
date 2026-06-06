@@ -22,224 +22,234 @@ import org.sodeac.dbschema.api.IDatabaseSchemaDriver;
 import org.sodeac.dbschema.api.SchemaSpec;
 import org.sodeac.dbschema.api.TableSpec;
 
-@Component(name="DefaultColumnType", service=IColumnType.class)
+@Component(name = "DefaultColumnType", service = IColumnType.class)
 public class DefaultColumnTypeImpl implements IColumnType
 {
-	private static final List<String> typeList = Arrays.asList(new String[] 
-	{
-		ColumnType.CHAR.toString(),
-		ColumnType.VARCHAR.toString(),
-		ColumnType.CLOB.toString(),
-		ColumnType.BOOLEAN.toString(),
-		ColumnType.SMALLINT.toString(),
-		ColumnType.INTEGER.toString(),
-		ColumnType.BIGINT.toString(),
-		ColumnType.REAL.toString(),
-		ColumnType.DOUBLE.toString(),
-		ColumnType.TIMESTAMP.toString(),
-		ColumnType.DATE.toString(),
-		ColumnType.TIME.toString(),
-		ColumnType.BINARY.toString(),
-		ColumnType.BLOB.toString()
-	});
-	
-	@Override
-	public List<String> getTypeList()
-	{
-		return typeList;
-	}
-	
-
-	@Override
-	public String getTypeExpression
-	(
-		Connection connection, 
-		SchemaSpec schemaSpec, 
-		TableSpec tableSpec,
-		ColumnSpec columnSpec, 
-		String dbProduct,
-		IDatabaseSchemaDriver schemaDriver
-	) throws SQLException
-	{
-		if((columnSpec.getColumntype() == null) || ColumnType.VARCHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) || ColumnType.CHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) )
-		{
-			String type = (columnSpec.getColumntype() == null) || ColumnType.VARCHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) ? "VARCHAR" : "CHAR";
-			
-			if(columnSpec.getSize() > 0)
-			{
-				if(ColumnType.VARCHAR.toString().equalsIgnoreCase(type) && connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-				{
-					return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, type + "(" + columnSpec.getSize() + " CHAR)", "COLUMN_TYPE") ;
-				}
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, type + "(" + columnSpec.getSize() + ")", "COLUMN_TYPE") ;
-			}
-			else
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, type , "COLUMN_TYPE") ;
-			}
-		}
-		
-		if(ColumnType.CLOB.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("PostgreSQL"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "text", "COLUMN_TYPE");
-			}
-		}
-		if(ColumnType.REAL.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("PostgreSQL"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "float4", "COLUMN_TYPE");
-			}
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FLOAT(63)", "COLUMN_TYPE");
-			}
-		}
-		if(ColumnType.DOUBLE.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("PostgreSQL"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "float8", "COLUMN_TYPE");
-			}
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FLOAT(126)", "COLUMN_TYPE");
-			}
-		}
-		if(ColumnType.BINARY.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("PostgreSQL"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "bytea", "COLUMN_TYPE");
-			}
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "LONG RAW", "COLUMN_TYPE");
-			}
-		}
-		
-		if(ColumnType.BLOB.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("PostgreSQL"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "oid", "COLUMN_TYPE");
-			}
-		}
-		
-		if(ColumnType.BOOLEAN.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "CHAR(1)", "COLUMN_TYPE");
-			}
-		}
-		
-		if(ColumnType.SMALLINT.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "NUMBER(5)", "COLUMN_TYPE");
-			}
-		}
-		
-		if(ColumnType.INTEGER.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "NUMBER(10)", "COLUMN_TYPE");
-			}
-		}
-		
-		if(ColumnType.BIGINT.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "NUMBER(19)", "COLUMN_TYPE");
-			}
-		}
-		
-		if(ColumnType.TIME.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if(connection.getMetaData().getDatabaseProductName().equalsIgnoreCase("Oracle"))
-			{
-				return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "DATE", "COLUMN_TYPE");
-			}
-		}
-		
-		return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getColumntype(), "COLUMN_TYPE");
-	}
-
-	@Override
-	public String getDefaultValueExpression
-	(
-		Connection connection, 
-		SchemaSpec schemaSpec, 
-		TableSpec tableSpec,
-		ColumnSpec columnSpec, 
-		String dbProduct,
-		IDatabaseSchemaDriver schemaDriver
-	) throws SQLException
-	{
-		if((columnSpec.getColumntype() == null) || ColumnType.VARCHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) || ColumnType.CHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) )
-		{
-			if(columnSpec.getDefaultValue() != null)
-			{
-				return "DEFAULT " + (columnSpec.getDefaultValueByFunction() ? schemaDriver.getFunctionExpression(columnSpec.getDefaultValue()) :  columnSpec.getDefaultValue() );
-			}
-		}
-		if(ColumnType.BOOLEAN.toString().equalsIgnoreCase(columnSpec.getColumntype()))
-		{
-			if((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
-			{
-				return "DEFAULT " + 
-					(
-						columnSpec.getDefaultValue().equalsIgnoreCase("true") ? 
-						schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "TRUE" , "BOOLEAN") : 
-						schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FALSE" , "BOOLEAN")
-					);
-			}
-		}
-		
-		if(ColumnType.TIMESTAMP.toString().equals(columnSpec.getColumntype()))
-		{
-			if((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
-			{
-				if(columnSpec.getDefaultValue().equals("NOW"))
-				{
-					return "DEFAULT " + schemaDriver.getFunctionExpression(IDatabaseSchemaDriver.Function.CURRENT_TIMESTAMP.toString()); 
-				}
-			}
-		}
-		else if(ColumnType.DATE.toString().equals(columnSpec.getColumntype()))
-		{
-			if((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
-			{
-				if(columnSpec.getDefaultValue().equals("NOW"))
-				{
-					return "DEFAULT " + schemaDriver.getFunctionExpression(IDatabaseSchemaDriver.Function.CURRENT_DATE.toString()); 
-				}
-			}
-		}
-		else if(ColumnType.TIME.toString().equals(columnSpec.getColumntype()))
-		{
-			if((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
-			{
-				if(columnSpec.getDefaultValue().equals("NOW"))
-				{
-					return "DEFAULT " + schemaDriver.getFunctionExpression(IDatabaseSchemaDriver.Function.CURRENT_TIME.toString()); 
-				}
-			}	
-		}
-		if((columnSpec.getDefaultValue() != null) && (columnSpec.getDefaultValue().length() > 0))
-		{
-			
-			return "DEFAULT " + (columnSpec.getDefaultValueByFunction() ? schemaDriver.getFunctionExpression(columnSpec.getDefaultValue()) : columnSpec.getDefaultValue());
-		}
-		
-		return new String();
-	}
-	
-
+    private static final List<String> typeList = Arrays.asList(ColumnType.CHAR.toString(),
+                                                               ColumnType.VARCHAR.toString(),
+                                                               ColumnType.CLOB.toString(),
+                                                               ColumnType.BOOLEAN.toString(),
+                                                               ColumnType.SMALLINT.toString(),
+                                                               ColumnType.INTEGER.toString(),
+                                                               ColumnType.BIGINT.toString(),
+                                                               ColumnType.REAL.toString(),
+                                                               ColumnType.DOUBLE.toString(),
+                                                               ColumnType.TIMESTAMP.toString(),
+                                                               ColumnType.DATE.toString(),
+                                                               ColumnType.TIME.toString(),
+                                                               ColumnType.BINARY.toString(),
+                                                               ColumnType.BLOB.toString()
+    );
+    
+    @Override
+    public List<String> getTypeList()
+    {
+        return typeList;
+    }
+    
+    @Override
+    public String getTypeExpression
+        (
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final ColumnSpec columnSpec,
+            final String dbProduct,
+            final IDatabaseSchemaDriver schemaDriver
+        ) throws SQLException
+    {
+        final String databaseName = connection.getMetaData().getDatabaseProductName();
+        if ((columnSpec.getColumntype() == null) || ColumnType.VARCHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) || ColumnType.CHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            final String type = (columnSpec.getColumntype() == null) || ColumnType.VARCHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) ? "VARCHAR" : "CHAR";
+            
+            if (columnSpec.getSize() > 0)
+            {
+                if (ColumnType.VARCHAR.toString().equalsIgnoreCase(type) && databaseName.equalsIgnoreCase("Oracle"))
+                {
+                    return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, type + "(" + columnSpec.getSize() + " CHAR)", "COLUMN_TYPE");
+                }
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, type + "(" + columnSpec.getSize() + ")", "COLUMN_TYPE");
+            }
+            else
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, type, "COLUMN_TYPE");
+            }
+        }
+        
+        if (ColumnType.CLOB.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("PostgreSQL"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "text", "COLUMN_TYPE");
+            }
+        }
+        if (ColumnType.REAL.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("PostgreSQL"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "float4", "COLUMN_TYPE");
+            }
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FLOAT(63)", "COLUMN_TYPE");
+            }
+        }
+        if (ColumnType.DOUBLE.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("PostgreSQL"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "float8", "COLUMN_TYPE");
+            }
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FLOAT(126)", "COLUMN_TYPE");
+            }
+        }
+        if (ColumnType.BINARY.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("PostgreSQL"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "bytea", "COLUMN_TYPE");
+            }
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "LONG RAW", "COLUMN_TYPE");
+            }
+            if (databaseName.equalsIgnoreCase("H2"))
+            {
+                if (columnSpec.getSize() > 0) // defined specific size
+                {
+                    return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "VARBINARY(" + columnSpec.getSize() + ")", "COLUMN_TYPE");
+                    
+                }
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "BLOB", "COLUMN_TYPE");
+            }
+        }
+        
+        if (ColumnType.BLOB.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("PostgreSQL"))
+            { // TODO: to BLOB, oid is for old PG Large Objects
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "oid", "COLUMN_TYPE");
+            }
+            if (databaseName.equalsIgnoreCase("H2"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "BLOB", "COLUMN_TYPE");
+            }
+        }
+        
+        if (ColumnType.BOOLEAN.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "CHAR(1)", "COLUMN_TYPE");
+            }
+        }
+        
+        if (ColumnType.SMALLINT.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "NUMBER(5)", "COLUMN_TYPE");
+            }
+        }
+        
+        if (ColumnType.INTEGER.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "NUMBER(10)", "COLUMN_TYPE");
+            }
+        }
+        
+        if (ColumnType.BIGINT.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "NUMBER(19)", "COLUMN_TYPE");
+            }
+        }
+        
+        if (ColumnType.TIME.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (databaseName.equalsIgnoreCase("Oracle"))
+            {
+                return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "DATE", "COLUMN_TYPE");
+            }
+        }
+        
+        return schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, columnSpec.getColumntype(), "COLUMN_TYPE");
+    }
+    
+    @Override
+    public String getDefaultValueExpression
+        (
+            final Connection connection,
+            final SchemaSpec schemaSpec,
+            final TableSpec tableSpec,
+            final ColumnSpec columnSpec,
+            final String dbProduct,
+            final IDatabaseSchemaDriver schemaDriver
+        ) throws SQLException
+    {
+        if ((columnSpec.getColumntype() == null) || ColumnType.VARCHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()) || ColumnType.CHAR.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if (columnSpec.getDefaultValue() != null)
+            {
+                return "DEFAULT " + (columnSpec.getDefaultValueByFunction() ? schemaDriver.getFunctionExpression(columnSpec.getDefaultValue()) : columnSpec.getDefaultValue());
+            }
+        }
+        if (ColumnType.BOOLEAN.toString().equalsIgnoreCase(columnSpec.getColumntype()))
+        {
+            if ((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
+            {
+                return "DEFAULT " +
+                       (
+                           columnSpec.getDefaultValue().equalsIgnoreCase("true") ?
+                               schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "TRUE", "BOOLEAN") :
+                               schemaDriver.objectNameGuidelineFormat(schemaSpec, connection, "FALSE", "BOOLEAN")
+                       );
+            }
+        }
+        
+        if (ColumnType.TIMESTAMP.toString().equals(columnSpec.getColumntype()))
+        {
+            if ((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
+            {
+                if (columnSpec.getDefaultValue().equals("NOW"))
+                {
+                    return "DEFAULT " + schemaDriver.getFunctionExpression(IDatabaseSchemaDriver.Function.CURRENT_TIMESTAMP.toString());
+                }
+            }
+        }
+        else if (ColumnType.DATE.toString().equals(columnSpec.getColumntype()))
+        {
+            if ((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
+            {
+                if (columnSpec.getDefaultValue().equals("NOW"))
+                {
+                    return "DEFAULT " + schemaDriver.getFunctionExpression(IDatabaseSchemaDriver.Function.CURRENT_DATE.toString());
+                }
+            }
+        }
+        else if (ColumnType.TIME.toString().equals(columnSpec.getColumntype()))
+        {
+            if ((columnSpec.getDefaultValue() != null) && (!columnSpec.getDefaultValue().isEmpty()))
+            {
+                if (columnSpec.getDefaultValue().equals("NOW"))
+                {
+                    return "DEFAULT " + schemaDriver.getFunctionExpression(IDatabaseSchemaDriver.Function.CURRENT_TIME.toString());
+                }
+            }
+        }
+        if ((columnSpec.getDefaultValue() != null) && (columnSpec.getDefaultValue().length() > 0))
+        {
+            
+            return "DEFAULT " + (columnSpec.getDefaultValueByFunction() ? schemaDriver.getFunctionExpression(columnSpec.getDefaultValue()) : columnSpec.getDefaultValue());
+        }
+        
+        return "";
+    }
+    
 }

@@ -11,42 +11,42 @@
 package org.sodeac.dbschema.api;
 
 /**
- * This exception should thrown, if schema is unusable. In this case, the process {@link IDatabaseSchemaProcessor#checkSchemaSpec(SchemaSpec, java.sql.Connection)} return false. 
- * 
+ * This exception should thrown, if schema is unusable. In this case, the process {@link IDatabaseSchemaProcessor#checkSchemaSpec(SchemaSpec, java.sql.Connection)} return false.
+ *
  * @author Sebastian Palarus
  *
  */
 public class SchemaUnusableException extends RuntimeException
 {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2808225220948944523L;
-
-	public SchemaUnusableException()
-	{
-		super();
-	}
-
-	public SchemaUnusableException(String message, Throwable cause, boolean enableSuppression,boolean writableStackTrace)
-	{
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	public SchemaUnusableException(String message, Throwable cause)
-	{
-		super(message, cause);
-	}
-
-	public SchemaUnusableException(String message)
-	{
-		super(message);
-	}
-
-	public SchemaUnusableException(Throwable cause)
-	{
-		super(cause);
-	}
-	
+    
+    /**
+     *
+     */
+    private static final long serialVersionUID = 2808225220948944523L;
+    
+    public SchemaUnusableException()
+    {
+        super();
+    }
+    
+    public SchemaUnusableException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace)
+    {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+    
+    public SchemaUnusableException(final String message, final Throwable cause)
+    {
+        super(message, cause);
+    }
+    
+    public SchemaUnusableException(final String message)
+    {
+        super(message);
+    }
+    
+    public SchemaUnusableException(final Throwable cause)
+    {
+        super(cause);
+    }
+    
 }

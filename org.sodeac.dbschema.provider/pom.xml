@@ -1,39 +1,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.sodeac</groupId>
-  <artifactId>org.sodeac.dbschema.provider</artifactId>
-  <version>1.0.2</version>
-  <name>Sodeac db-schema provider</name>
-  <description>Service provider for Sodeac database schema management</description>
-  <packaging>bundle</packaging>
-  
-  <parent>
-    <groupId>org.sodeac</groupId>
-    <artifactId>sodeac-dbschema-parent</artifactId>
-    <version>1.0.0</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.sodeac</groupId>
-      <artifactId>org.sodeac.dbschema.api</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-  </dependencies>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-          	<Private-Package>org.sodeac.dbschema.impl</Private-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sodeac</groupId>
+        <artifactId>sodeac-dbschema-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>org.sodeac.dbschema.provider</artifactId>
+    <name>Sodeac db-schema provider</name>
+    <description>Service provider for Sodeac database schema management</description>
+    <packaging>bundle</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.sodeac</groupId>
+            <artifactId>org.sodeac.dbschema.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Private-Package>org.sodeac.dbschema.impl</Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

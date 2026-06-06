@@ -16,41 +16,48 @@ import org.sodeac.dbschema.api.ColumnSpec;
 
 public class ColumnTracker
 {
-	private ColumnSpec columnSpec = null;
-	private boolean created = false;
-	private boolean exits = false;
-	private Map<String,Object> columnProperties = null;
-	
-	public boolean isCreated()
-	{
-		return created;
-	}
-	public void setCreated(boolean created)
-	{
-		this.created = created;
-	}
-	public boolean isExits()
-	{
-		return exits;
-	}
-	public void setExits(boolean exits)
-	{
-		this.exits = exits;
-	}
-	public ColumnSpec getColumnSpec()
-	{
-		return columnSpec;
-	}
-	public void setColumnSpec(ColumnSpec columnSpec)
-	{
-		this.columnSpec = columnSpec;
-	}
-	public Map<String, Object> getColumnProperties()
-	{
-		return columnProperties;
-	}
-	public void setColumnProperties(Map<String, Object> columnProperties)
-	{
-		this.columnProperties = columnProperties;
-	}
+    private ColumnSpec columnSpec = null;
+    private boolean created = false;
+    private boolean exits = false;
+    private Map<String, Object> columnProperties = null;
+    
+    public boolean isCreated()
+    {
+        return this.created;
+    }
+    
+    public void setCreated(final boolean created)
+    {
+        this.created = created;
+    }
+    
+    public boolean isExits()
+    {
+        return this.exits;
+    }
+    
+    public void setExits(final boolean exits)
+    {
+        this.exits = exits;
+    }
+    
+    public ColumnSpec getColumnSpec()
+    {
+        return this.columnSpec;
+    }
+    
+    public void setColumnSpec(final ColumnSpec columnSpec)
+    {
+        this.columnSpec = columnSpec;
+    }
+    
+    public Map<String, Object> getColumnProperties()
+    {
+        return this.columnProperties;
+    }
+    
+    public void setColumnProperties(final Map<String, Object> columnProperties)
+    {
+        this.columnProperties = columnProperties;
+    }
 }

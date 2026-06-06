@@ -12,16 +12,16 @@ package org.sodeac.dbschema.api;
 
 /**
  * Interface to create default objects in tables
- * 
+ *
  * @author Sebastian Palarus
  *
  */
 public interface ITableTemplate
 {
-	/**
-	 * implementation of applying tableTemplate to tableSpec
-	 * 
-	 * @param tableSpec
-	 */
-	public void tableTemplateApply(TableSpec tableSpec);
+    /**
+     * implementation of applying tableTemplate to tableSpec
+     *
+     * @param tableSpec
+     */
+    void tableTemplateApply(TableSpec tableSpec);
 }	
